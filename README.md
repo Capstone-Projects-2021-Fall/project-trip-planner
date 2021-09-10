@@ -9,9 +9,11 @@ A web application that allows multiple users to collaborate on a trip itinerary 
 
 
 # Contributors
-* Gen Cohen
+* Gen P. Cohen
 * Jett Everett
 * Tsunkit Lam
 * John Lee
 * Sarah N. Paroya
 * Gary Renato Mejia
+
+Hello World, someone can delete this line as their commit.
