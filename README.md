@@ -9,7 +9,7 @@ A web application that allows multiple users to collaborate on a trip itinerary 
 
 
 # Contributors
-* Gen P. Cohen
+* Gen Cohen
 * Jett Everett
 * Tsunkit Lam
 * John Lee
