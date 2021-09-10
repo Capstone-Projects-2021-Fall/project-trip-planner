@@ -15,5 +15,3 @@ A web application that allows multiple users to collaborate on a trip itinerary 
 * John Lee
 * Sarah N. Paroya
 * Gary Renato Mejia
-
-Hello World, someone can delete this line as their commit.
