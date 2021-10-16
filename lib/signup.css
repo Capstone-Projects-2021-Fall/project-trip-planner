@@ -1,19 +1,56 @@
 * {box-sizing: border-box}
 
 /* Full-width input fields */
-  input[type=text], input[type=password] {
-  width: 25%;
+  input[type=text], input[type=text] {
+  width: 50%;
   padding: 15px;
-  margin: 5px 0 22px 0;
-  display: inline-block;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+}
+  input[type=text], input[type=text] {
+  width: 50%;
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
   border: none;
   background: #f1f1f1;
 }
 
-input[type=text]:focus, input[type=password]:focus {
+/* input[type=text]:focus, input[type=password]:focus {
   background-color: #ddd;
   outline: none;
+} */
+
+  input[type=email], input[type=password] {
+  width: 50%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
 }
+
+
+  input[type=password], input[type=password] {
+  width: 50%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+}
+
+  input[type=number], input[type=password] {
+  width: 50%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+}
+
 
 hr {
   border: 1px solid #f1f1f1;
