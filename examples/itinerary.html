@@ -42,19 +42,48 @@
       dayMaxEvents: true, // allow "more" link when too many events
      
     });
-    
-    var requestItineraries = {
-        mode: 'no-cors',
-        method: 'GET',
-      };
-      // make API call with parameters and use promises to get response
-      fetch("https://efagw7lrci.execute-api.us-west-2.amazonaws.com/uploadItinerary", requestItineraries).then(response => console.log(response));
-  //.then(response => console.log(response));
-
-
-
 
     calendar.render();
+
+
+    var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+      var anHttpRequest = new XMLHttpRequest();
+      anHttpRequest.onreadystatechange = function() { 
+          if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+              aCallback(anHttpRequest.responseText);
+      }
+      anHttpRequest.open( "GET", aUrl, true );            
+      anHttpRequest.send( null );
+      }
+    }
+
+    var client = new HttpClient();
+    client.get('https://efagw7lrci.execute-api.us-west-2.amazonaws.com/uploadItinerary', function(response) {
+    // do something with response
+    let value = JSON.parse(response);
+     let count = (Object.keys(value).length); 
+    for(let index = 0; index < count; index++){
+      calendar.addEvent({
+            title: value[index]["title"],
+            start: new Date().setHours(12, 30, 0, 0),
+            end: new Date().setHours(13, 30, 0, 0),
+            allDay: true
+          });
+    }
+    /*ITS UPDATING A DIFFERENT MONTH FROM THE DATABASE SO INSERT ONES FOR TODAY TO TEST IT OUT*/
+    /*has prewritten dates. change to read from value instead*/
+
+
+    });
+
+   
+
+            calendar.render();
+
+
+
+
     document.getElementById("save").addEventListener("click", function(){
       let index = 0;
       let saveEvents = {
