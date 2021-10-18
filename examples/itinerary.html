@@ -42,64 +42,50 @@
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
         {
-          title: 'All Day Event',
-          start: '2021-09-01'
-        },
-        {
-          title: 'Long Event',
-          start: '2021-09-07',
-          end: '2021-09-10'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2021-09-09T16:00:00'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2021-09-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2021-09-11',
-          end: '2021-09-13'
-        },
-        {
           title: 'Meeting',
-          start: '2021-09-12T10:30:00',
-          end: '2021-09-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2021-09-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2021-09-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2021-09-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2021-09-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2021-09-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2021-09-28'
+          start: '2021-02-24T10:30:00',
+          end: '2021-09-12T11:30:00'
         }
       ]
     });
 
     calendar.render();
-  });
+    document.getElementById("save").addEventListener("click", function(){
+      let index = 0;
+      let saveEvents = {
+        "sourceItineraryID": 10,
+        "activities":[]             
+      };
+      calendarArr = calendar.getEvents();
+      //console.log(calendarArr[index]);
+      for(index; index < calendarArr.length; index +=1){
+        let title = calendarArr[index]["_def"]["title"];
+        let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
+        let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
+        saveEvents.activities.push({
+          "title":title,
+          "start":start,
+          "end":end
+          });
+      }
+      var json = JSON.stringify(saveEvents);
+      console.log(json);
+      bodyJson = "{\"sourceItineraryID\": 10,\"activities\":[{\"title\":\"workples\",\"start\":\"2021-02-24T01:30:00\",\"end\": \"2021-09-12T10:30:00.000Z\"}]}"
+      
+      // create a JSON object with parameters for API call and store in a variable
+      var requestOptions = {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+          },
+        method: 'POST',
+        body:json
+      };
+      // make API call with parameters and use promises to get response
+      fetch("https://gy6y9vt172.execute-api.us-west-2.amazonaws.com/default/saveActivities", requestOptions)
+  
+    });
+  });   
 
 </script>
 <style>
@@ -133,7 +119,7 @@
 </head>
 <body>
 
-  <button type="button">Save Itinerary</button>
+  <button type="button" id = "save">Save Itinerary</button>
   <div id='calendar'></div>
 
 </body>
