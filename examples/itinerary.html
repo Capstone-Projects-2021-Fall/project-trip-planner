@@ -10,9 +10,10 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialDate: '2020-09-12',
+      initialDate: document.getElementById("sdate").value,
       initialView: 'timeGridWeek',
       nowIndicator: true,
+
 
       headerToolbar: {
         left: 'prev,next today',
@@ -51,7 +52,8 @@
       events: [
         {
           title: 'All Day Event',
-          start: '2020-09-01',
+          start: '2020-09-01'
+
         },
         {
           title: 'Long Event',
@@ -127,7 +129,11 @@
 </style>
 </head>
 <body>
-
+<form>
+  <label for="sdate">Start Date:</label>
+  <input type="text" id="sdate"  value="2022-09-12"><br><br>
+  <input type="submit" value="Submit">
+</form>
 <div id='calendar'></div>
 
 </body>
