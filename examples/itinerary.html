@@ -20,6 +20,8 @@
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
+
+
     // When the user clicks on the button, open the modal
     btn.onclick = function() {
       modal.style.display = "block";
@@ -46,25 +48,31 @@
 
   saveBtn.onclick = function() {
       modal.style.display = "none";
+      //calculate how many days the trip is
+      var date1 = new Date(document.getElementById("startDate").value);
+      var date2 = new Date(document.getElementById("endDate").value);
+      var diffTime = Math.abs(date2 - date1);
+      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      //console.log(diffDays);
 
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialDate: document.getElementById("startDate").value,
-      initialView: 'timeGridFourDay',
+      initialView: 'timeGridAnyDay',
       nowIndicator: true,
 
 
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-         right: 'timeGridFourDay,listWeek' // buttons for switching between views
+         right: 'timeGridAnyDay,listWeek' // buttons for switching between views
           },
           views: {
-            timeGridFourDay: {
+            timeGridAnyDay: {
               type: 'timeGrid',
-              duration: { days: 4 },
-              buttonText: '4 day'
+              duration: { days: diffDays +1 },
+              buttonText: 'Whole Trip'
             }
           },
       navLinks: true, // can click day/week names to navigate views
