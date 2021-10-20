@@ -14,6 +14,9 @@
     // Get the button that opens the modal
     var btn = document.getElementById("myBtn");
 
+    //Get the button that saves the modal
+    var saveBtn = document.getElementById("saveBtn");
+
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
@@ -21,6 +24,11 @@
     btn.onclick = function() {
       modal.style.display = "block";
     }
+
+    //when the user clicks save, close the modal
+    //saveBtn.onclick = function() {
+      //modal.style.display = "none";
+      //}
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
@@ -35,11 +43,15 @@
     }
  //END OF SCRIPT FOR MODAL ITINERARY MODAL FORM
 
+
+  saveBtn.onclick = function() {
+      modal.style.display = "none";
+
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialDate: document.getElementById("sdate").value,
-      initialView: 'timeGridWeek',
+      initialDate: document.getElementById("startDate").value,
+      initialView: 'timeGridFourDay',
       nowIndicator: true,
 
 
@@ -136,8 +148,13 @@
       ]
     });
 
-    calendar.render();
-  });
+  var button2 = document.getElementById("saveBtn");
+  button2.onclick = function(){console.log("clicked");}
+
+    calendar.render();}//end onclick save button
+  });//end of dom content loaded
+
+
 
 </script>
   <style>
@@ -289,19 +306,12 @@ label {
           </select>
         </div>
         <div style="padding-top: 25px" class="form-group" align="middle">
-          <input style="padding: 5px" type="submit" name="save" class="btn btn-primary" value="Save">
+          <input style="padding: 5px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
         </div>
       </form>
     </div>
   </div>
 
-
-
-  <form>
-    <label for="sdate">Start Date:</label>
-    <input type="text" id="sdate"  value="2022-09-12"><br><br>
-    <input type="submit" value="Submit">
-  </form>
 
 
 
