@@ -40,38 +40,20 @@
       },
       editable: true,
       dayMaxEvents: true, // allow "more" link when too many events
-      events: [
-        {
-          title: 'Long Event',
-          start: '2021-09-07T00:0:10',
-          end: '2021-09-10T00:0:20'
-        },
-        {
-          title: 'Repeating Event',
-          start: '2021-09-09T00:00:30',
-          end: '2021-09-09T00:00:40'
-        },
-        {
-          title: 'Repeating Event2',
-          start: '2021-09-16T00:00:50',
-          end: '2021-09-09T00:01:00'
-        },
-        {
-          title: 'Conference',
-          start: '2021-09-11T00:01:10',
-          end: '2021-09-13T00:01:20'
-        },
-        {
-          title: 'Meeting',
-          start: '2021-09-12T10:30:00',
-          end: '2021-09-12T12:30:00'
-        }
-      ]
+      events: []
     });
 
     calendar.render();
 
-
+    var requestItinerary = {
+        method: 'GET',
+        headers: {
+          "Access-Control-Allow-Headers":"*"
+        }
+      };
+      // make API call with parameters and use promises to get response
+      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement", requestItinerary).then(response => response.text()) // <--- 
+      .then(data => console.log("Printing data: ", data));
     var HttpClient = function() {
     this.get = function(aUrl, aCallback) {
       var anHttpRequest = new XMLHttpRequest();
@@ -85,9 +67,10 @@
     }
 
     var client = new HttpClient();
-    /**client.get('https://efagw7lrci.execute-api.us-west-2.amazonaws.com/uploadItinerary', function(response) {
+    client.get('https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement', function(response) {
     // do something with response
     let value = JSON.parse(response);
+    console.log(value);
      let count = (Object.keys(value).length); 
     for(let index = 0; index < count; index++){
       calendar.addEvent({
@@ -96,26 +79,27 @@
             end: new Date().setHours(13, 30, 0, 0),
             allDay: true
           });
-          console.log("here");
-
-    }**/
-    /*ITS UPDATING A DIFFERENT MONTH FROM THE DATABASE SO INSERT ONES FOR TODAY TO TEST IT OUT*/
-    /*has prewritten dates. change to read from value instead*/
-
-
-    //});
+    }
+    });
 
     calendar.render();
 
 
+
+
+
+
+    //!!!!!!!!----------Executes when user saves the itinerary--------------!!!!!!!!!!!11
     document.getElementById("save").addEventListener("click", function(){
       let index = 0;
       let saveEvents = {
+        //change itinerary id when creating new itinerary feature is added
         "sourceItineraryID": '10',
         "activities":[]             
       };
       calendarArr = calendar.getEvents();
-      //console.log(calendarArr[index]);
+    
+      //loop through events from calendar and prepare them into an array to be sent off to the database
       for(index; index < calendarArr.length; index++){
         let title = calendarArr[index]["_def"]["title"];
         let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
