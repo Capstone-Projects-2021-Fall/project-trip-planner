@@ -1,24 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset='utf-8' />
-<link href='../lib/main.css' rel='stylesheet' />
-<script src='../lib/main.js'></script>
-<script>
-
+  <meta charset='utf-8' />
+  <link href='../lib/main.css' rel='stylesheet' />
+  <script src='../lib/main.js'></script>
+  <script>
 
   document.addEventListener('DOMContentLoaded', function() {
+ //SCRIPT FOR MODAL ITINERARY MODAL FORM
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    //Get the button that saves the modal
+    var saveBtn = document.getElementById("saveBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+
+
+    // When the user clicks on the button, open the modal
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    //when the user clicks save, close the modal
+    //saveBtn.onclick = function() {
+      //modal.style.display = "none";
+      //}
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+ //END OF SCRIPT FOR MODAL ITINERARY MODAL FORM
+
+
+  saveBtn.onclick = function() {
+      modal.style.display = "none";
+      //calculate how many days the trip is
+      var date1 = new Date(document.getElementById("startDate").value);
+      var date2 = new Date(document.getElementById("endDate").value);
+      var diffTime = Math.abs(date2 - date1);
+      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      //console.log(diffDays);
+
     var calendarEl = document.getElementById('calendar');
 
-
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialDate: document.getElementById("startDate").value,
+      initialView: 'timeGridAnyDay',
+      nowIndicator: true,
+
+
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      initialDate: '2021-10-00',
+         right: 'timeGridAnyDay,listWeek' // buttons for switching between views
+          },
+          views: {
+            timeGridAnyDay: {
+              type: 'timeGrid',
+              duration: { days: diffDays +1 },
+              buttonText: 'Whole Trip'
+            }
+          },
       navLinks: true, // can click day/week names to navigate views
+      editable: true,
       selectable: true,
       selectMirror: true,
       select: function(arg) {
@@ -38,8 +96,8 @@
           arg.event.remove()
         }
       },
-      editable: true,
       dayMaxEvents: true, // allow "more" link when too many events
+
       events: []
     });
 
@@ -49,7 +107,7 @@
         method: 'GET',
         headers: {
           "Access-Control-Allow-Headers":"*"
-        }
+
       };
       // make API call with parameters and use promises to get response
       fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement", requestItinerary).then(response => response.text()) // <--- 
@@ -81,6 +139,7 @@
           });
     }
     });
+
 
     calendar.render();
 
@@ -124,8 +183,16 @@
     });
   });   
 
+  var button2 = document.getElementById("saveBtn");
+  button2.onclick = function(){console.log("clicked");}
+
+    calendar.render();}//end onclick save button
+  });//end of dom content loaded
+
+
+
 </script>
-<style>
+  <style>
 
   body {
     margin: 40px 10px;
@@ -152,12 +219,155 @@
     margin: 0 auto;
   }
 
+/*CSS FOR MODAL ITINERARY CREATION FORM*/
+ /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: gray;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 25%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:300px}
+.w3-red {background-color:#2C3E50 !important}
+
+input[type=text], input[type=text] {
+  width: 60%;
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=date] {
+  width: 20%;
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+  text-align: center;
+}
+
+input[type=submit] {
+  width: 20%;
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #194d33;
+  color: white;
+}
+
+h1 {
+    font-size: 3em;
+    font-color: white;
+}
+
+label {
+  display: block;
+  text-align: center;
+  }
+
+.form-group {
+  display: block;
+ }
+
+.input {
+  display: block;
+  text-align: center;
+}
+
+/*END OF CSS FOR MODAL FORM*/
+
 </style>
 </head>
 <body>
 
+
   <button type="button" id = "save">Save Itinerary</button>
+
+
+  <button id="myBtn">Create Itinerary</button>
+
+
+
   <div id='calendar'></div>
+
+  <!-- modal itin creation form -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+
+      <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+        <h1 style="color: white" class="w3-center w3-jumbo">Create Your Trip!</h1>
+      </header>
+
+      <form action="" method= "post">
+        <div style="padding-top: 20px" class="form-group"  align="middle">
+          <label>Trip Name:</label>
+          <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
+        </div>
+        <div class="form-group" align="middle">
+          <label>Start Date:</label>
+          <input type="date" class="form-control" name="startDate" id="startDate" required>
+        </div>
+        <div class="form-group" align="middle">
+          <label>End Date:</label>
+          <input type="date" class="form-control" name="endDate" id="endDate" required>
+        </div>
+        <div class="form-group" align="middle">
+          <label>Location:</label>
+          <input type="text" class="form-control" name="location" id="location" required>
+        </div>
+        <div class="form-group"  align="middle">
+          <label>Visibility:</label>
+          <select style="padding: 5px" name = "Visibility:">
+            <option value = "private" selected>Private</option>
+            <option value = "public">Public</option>
+          </select>
+        </div>
+        <div style="padding-top: 25px" class="form-group" align="middle">
+          <input style="padding: 5px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
 
 </body>
 </html>
