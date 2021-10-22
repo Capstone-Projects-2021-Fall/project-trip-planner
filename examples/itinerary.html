@@ -4,7 +4,18 @@
   <meta charset='utf-8' />
   <link href='../lib/main.css' rel='stylesheet' />
   <script src='../lib/main.js'></script>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+.w3-red {background-color:#2C3E50 !important}
+</style>
   <script>
+
 
   document.addEventListener('DOMContentLoaded', function() {
  //SCRIPT FOR MODAL ITINERARY MODAL FORM
@@ -195,24 +206,24 @@
 /*CSS FOR MODAL ITINERARY CREATION FORM*/
  /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
+<!--  display: none; /* Hidden by default */-->
+  position: absolute; /* Stay in place */
   z-index: 1; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  background-color: gray;
 }
 
 /* Modal Content/Box */
 .modal-content {
   background-color: gray;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 0% auto; /* 0% from the top and centered */
   padding: 20px;
-  border: 1px solid #888;
-  width: 25%; /* Could be more or less, depending on screen size */
+  border: 0px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
 }
 
 /* The Close Button */
@@ -235,7 +246,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .fa-anchor,.fa-coffee {font-size:300px}
 .w3-red {background-color:#2C3E50 !important}
 
-input[type=text], input[type=text] {
+input[type=text] {
   width: 60%;
   padding: 15px;
   margin: 15px 0 22px 0;
@@ -245,7 +256,7 @@ input[type=text], input[type=text] {
 }
 
 input[type=date] {
-  width: 20%;
+  width: 25%;
   padding: 15px;
   margin: 15px 0 22px 0;
   display: block;
@@ -290,20 +301,19 @@ label {
 <body>
 
 
-  <button id="myBtn">Create Itinerary</button>
-
-
-  <button type="button">Save Itinerary</button>
+<!--  <button id="myBtn">Create Itinerary</button>-->
+<!--  <button type="button">Save Itinerary</button>-->
 
   <div id='calendar'></div>
 
   <!-- modal itin creation form -->
   <div id="myModal" class="modal">
+
     <div class="modal-content">
       <span class="close">&times;</span>
 
       <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-        <h1 style="color: white" class="w3-center w3-jumbo">Create Your Trip!</h1>
+        <h1 align="middle" style="color: white" >Create Your Trip</h1>
       </header>
 
       <form action="" method= "post">
@@ -331,14 +341,23 @@ label {
           </select>
         </div>
         <div style="padding-top: 25px" class="form-group" align="middle">
-          <input style="padding: 5px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
+          <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
         </div>
       </form>
     </div>
   </div>
 
-
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+  <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
+</div>
 
 
 </body>
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-64 w3-center w3-opacity">
+  <div class="w3-xlarge w3-padding-32">
+  </div>
+  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+</footer>
 </html>
