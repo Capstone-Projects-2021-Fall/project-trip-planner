@@ -142,11 +142,15 @@ CREATE TABLE `PlannedActivity` (
   `EndTime` time NOT NULL,
   `PlannedDayID` int NOT NULL,
   `ActivityLocation` varchar(45) DEFAULT NULL,
+  `ActivityLatitudeCoordinate` decimal(6,4) NOT NULL,
+  `ActivityLongitudeCoordinate` decimal(7,4) NOT NULL,
   PRIMARY KEY (`PlannedActivityID`),
   UNIQUE KEY `Unique_NoDupes` (`ActivityName`,`StartTime`,`EndTime`,`PlannedDayID`),
   KEY `FK_PLANNED_DAY_ACTIVITY_idx` (`PlannedDayID`),
   CONSTRAINT `FK_PLANNED_DAY_ACTIVITY` FOREIGN KEY (`PlannedDayID`) REFERENCES `PlannedDay` (`PlannedDayID`),
-  CONSTRAINT `EndGreaterThanStart` CHECK ((`StartTime` < `EndTime`))
+  CONSTRAINT `EndGreaterThanStart` CHECK ((`StartTime` < `EndTime`)),
+  CONSTRAINT `PlannedActivity_chk_1` CHECK (((`ActivityLatitudeCoordinate` < 90) and (`ActivityLatitudeCoordinate` > -(90)))),
+  CONSTRAINT `PlannedActivity_chk_2` CHECK (((`ActivityLongitudeCoordinate` < 180) and (`ActivityLongitudeCoordinate` > -(180))))
 ) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='To distinquish between an activity that you can do, have done, and have in an itinerary, this is called Planned Activity. If that''s not necessary, great.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -156,7 +160,7 @@ CREATE TABLE `PlannedActivity` (
 
 LOCK TABLES `PlannedActivity` WRITE;
 /*!40000 ALTER TABLE `PlannedActivity` DISABLE KEYS */;
-INSERT INTO `PlannedActivity` VALUES (38,'workples','01:30:00','10:30:00',69,NULL),(39,'Repeating Event','00:00:30','00:00:40',71,NULL),(40,'Repeating Event2','00:00:50','01:00:50',72,NULL),(41,'Conference','00:01:10','00:01:20',73,NULL),(42,'Meeting','10:30:00','12:30:00',74,NULL);
+INSERT INTO `PlannedActivity` VALUES (38,'workples','01:30:00','10:30:00',69,NULL,39.9526,-75.1652),(39,'Repeating Event','00:00:30','00:00:40',71,NULL,0.0000,0.0000),(40,'Repeating Event2','00:00:50','01:00:50',72,NULL,0.0000,0.0000),(41,'Conference','00:01:10','00:01:20',73,NULL,0.0000,0.0000),(42,'Meeting','10:30:00','12:30:00',74,NULL,0.0000,0.0000);
 /*!40000 ALTER TABLE `PlannedActivity` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -228,7 +232,7 @@ CREATE TABLE `User` (
   `LastName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `ScreenName_UNIQUE` (`ScreenName`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,9 +241,13 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'DrChocolates','Karen','Chakwas'),(2,'Batman','Bruce','Wayne'),(3,'Superman','Clark','Kent'),(4,'Spiderman','Peter','Parker'),(5,'Report To the Ship...','Commander','Shepard'),(8,'Also Spiderman','Miles','Morales'),(9,'OptimusPrime','Liara','T\'Soni'),(10,'pinche',NULL,NULL),(11,'fsdsfgdgsdfg',NULL,NULL),(12,'what',NULL,NULL),(13,'real',NULL,NULL),(14,'reale',NULL,NULL),(15,'freewilly',NULL,NULL),(16,'freewilly22',NULL,NULL),(17,'gdfhdfghdfghdfgh',NULL,NULL),(18,'tester',NULL,NULL),(19,'usernametest',NULL,NULL),(20,'asdfasdf',NULL,NULL),(21,'test1',NULL,NULL),(23,'username',NULL,NULL),(24,'2134123',NULL,NULL),(25,'meHELLO',NULL,NULL),(26,'meHELLOdgfhdfgh',NULL,NULL),(27,'yoyo',NULL,NULL),(28,'rjames',NULL,NULL),(29,'sdgsdfg',NULL,NULL),(30,'sample',NULL,NULL);
+INSERT INTO `User` VALUES (1,'DrChocolates','Karen','Chakwas'),(2,'Batman','Bruce','Wayne'),(3,'Superman','Clark','Kent'),(4,'Spiderman','Peter','Parker'),(5,'Report To the Ship...','Commander','Shepard'),(8,'Also Spiderman','Miles','Morales'),(9,'OptimusPrime','Liara','T\'Soni'),(10,'pinche',NULL,NULL),(11,'fsdsfgdgsdfg',NULL,NULL),(12,'what',NULL,NULL),(13,'real',NULL,NULL),(14,'reale',NULL,NULL),(15,'freewilly',NULL,NULL),(16,'freewilly22',NULL,NULL),(17,'gdfhdfghdfghdfgh',NULL,NULL),(18,'tester',NULL,NULL),(19,'usernametest',NULL,NULL),(20,'asdfasdf',NULL,NULL),(21,'test1',NULL,NULL),(23,'username',NULL,NULL),(24,'2134123',NULL,NULL),(25,'meHELLO',NULL,NULL),(26,'meHELLOdgfhdfgh',NULL,NULL),(27,'yoyo',NULL,NULL),(28,'rjames',NULL,NULL),(29,'sdgsdfg',NULL,NULL),(30,'sample',NULL,NULL),(31,'man',NULL,NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'database'
+--
 
 --
 -- Dumping routines for database 'database'
@@ -351,6 +359,78 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `FindUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` PROCEDURE `FindUser`(IN screen VARCHAR(45))
+BEGIN
+	SELECT * FROM `User` WHERE `User`.ScreenName LIKE screen;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `FindUsers` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` PROCEDURE `FindUsers`(IN screen VARCHAR(45))
+BEGIN
+	SELECT  `UserID`, `ScreenName`, `FirstName`, `LastName`,
+    (`ScreenName` LIKE screen) AS IsExactMatch
+    FROM `User` WHERE `ScreenName` LIKE CONCAT('%', screen, '%')
+    ORDER BY IsExactMatch DESC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetAllItineraryInformation` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` PROCEDURE `GetAllItineraryInformation`(IN UserID int)
+BEGIN
+ SELECT 
+        `I`.`ItineraryName` AS `ItineraryName`,
+        `I`.`StartDate` AS `StartDate`,
+        `I`.`EndDate` AS `EndDate`,
+        `D`.`CurrentDay` AS `CurrentDay`,
+        `A`.`ActivityName` AS `ActivityName`,
+        `A`.`StartTime` AS `StartTime`,
+        `A`.`EndTime` AS `EndTime`
+    FROM
+        ((`Itinerary` `I`
+        LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
+        LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
+	WHERE I.CreatorID = UserID;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `GetItineraryInformation2` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -373,6 +453,77 @@ BEGIN
         LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
         LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
 	WHERE I.CreatorID = UserID;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetItineraryInformationNoActivities` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` PROCEDURE `GetItineraryInformationNoActivities`(UserID int)
+BEGIN
+	SELECT 
+        `D`.`CurrentDay` AS `CurrentDay`,
+        `A`.`ActivityName` AS `ActivityName`,
+        `A`.`StartTime` AS `StartTime`,
+        `A`.`EndTime` AS `EndTime`
+    FROM
+        ((`Itinerary` `I`
+        LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
+        LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
+	WHERE I.CreatorID = UserID;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `ItinerariesIncludingGivenCoordinates` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` PROCEDURE `ItinerariesIncludingGivenCoordinates`(IN LatCoordinate Decimal(6,4), IN LongCoordinate Decimal(7,4), IN DistanceAwayInMiles DOUBLE)
+BEGIN
+	SELECT 
+        `I`.`ItineraryName` AS `ItineraryName`,
+        `I`.`StartDate` AS `StartDate`,
+        `I`.`EndDate` AS `EndDate`,
+        `D`.`CurrentDay` AS `CurrentDay`,
+        `A`.`ActivityName` AS `ActivityName`,
+        `A`.`ActivityLatitudeCoordinate` AS `Latitude`,
+        `A`.`ActivityLongitudeCoordinate` AS `Longitude`,
+        `A`.`StartTime` AS `StartTime`,
+        `A`.`EndTime` AS `EndTime`,
+        (
+			3959 * acos (
+			cos ( radians(LatCoordinate) )
+			* cos( radians(  `A`.`ActivityLatitudeCoordinate` ) )
+			* cos( radians( `A`.`ActivityLongitudeCoordinate` ) - radians(LongCoordinate) )
+			+ sin ( radians(LatCoordinate) )
+			* sin( radians( `A`.`ActivityLatitudeCoordinate`) )
+		)) AS `DistanceAway`
+    FROM
+        ((`Itinerary` `I`
+        INNER JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
+        INNER JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
+	 Having 
+		`DistanceAway` <= DistanceAwayInMiles
+		;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -427,4 +578,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-10-25  6:48:45
+-- Dump completed on 2021-10-25 10:13:50
