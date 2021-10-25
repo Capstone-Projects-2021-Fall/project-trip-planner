@@ -1,0 +1,3 @@
+The code here represents the code necessary to create our entire database structure/schema. It does not include the data entries. IT is read-only; changes here will not affect the underlying database.
+
+SQL by its nature does not lend itself to version control easily; dropping tables or constraints, etc, is done via an ALTER command, not by removing the affected code. However, to show that work is being done, we need to capture all the data in the database in a way that is easily read. A binary backup file would not do that, so instead we dump the entire schema into a SQL file and use that as the version control. changes made to the queries, procs, etc, will be displayed in this file. 
