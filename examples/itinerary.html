@@ -32,17 +32,6 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     var span = document.getElementsByClassName("close")[0];
 
 
-
-    // When the user clicks on the button, open the modal
-    btn.onclick = function() {
-      modal.style.display = "block";
-    }
-
-    //when the user clicks save, close the modal
-    //saveBtn.onclick = function() {
-      //modal.style.display = "none";
-      //}
-
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
       modal.style.display = "none";
@@ -256,7 +245,7 @@ input[type=text] {
 }
 
 input[type=date] {
-  width: 25%;
+  width: 75%;
   padding: 15px;
   margin: 15px 0 22px 0;
   display: block;
@@ -304,48 +293,48 @@ label {
 <!--  <button id="myBtn">Create Itinerary</button>-->
 <!--  <button type="button">Save Itinerary</button>-->
 
-  <div id='calendar'></div>
+<div id='calendar'></div>
 
-  <!-- modal itin creation form -->
-  <div id="myModal" class="modal">
+<!-- modal itin creation form -->
+<div id="myModal" class="modal">
 
-    <div class="modal-content">
-      <span class="close">&times;</span>
+  <div class="modal-content">
+    <span class="close">&times;</span>
 
-      <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-        <h1 align="middle" style="color: white" >Create Your Trip</h1>
-      </header>
+    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+      <h1 align="middle" style="color: white" >Create Your Trip</h1>
+    </header>
 
-      <form action="" method= "post">
-        <div style="padding-top: 20px" class="form-group"  align="middle">
-          <label>Trip Name:</label>
-          <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
-        </div>
-        <div class="form-group" align="middle">
-          <label>Start Date:</label>
-          <input type="date" class="form-control" name="startDate" id="startDate" required>
-        </div>
-        <div class="form-group" align="middle">
-          <label>End Date:</label>
-          <input type="date" class="form-control" name="endDate" id="endDate" required>
-        </div>
-        <div class="form-group" align="middle">
-          <label>Location:</label>
-          <input type="text" class="form-control" name="location" id="location" required>
-        </div>
-        <div class="form-group"  align="middle">
-          <label>Visibility:</label>
-          <select style="padding: 5px" name = "Visibility:">
-            <option value = "private" selected>Private</option>
-            <option value = "public">Public</option>
-          </select>
-        </div>
-        <div style="padding-top: 25px" class="form-group" align="middle">
-          <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
-        </div>
-      </form>
-    </div>
+    <form action="" method= "post">
+      <div style="padding-top: 20px" class="form-group"  align="middle">
+        <label>Trip Name:</label>
+        <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
+      </div>
+      <div class="form-group" align="middle">
+        <label>Start Date:</label>
+        <input type="date" class="form-control" name="startDate" id="startDate" required>
+      </div>
+      <div class="form-group" align="middle">
+        <label>End Date:</label>
+        <input type="date" class="form-control" name="endDate" id="endDate" required>
+      </div>
+      <div class="form-group" align="middle">
+        <label>Location:</label>
+        <input type="text" class="form-control" name="location" id="location" required>
+      </div>
+      <div class="form-group"  align="middle">
+        <label>Visibility:</label>
+        <select style="padding: 5px" name = "Visibility:">
+          <option value = "private" selected>Private</option>
+          <option value = "public">Public</option>
+        </select>
+      </div>
+      <div style="padding-top: 25px" class="form-group" align="middle">
+        <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
+      </div>
+    </form>
   </div>
+</div>
 
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
   <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
@@ -358,6 +347,6 @@ label {
 <footer class="w3-container w3-padding-64 w3-center w3-opacity">
   <div class="w3-xlarge w3-padding-32">
   </div>
-  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+
 </footer>
 </html>
