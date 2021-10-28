@@ -128,7 +128,16 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       },
       eventClick: function(arg) {//when they click on an event
         eventDetailsModal.style.display = "block";
-        calendar.destroy();
+        //need to change the event start time or end time or title here
+        //then apply those changes using event functions
+
+        document.getElementById("eventName").innerHTML=arg.event.title;
+        document.getElementById("startDateEventDetails").innerHTML = arg.event.start;
+        document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
+
+
+        //console.log(arg);
+        calendar.destroy();//probs dont do this, doesnt seem like a good idea
       },
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
@@ -375,7 +384,7 @@ label {
     </div>
   </div>
 
-<!-- modal itin creation form -->
+<!-- modal event edit form -->
 <div id="eventDetailsModal" class="modal" style="display:none">
 
   <div class="modal-content">
@@ -388,15 +397,18 @@ label {
     <form action="" method= "post">
       <div style="padding-top: 20px" class="form-group"  align="middle">
         <label>Event Name:</label>
-        <input style="text-align: center" type="text" class="form-control" name="eventName" id="eventName" required>
+        <label id = "eventName"></label>
+        <!-- <input style="text-align: center" type="text" class="form-control" name="eventName" id="eventName"  required>-->
       </div>
       <div class="form-group" align="middle">
-        <label>Start Date:</label>
-        <input type="date" class="form-control" name="startDate" id="startDateEventDetails" required>
+        <label>Start Time:</label>
+        <label id = "startDateEventDetails"></label>
+        <!--<input type="date" class="form-control" name="startDate" id="startDateEventDetails" required>---->
       </div>
       <div class="form-group" align="middle">
-        <label>End Date:</label>
-        <input type="date" class="form-control" name="endDate" id="endDateEventDetails" required>
+        <label>End Time:</label>
+        <label id = "endDateEventDetails"></label>
+        <!--<input type="date" class="form-control" name="endDate" id="endDateEventDetails" required>-->
       </div>
 
       <div style="padding-top: 25px" class="form-group" align="middle">
