@@ -74,12 +74,6 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
     saveBtnEventDetails.onclick = function() {
       eventDetailsModal.style.display = "none";
-      var date1 = new Date(document.getElementById("startDate").value);
-      var date2 = new Date(document.getElementById("endDate").value);
-
-      //FIGURE OUT HOW TO CHANGE EVENT TIME
-
-      createAndLoadCalendar(date1, date2);
 
     }//end onclick save button
 
@@ -137,7 +131,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
 
         //console.log(arg);
-        calendar.destroy();//probs dont do this, doesnt seem like a good idea
+        //calendar.destroy();//probs dont do this, doesnt seem like a good idea
       },
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
@@ -412,7 +406,7 @@ label {
       </div>
 
       <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="Save">
+        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
       </div>
     </form>
   </div>
