@@ -287,7 +287,9 @@ input[type=text] {
 }
 
 input[type=date] {
-  width: 50%;
+
+  width: 75%;
+
   padding: 15px;
   margin: 15px 0 22px 0;
   display: block;
@@ -335,48 +337,48 @@ label {
 <!--  <button id="myBtn">Create Itinerary</button>-->
 <!--  <button type="button">Save Itinerary</button>-->
 
-  <div id='calendar'></div>
+<div id='calendar'></div>
 
-  <!-- modal itin creation form -->
-  <div id="myModal" class="modal">
+<!-- modal itin creation form -->
+<div id="myModal" class="modal">
 
-    <div class="modal-content">
-      <span class="close">&times;</span>
+  <div class="modal-content">
+    <span class="close">&times;</span>
 
-      <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-        <h1 align="middle" style="color: white" >Create Your Trip</h1>
-      </header>
+    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+      <h1 align="middle" style="color: white" >Create Your Trip</h1>
+    </header>
 
-      <form action="" method= "post">
-        <div style="padding-top: 20px" class="form-group"  align="middle">
-          <label>Trip Name:</label>
-          <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
-        </div>
-        <div class="form-group" align="middle">
-          <label>Start Date:</label>
-          <input type="date" class="form-control" name="startDate" id="startDate" required>
-        </div>
-        <div class="form-group" align="middle">
-          <label>End Date:</label>
-          <input type="date" class="form-control" name="endDate" id="endDate" required>
-        </div>
-        <div class="form-group" align="middle">
-          <label>Location:</label>
-          <input type="text" class="form-control" name="location" id="location" required>
-        </div>
-        <div class="form-group"  align="middle">
-          <label>Visibility:</label>
-          <select style="padding: 5px" name = "Visibility:">
-            <option value = "private" selected>Private</option>
-            <option value = "public">Public</option>
-          </select>
-        </div>
-        <div style="padding-top: 25px" class="form-group" align="middle">
-          <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
-        </div>
-      </form>
-    </div>
+    <form action="" method= "post">
+      <div style="padding-top: 20px" class="form-group"  align="middle">
+        <label>Trip Name:</label>
+        <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
+      </div>
+      <div class="form-group" align="middle">
+        <label>Start Date:</label>
+        <input type="date" class="form-control" name="startDate" id="startDate" required>
+      </div>
+      <div class="form-group" align="middle">
+        <label>End Date:</label>
+        <input type="date" class="form-control" name="endDate" id="endDate" required>
+      </div>
+      <div class="form-group" align="middle">
+        <label>Location:</label>
+        <input type="text" class="form-control" name="location" id="location" required>
+      </div>
+      <div class="form-group"  align="middle">
+        <label>Visibility:</label>
+        <select style="padding: 5px" name = "Visibility:">
+          <option value = "private" selected>Private</option>
+          <option value = "public">Public</option>
+        </select>
+      </div>
+      <div style="padding-top: 25px" class="form-group" align="middle">
+        <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
+      </div>
+    </form>
   </div>
+</div>
 
 <!-- modal event edit form -->
 <div id="eventDetailsModal" class="modal" style="display:none">
