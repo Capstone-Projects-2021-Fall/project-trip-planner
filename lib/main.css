@@ -1444,3 +1444,35 @@ A VERTICAL event
     color: inherit; /* natural color for navlinks */
   }
 
+w3-top.search input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 40%;
+  background: #f1f1f1;
+}
+
+/* Style the submit button */
+w3-top.search button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+
+w3-top.search button:hover {
+  background: #0b7dda;
+}
+
+/* Clear floats */
+w3-top.search::after {
+  content: "";
+  clear: both;
+  display: table;
+}
