@@ -28,6 +28,36 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '';
 
 --
+-- Table structure for table `Activity`
+--
+
+DROP TABLE IF EXISTS `Activity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Activity` (
+  `ActivityID` int NOT NULL AUTO_INCREMENT,
+  `ActivityName` varchar(45) NOT NULL,
+  `Latitude` decimal(6,4) NOT NULL,
+  `Longitude` decimal(7,4) NOT NULL,
+  `Address` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`ActivityID`),
+  UNIQUE KEY `ActivityName` (`ActivityName`,`Latitude`,`Longitude`),
+  CONSTRAINT `Activity_chk_1` CHECK ((not((trim(`ActivityName`) like _utf8mb4'')))),
+  CONSTRAINT `Activity_chk_2` CHECK (((`Latitude` >= -(90)) and (`Latitude` <= 90))),
+  CONSTRAINT `Activity_chk_3` CHECK (((`Longitude` >= -(180)) and (`Longitude` <= 180)))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Activity`
+--
+
+LOCK TABLES `Activity` WRITE;
+/*!40000 ALTER TABLE `Activity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Activity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Temporary view structure for view `DefaultUIView`
 --
 
@@ -36,13 +66,17 @@ DROP TABLE IF EXISTS `DefaultUIView`;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
 /*!50001 CREATE VIEW `DefaultUIView` AS SELECT 
+ 1 AS `ItineraryID`,
  1 AS `ItineraryName`,
  1 AS `StartDate`,
  1 AS `EndDate`,
- 1 AS `CurrentDay`,
+ 1 AS `ActivityID`,
  1 AS `ActivityName`,
+ 1 AS `Latitude`,
+ 1 AS `Longitude`,
  1 AS `StartTime`,
- 1 AS `EndTime`*/;
+ 1 AS `EndTime`,
+ 1 AS `Description`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -86,7 +120,7 @@ CREATE TABLE `Itinerary` (
   KEY `FK_ITINERARY_CREATOR_USER_ID_idx` (`CreatorID`),
   CONSTRAINT `FK_ITINERARY_CREATOR_USER_ID` FOREIGN KEY (`CreatorID`) REFERENCES `User` (`UserID`),
   CONSTRAINT `EndDateGreaterThanStartDate` CHECK ((`StartDate` < `EndDate`))
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='	';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,9 +129,69 @@ CREATE TABLE `Itinerary` (
 
 LOCK TABLES `Itinerary` WRITE;
 /*!40000 ALTER TABLE `Itinerary` DISABLE KEYS */;
-INSERT INTO `Itinerary` VALUES (10,'ThirdTest','2020-12-30','2021-12-30',2);
+INSERT INTO `Itinerary` VALUES (20,'secondItinerary','2021-12-31','2022-01-22',2),(10,'ThirdTest','2020-12-30','2021-12-30',2);
 /*!40000 ALTER TABLE `Itinerary` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `ItineraryItem`
+--
+
+DROP TABLE IF EXISTS `ItineraryItem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ItineraryItem` (
+  `ItineraryItemID` int NOT NULL AUTO_INCREMENT,
+  `ItineraryID` int NOT NULL,
+  `ActivityID` int NOT NULL,
+  `StartTime` datetime NOT NULL,
+  `EndTime` datetime NOT NULL,
+  `Description` varchar(256) DEFAULT '',
+  PRIMARY KEY (`ItineraryItemID`),
+  UNIQUE KEY `ActionID` (`ItineraryItemID`,`ItineraryID`,`ActivityID`),
+  KEY `ItineraryID` (`ItineraryID`),
+  KEY `ActivityID` (`ActivityID`),
+  CONSTRAINT `ItineraryItem_ibfk_1` FOREIGN KEY (`ItineraryID`) REFERENCES `Itinerary` (`ItineraryID`),
+  CONSTRAINT `ItineraryItem_ibfk_2` FOREIGN KEY (`ActivityID`) REFERENCES `Activity` (`ActivityID`),
+  CONSTRAINT `Action_StartBeforeEnd` CHECK ((`StartTime` < `EndTime`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ItineraryItem`
+--
+
+LOCK TABLES `ItineraryItem` WRITE;
+/*!40000 ALTER TABLE `ItineraryItem` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ItineraryItem` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER `Action_BEFORE_INSERT` BEFORE INSERT ON `ItineraryItem` FOR EACH ROW BEGIN
+	DECLARE msg Varchar(128);
+    
+    IF (EXISTS(
+		SELECT Q.ActionID 
+        FROM `Action` AS Q 
+		WHERE new.StartTime between Q.StartTime AND Q.EndTime 
+			OR new.EndTime between Q.StartTime AND Q.EndTime))
+	THEN 
+		SET MSG = concat('Error: Times overlap', new.StartTime, new.EndTime);
+		SIGNAL sqlstate '45000' SET message_text = MSG;
+	END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `NormalLogin`
@@ -124,98 +218,8 @@ CREATE TABLE `NormalLogin` (
 
 LOCK TABLES `NormalLogin` WRITE;
 /*!40000 ALTER TABLE `NormalLogin` DISABLE KEYS */;
-INSERT INTO `NormalLogin` VALUES (1,'AbductingWomen','chocolates@thatmakesnosense.edu'),(2,'WeAreGoingOnATrip','ImAwesome@chickenWANG.charlie'),(9,'ShepardImAReaperDoomsdayDevice','abcd@efg.hij'),(11,'adfgdsfgsdfg','randoemail@gmail.com'),(15,';\'kl;\'kl;\'kl;\'','random@email'),(17,'dfghdfghdfghdfghdfg','hdfghdfghdfghdfgh'),(18,'testtest','test@test.com'),(19,'testtest','usertest@email.com'),(20,'wertsdfg','asdfasdf@email.com'),(24,'32412341324123','12341234'),(28,'ricky123','rickjames@gmail.com'),(29,'sdfgsdfgsdfgsd','sdfgsdfg'),(30,'asdasdasda','@sample');
+INSERT INTO `NormalLogin` VALUES (1,'AbductingWomen','chocolates@thatmakesnosense.edu'),(2,'WeAreGoingOnATrip','ImAwesome@chickenWANG.charlie'),(9,'ShepardImAReaperDoomsdayDevice','abcd@efg.hij'),(11,'adfgdsfgsdfg','randoemail@gmail.com'),(15,';\'kl;\'kl;\'kl;\'','random@email'),(17,'dfghdfghdfghdfghdfg','hdfghdfghdfghdfgh'),(18,'testtest','test@test.com'),(19,'testtest','usertest@email.com'),(20,'wertsdfg','asdfasdf@email.com'),(24,'32412341324123','12341234'),(28,'ricky123','rickjames@gmail.com'),(29,'sdfgsdfgsdfgsd','sdfgsdfg'),(30,'asdasdasda','@sample'),(31,'tooshort','abc@defg.hij');
 /*!40000 ALTER TABLE `NormalLogin` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `PlannedActivity`
---
-
-DROP TABLE IF EXISTS `PlannedActivity`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `PlannedActivity` (
-  `PlannedActivityID` int NOT NULL AUTO_INCREMENT,
-  `ActivityName` varchar(45) NOT NULL,
-  `StartTime` time NOT NULL,
-  `EndTime` time NOT NULL,
-  `PlannedDayID` int NOT NULL,
-  `ActivityLocation` varchar(45) DEFAULT NULL,
-  `ActivityLatitudeCoordinate` decimal(6,4) NOT NULL,
-  `ActivityLongitudeCoordinate` decimal(7,4) NOT NULL,
-  PRIMARY KEY (`PlannedActivityID`),
-  UNIQUE KEY `Unique_NoDupes` (`ActivityName`,`StartTime`,`EndTime`,`PlannedDayID`),
-  KEY `FK_PLANNED_DAY_ACTIVITY_idx` (`PlannedDayID`),
-  CONSTRAINT `FK_PLANNED_DAY_ACTIVITY` FOREIGN KEY (`PlannedDayID`) REFERENCES `PlannedDay` (`PlannedDayID`),
-  CONSTRAINT `EndGreaterThanStart` CHECK ((`StartTime` < `EndTime`)),
-  CONSTRAINT `PlannedActivity_chk_1` CHECK (((`ActivityLatitudeCoordinate` < 90) and (`ActivityLatitudeCoordinate` > -(90)))),
-  CONSTRAINT `PlannedActivity_chk_2` CHECK (((`ActivityLongitudeCoordinate` < 180) and (`ActivityLongitudeCoordinate` > -(180))))
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='To distinquish between an activity that you can do, have done, and have in an itinerary, this is called Planned Activity. If that''s not necessary, great.';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `PlannedActivity`
---
-
-LOCK TABLES `PlannedActivity` WRITE;
-/*!40000 ALTER TABLE `PlannedActivity` DISABLE KEYS */;
-INSERT INTO `PlannedActivity` VALUES (38,'workples','01:30:00','10:30:00',69,NULL,39.9526,-75.1652),(39,'Repeating Event','00:00:30','00:00:40',71,NULL,0.0000,0.0000),(40,'Repeating Event2','00:00:50','01:00:50',72,NULL,0.0000,0.0000),(41,'Conference','00:01:10','00:01:20',73,NULL,0.0000,0.0000),(42,'Meeting','10:30:00','12:30:00',74,NULL,0.0000,0.0000);
-/*!40000 ALTER TABLE `PlannedActivity` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER `PlannedActivity_BEFORE_INSERT` BEFORE INSERT ON `PlannedActivity` FOR EACH ROW BEGIN
-	DECLARE MSG VARCHAR(128);
-    
-	IF (EXISTS(SELECT Q.PlannedActivityID
-	FROM PlannedActivity AS Q INNER JOIN PlannedDay as D ON Q.PlannedDayID = new.PlannedDayID
-    WHERE new.StartTime BETWEEN Q.StartTime AND Q.EndTime OR new.EndTime BETWEEN Q.StartTime AND Q.EndTime))
-    THEN
-		SET MSG = concat('Error: Times overlap', new.startTime);
-		SIGNAL sqlstate '45000' SET message_text = MSG;
-    END IF;
-    
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-
---
--- Table structure for table `PlannedDay`
---
-
-DROP TABLE IF EXISTS `PlannedDay`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `PlannedDay` (
-  `PlannedDayID` int NOT NULL AUTO_INCREMENT,
-  `CurrentDay` date NOT NULL,
-  `ItineraryID` int NOT NULL,
-  PRIMARY KEY (`PlannedDayID`),
-  UNIQUE KEY `Unique_NoDupes` (`CurrentDay`,`ItineraryID`),
-  KEY `FK_IHATEEVERYONE` (`ItineraryID`),
-  CONSTRAINT `FK_IHATEEVERYONE` FOREIGN KEY (`ItineraryID`) REFERENCES `Itinerary` (`ItineraryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `PlannedDay`
---
-
-LOCK TABLES `PlannedDay` WRITE;
-/*!40000 ALTER TABLE `PlannedDay` DISABLE KEYS */;
-INSERT INTO `PlannedDay` VALUES (69,'2021-02-24',10),(71,'2021-09-09',10),(73,'2021-09-11',10),(74,'2021-09-12',10),(72,'2021-09-16',10);
-/*!40000 ALTER TABLE `PlannedDay` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -230,9 +234,10 @@ CREATE TABLE `User` (
   `ScreenName` varchar(45) NOT NULL,
   `FirstName` varchar(45) DEFAULT NULL,
   `LastName` varchar(45) DEFAULT NULL,
+  `DateOfBirth` datetime DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `ScreenName_UNIQUE` (`ScreenName`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -241,7 +246,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'DrChocolates','Karen','Chakwas'),(2,'Batman','Bruce','Wayne'),(3,'Superman','Clark','Kent'),(4,'Spiderman','Peter','Parker'),(5,'Report To the Ship...','Commander','Shepard'),(8,'Also Spiderman','Miles','Morales'),(9,'OptimusPrime','Liara','T\'Soni'),(10,'pinche',NULL,NULL),(11,'fsdsfgdgsdfg',NULL,NULL),(12,'what',NULL,NULL),(13,'real',NULL,NULL),(14,'reale',NULL,NULL),(15,'freewilly',NULL,NULL),(16,'freewilly22',NULL,NULL),(17,'gdfhdfghdfghdfgh',NULL,NULL),(18,'tester',NULL,NULL),(19,'usernametest',NULL,NULL),(20,'asdfasdf',NULL,NULL),(21,'test1',NULL,NULL),(23,'username',NULL,NULL),(24,'2134123',NULL,NULL),(25,'meHELLO',NULL,NULL),(26,'meHELLOdgfhdfgh',NULL,NULL),(27,'yoyo',NULL,NULL),(28,'rjames',NULL,NULL),(29,'sdgsdfg',NULL,NULL),(30,'sample',NULL,NULL),(31,'man',NULL,NULL);
+INSERT INTO `User` VALUES (1,'DrChocolates','Karen','Chakwas',NULL),(2,'Batman','Bruce','Wayne',NULL),(3,'Superman','Clark','Kent',NULL),(4,'Spiderman','Peter','Parker',NULL),(5,'Report To the Ship...','Commander','Shepard',NULL),(8,'Also Spiderman','Miles','Morales',NULL),(9,'OptimusPrime','Liara','T\'Soni',NULL),(10,'pinche',NULL,NULL,NULL),(11,'fsdsfgdgsdfg',NULL,NULL,NULL),(12,'what',NULL,NULL,NULL),(13,'real',NULL,NULL,NULL),(14,'reale',NULL,NULL,NULL),(15,'freewilly',NULL,NULL,NULL),(16,'freewilly22',NULL,NULL,NULL),(17,'gdfhdfghdfghdfgh',NULL,NULL,NULL),(18,'tester',NULL,NULL,NULL),(19,'usernametest',NULL,NULL,NULL),(20,'asdfasdf',NULL,NULL,NULL),(21,'test1',NULL,NULL,NULL),(23,'username',NULL,NULL,NULL),(24,'2134123',NULL,NULL,NULL),(25,'meHELLO',NULL,NULL,NULL),(26,'meHELLOdgfhdfgh',NULL,NULL,NULL),(27,'yoyo',NULL,NULL,NULL),(28,'rjames',NULL,NULL,NULL),(29,'sdgsdfg',NULL,NULL,NULL),(30,'sample',NULL,NULL,NULL),(31,'man',NULL,NULL,NULL),(34,'test\'fuzzy',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -277,7 +282,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `ActivityCreate` */;
+/*!50003 DROP FUNCTION IF EXISTS `RetrieveEntryFrom1062` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -287,18 +292,49 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `ActivityCreate`(IN SourceItineraryID INT, IN title VARCHAR(45), IN dayOccurs DATE, IN beginTime TIME(0), IN stopTime TIME(0))
+CREATE DEFINER=`admin`@`%` FUNCTION `RetrieveEntryFrom1062`(errorMessage VARCHAR(128)) RETURNS varchar(128) CHARSET utf8mb4
 BEGIN
-	DECLARE dayID INT;
+    DECLARE FuzzyEndFix varChar(128);
+    DECLARE len int;
+    DECLARE startIndex int;
+    declare endIndex int;
+    DECLARE returnValue varChar(128);
     
-	INSERT IGNORE INTO PlannedDay (CurrentDay, ItineraryID)
-    VALUE (dayOccurs, SourceItineraryID);
+    SET @startDelim = "Duplicate entry '";
+    SET @endDelim = "' for key '";
+    SET len = CHAR_LENGTH(@startDelim);
+    SET startIndex = LOCATE(@startDelim, errorMessage) + len;
+    
+    IF (startIndex > len)
+    THEN 
+		Set FuzzyEndFix = substring_index(errorMessage, @endDelim,-1);
+		SET endIndex = char_length(errorMessage) -  char_length(FuzzyEndFix) - char_length(@endDelim);
+		SET returnValue = SUBSTRING(errorMessage, startIndex, endIndex - startIndex);
+    END IF;
+    
+    return returnValue;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `RetriveConstraintFrom1062` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` FUNCTION `RetriveConstraintFrom1062`(errorMessage varchar(128)) RETURNS varchar(128) CHARSET utf8mb4
+BEGIN
 
-    SELECT PlannedDayID INTO dayID FROM PlannedDay As PD WHERE PD.CurrentDay = dayOccurs AND PD.ItineraryId = SourceItineraryID;
-    
-	INSERT INTO PlannedActivity
-    (ActivityName, StartTime, EndTime, PlannedDayID)
-    VALUE (title, beginTime, stopTime, dayID);
+	SET @endDelim = "' for key '";
+	Set @FuzzyEndFix = substring_index(errorMessage, @endDelim,-1);
+	return substring(@FuzzyEndFix, 1, char_length(@FuzzyEndFix) - 1);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -315,8 +351,42 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `CreateItinerary`(IN title VARCHAR(45), IN firstDay DATE, IN lastDay DATE, IN creator INT)
+CREATE DEFINER=`admin`@`%` PROCEDURE `CreateItinerary`(IN title VARCHAR(45), IN firstDay DATE, IN lastDay DATE, IN creator INT,
+OUT errorCode int, OUT errorMessage varchar(128))
 BEGIN
+	/* Error Codes:
+     * 1: Not Unique: This user already has an itinerary with this name, starting and ending at this point.
+     * 2: Invalid Start/End Days - the start is after the end.
+     * 3: Invalid Creator ID. This is an error caused by the API, and should never happen.
+     */
+	DECLARE exit handler for SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+        -- Duplicate Unqiue key
+		IF (@errno = 1062)
+        THEN
+			SET errorCode = 1;
+            SET errorMessage = "An itinerary with this name, start date, and end date already exists";
+        -- Check constraint fails.
+        ELSEIF (@errno = 3819)
+		THEN 
+			SET errorCode = 2;
+			SET errorMessage = CONCAT("StartDate '", firstDay, "', is after the EndDate '", lastDay, "'");
+		-- User ID is invalid. This means the API is broken.
+		ELSEIF (@errno = 1452)
+		THEN
+			SET errorCode = 2;
+			SET errorMessage = "User ID does not exist, the API is broken somehow";
+		-- Unhandled error.
+		ELSE 
+			SET errorCode = @errNo;
+			SET errorMessage = @text;
+		END IF;
+	END;
+    
+    SET errorCode = 0;
+    SET errorMessage = '';
+    
 	INSERT INTO Itinerary 
     (ItineraryName, StartDate, EndDate, CreatorID)
     VALUE (title, firstDay, lastDay, creator);
@@ -336,30 +406,82 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `CreateUserNormalLogin`(screen varchar(45), email varchar(45), pass varchar(64), out success bool)
+CREATE DEFINER=`admin`@`%` PROCEDURE `CreateUserNormalLogin`(screen varchar(45), IN fName varchar(45), IN lName varchar(45), IN DOB DATETIME, IN email varchar(45),
+IN pass varchar(64), out errorCode int, out errorMessage varchar(256))
 BEGIN
-DECLARE temp INT;
-IF (NOT Exists(SELECT U.ScreenName FROM User AS U WHERE U.ScreenName = screen)) 
-THEN
-	INSERT INTO User (ScreenName)
-    VALUE(screen);
-    SELECT K.UserID INTO temp FROM User as K WHERE K.ScreenName = screen;
+	/* ERROR CODES
+     * 1: Email already taken.
+     * 2: Screen name already taken.
+     * 3: Password invalid (too short, needs to be 8+ characters, maxed at 64)
+     * 4: Email invalid format NOT IMPLEMENTED YET!
+     */
+    SET errorCode = 0;
+    SET errorMessage = '';
+    START TRANSACTION;
+    CREATE TEMPORARY TABLE Invalids 
+		SELECT U.ScreenName AS ScreenName, N.Email AS Email FROM `User` AS U LEFT JOIN NormalLogin as N ON U.UserID = N.UserID
+		WHERE U.ScreenName = screen OR N.Email = email;
+        
+	If (Exists(Select Email From Invalids WHERE Email IS NOT NULL))
+    THEN 
+		SET errorCode = 1;
+        SET errorMessage = CONCAT("A user with the email '", email, "' is already registered.");
+	ELSEIF (Exists(Select ScreenName FROM Invalids))
+	THEN
+		SET errorCode = 2;
+		SET errorMessage = CONCAT("The screen name '", screen, "' is already taken.");
+	ELSE 
+		INSERT INTO User (ScreenName, FirstName, LastName, DateOfBirth)
+		VALUE(screen, fName, lName, DOB);
+	END IF;
     
-    Insert Into NormalLogin (UserID, Email, HashedPassword)
-    VALUE (temp, email, pass);
+    IF (errorCode = 0)
+    THEN
+		BEGIN
+			DECLARE exit handler for SQLEXCEPTION
+			BEGIN
+				GET DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+                -- Check constraint fails.
+                IF (@errno = 3819)
+                THEN 
+					SET errorCode = 3;
+                    SET errorMessage = CONCAT("Password, '", pass, "' is invalid");
+				-- NOTE: email constraint would require parsing the error message to see which constraint failed.
+                
+                -- User ID is invalid. This means this stored proc is broken.
+                ELSEIF (@errno = 1452)
+                THEN
+					SET errorCode = @errNo;
+                    SET errorMessage = "User ID does not exist, the stored proc is broken somehow";
+				-- Unhandled error.
+				ELSE 
+					SET errorCode = @errNo;
+                    SET errorMessage = @text;
+				END IF;
+                
+                ROLLBACK;
+			END;
+            
+			SELECT K.UserID INTO @temp FROM User as K WHERE K.ScreenName = screen;
     
-	set success = true;
-ELSE
-	set success = false;
-END IF;
-
+			Insert Into NormalLogin (UserID, Email, HashedPassword)
+			VALUE (@temp, email, pass);
+		END;
+	END IF;
+    
+    IF (errorCode = 0)
+    THEN 
+		COMMIT;
+	ELSE
+		ROLLBACK;
+	END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `FindUser` */;
+/*!50003 DROP PROCEDURE IF EXISTS `FindItinerariesWithActivitiesWithinACertainDistanceOf` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -369,16 +491,43 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `FindUser`(IN screen VARCHAR(45))
+CREATE DEFINER=`admin`@`%` PROCEDURE `FindItinerariesWithActivitiesWithinACertainDistanceOf`(IN LatCoordinate Decimal(6,4), IN LongCoordinate Decimal(7,4), IN MaxDistanceAwayInMiles DOUBLE)
 BEGIN
-	SELECT * FROM `User` WHERE `User`.ScreenName LIKE screen;
+	SELECT
+		`I`.`ItineraryID` AS `ItineraryID`,
+		`I`.`ItineraryName` AS `ItineraryName`,
+		`I`.`StartDate` AS `StartDate`,
+		`I`.`EndDate` AS `EndDate`,
+		`A`.`ActivityID` AS `ActivityID`,
+        `A`.`ActivityName` AS `ActivityName`,
+		`A`.`Latitude` AS `Latitude`,
+		`A`.`Longitude` AS `Longitude`,
+		`Q`.`StartTime` AS `StartTime`,
+		`Q`.`EndTime` AS `EndTime`,
+        `Q`.`Description` AS `Description`,
+        -- Taken from stack overflow, which in turn took it from the Google Maps API. Distance formula, coordingates to miles.
+        (
+			3959 * acos (
+			cos ( radians(LatCoordinate) )
+			* cos( radians(  `A`.`ActivityLatitudeCoordinate` ) )
+			* cos( radians( `A`.`ActivityLongitudeCoordinate` ) - radians(LongCoordinate) )
+			+ sin ( radians(LatCoordinate) )
+			* sin( radians( `A`.`ActivityLatitudeCoordinate`) )
+		)) AS `DistanceAway`
+    FROM
+        ((`Itinerary` `I`
+        INNER JOIN `ItineraryITem` `Q` ON ((`I`.`ItineraryID` = `Q`.`ItineraryID`)))
+        INNER JOIN `Activity` `A` ON ((`Q`.`ActivityID` = `A`.`ActivityID`)))
+	 Having 
+		`DistanceAway` <= MaxDistanceAwayInMiles
+		;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `FindUsers` */;
+/*!50003 DROP PROCEDURE IF EXISTS `FindUsersWithNameLike` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -388,7 +537,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `FindUsers`(IN screen VARCHAR(45))
+CREATE DEFINER=`admin`@`%` PROCEDURE `FindUsersWithNameLike`(IN screen VARCHAR(45))
 BEGIN
 	SELECT  `UserID`, `ScreenName`, `FirstName`, `LastName`,
     (`ScreenName` LIKE screen) AS IsExactMatch
@@ -400,7 +549,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `GetAllItineraryInformation` */;
+/*!50003 DROP PROCEDURE IF EXISTS `RetrieveActivitiesForGivenItinerary` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -410,20 +559,85 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `GetAllItineraryInformation`(IN UserID int)
+CREATE DEFINER=`admin`@`%` PROCEDURE `RetrieveActivitiesForGivenItinerary`(IN ItineraryIdentifier int, out errorCode int, out errorMessage varchar(128))
 BEGIN
- SELECT 
+	/* Error Codes:
+     * 1: Invalid Itinerary ID. This is an API error.
+     */
+	DECLARE exit handler for SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		-- Itinerary ID is invalid. This means the API is broken.
+		IF (@errno = 1452)
+		THEN
+			SET errorCode = 1;
+			SET errorMessage = "Itinerary ID does not exist, the API is broken somehow";
+		-- Unhandled error.
+		ELSE 
+			SET errorCode = @errNo;
+			SET errorMessage = @text;
+		END IF;
+	END;
+    
+    SET errorCode = 0;
+    Set errorMessage = '';
+    
+	SELECT 
+        `D`.`CurrentDay` AS `CurrentDay`,
+        `A`.`ActivityName` AS `ActivityName`,
+        `A`.`StartTime` AS `StartTime`,
+        `A`.`EndTime` AS `EndTime`
+    FROM
+        ((`Itinerary` `I`
+        LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
+        LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
+	WHERE I.ItineraryID = ItineraryIdentifier;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `RetrieveAllItinerariesForUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`admin`@`%` PROCEDURE `RetrieveAllItinerariesForUser`(IN UserID int, OUT errorCode int, out errorMessage varchar(128))
+BEGIN
+	/* Error Codes:
+     * 1: Invalid User ID. This is an API error.
+     */
+	DECLARE exit handler for SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		-- USER ID is invalid. This means the API is broken.
+		IF (@errno = 1452)
+		THEN
+			SET errorCode = 1;
+			SET errorMessage = "User ID does not exist, the API is broken somehow";
+		-- Unhandled error.
+		ELSE 
+			SET errorCode = @errNo;
+			SET errorMessage = @text;
+		END IF;
+	END;
+    
+    SET errorCode = 0;
+    Set errorMessage = '';
+	
+    SELECT 
+		`I`.`ItineraryID` AS `ItineraryID`,
         `I`.`ItineraryName` AS `ItineraryName`,
         `I`.`StartDate` AS `StartDate`,
-        `I`.`EndDate` AS `EndDate`,
-        `D`.`CurrentDay` AS `CurrentDay`,
-        `A`.`ActivityName` AS `ActivityName`,
-        `A`.`StartTime` AS `StartTime`,
-        `A`.`EndTime` AS `EndTime`
+        `I`.`EndDate` AS `EndDate`
     FROM
-        ((`Itinerary` `I`
-        LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
-        LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
+        `Itinerary` AS `I`
 	WHERE I.CreatorID = UserID;
 END ;;
 DELIMITER ;
@@ -431,7 +645,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `GetItineraryInformation2` */;
+/*!50003 DROP PROCEDURE IF EXISTS `RetrieveAllItineraryInformationForUser` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -441,89 +655,46 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `GetItineraryInformation2`(UserID int)
+CREATE DEFINER=`admin`@`%` PROCEDURE `RetrieveAllItineraryInformationForUser`(IN UserID int, OUT errorCode int, out errorMessage varchar(128))
 BEGIN
+	/* Error Codes:
+     * 1: Invalid User ID. This is an API error.
+     */
+	DECLARE exit handler for SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		-- USER ID is invalid. This means the API is broken.
+		IF (@errno = 1452)
+		THEN
+			SET errorCode = 1;
+			SET errorMessage = "User ID does not exist, the API is broken somehow";
+		-- Unhandled error.
+		ELSE 
+			SET errorCode = @errNo;
+			SET errorMessage = @text;
+		END IF;
+	END;
+    
+    SET errorCode = 0;
+    Set errorMessage = '';
+	
 	SELECT 
-        `D`.`CurrentDay` AS `CurrentDay`,
+        `I`.`ItineraryID` AS `ItineraryID`,
+		`I`.`ItineraryName` AS `ItineraryName`,
+		`I`.`StartDate` AS `StartDate`,
+		`I`.`EndDate` AS `EndDate`,
+		`A`.`ActivityID` AS `ActivityID`,
         `A`.`ActivityName` AS `ActivityName`,
-        `A`.`StartTime` AS `StartTime`,
-        `A`.`EndTime` AS `EndTime`
-    FROM
+		`A`.`Latitude` AS `Latitude`,
+		`A`.`Longitude` AS `Longitude`,
+		`Q`.`StartTime` AS `StartTime`,
+		`Q`.`EndTime` AS `EndTime`,
+        `Q`.`Description` AS `Description`
+   FROM
         ((`Itinerary` `I`
-        LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
-        LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
+        INNER JOIN `ItineraryItem` `Q` ON ((`I`.`ItineraryID` = `Q`.`ItineraryID`)))
+        INNER JOIN `Activity` `A` ON ((`Q`.`ActivityID` = `A`.`ActivityID`)))
 	WHERE I.CreatorID = UserID;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `GetItineraryInformationNoActivities` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `GetItineraryInformationNoActivities`(UserID int)
-BEGIN
-	SELECT 
-        `D`.`CurrentDay` AS `CurrentDay`,
-        `A`.`ActivityName` AS `ActivityName`,
-        `A`.`StartTime` AS `StartTime`,
-        `A`.`EndTime` AS `EndTime`
-    FROM
-        ((`Itinerary` `I`
-        LEFT JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
-        LEFT JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
-	WHERE I.CreatorID = UserID;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `ItinerariesIncludingGivenCoordinates` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `ItinerariesIncludingGivenCoordinates`(IN LatCoordinate Decimal(6,4), IN LongCoordinate Decimal(7,4), IN DistanceAwayInMiles DOUBLE)
-BEGIN
-	SELECT 
-        `I`.`ItineraryName` AS `ItineraryName`,
-        `I`.`StartDate` AS `StartDate`,
-        `I`.`EndDate` AS `EndDate`,
-        `D`.`CurrentDay` AS `CurrentDay`,
-        `A`.`ActivityName` AS `ActivityName`,
-        `A`.`ActivityLatitudeCoordinate` AS `Latitude`,
-        `A`.`ActivityLongitudeCoordinate` AS `Longitude`,
-        `A`.`StartTime` AS `StartTime`,
-        `A`.`EndTime` AS `EndTime`,
-        (
-			3959 * acos (
-			cos ( radians(LatCoordinate) )
-			* cos( radians(  `A`.`ActivityLatitudeCoordinate` ) )
-			* cos( radians( `A`.`ActivityLongitudeCoordinate` ) - radians(LongCoordinate) )
-			+ sin ( radians(LatCoordinate) )
-			* sin( radians( `A`.`ActivityLatitudeCoordinate`) )
-		)) AS `DistanceAway`
-    FROM
-        ((`Itinerary` `I`
-        INNER JOIN `PlannedDay` `D` ON ((`I`.`ItineraryID` = `D`.`ItineraryID`)))
-        INNER JOIN `PlannedActivity` `A` ON ((`D`.`PlannedDayID` = `A`.`PlannedDayID`)))
-	 Having 
-		`DistanceAway` <= DistanceAwayInMiles
-		;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -540,9 +711,29 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`admin`@`%` PROCEDURE `TryLoginGetID`(IN email VARCHAR(45), IN pass VARCHAR(64), OUT id INT)
+CREATE DEFINER=`admin`@`%` PROCEDURE `TryLoginGetID`(IN email VARCHAR(45), IN pass VARCHAR(64), OUT id INT, out errorCode int, out errorMessage varChar(128))
 BEGIN
-    SELECT K.UserID INTO id FROM NormalLogin as K WHERE K.Email = email AND K.HashedPassword = pass;
+	/* Error Codes***:
+     * 1: There is no user with this email in the database.
+     * 2: Invalid Password.
+     *** This is not a true error; the query runs correctly, but as far as the UI is concerned the result is the same. ***
+     */
+	
+    SELECT K.UserID, K.HashedPassword into @tempID, @pass FROM NormalLogin as K WHERE K.Email = email LIMIT 1;
+
+    IF (@tempID IS NULL)
+    THEN
+		SET errorCode = 1;
+        SET errorMessage = "No user with that email exists";
+	ELSEIF (NOT BINARY @pass = pass)
+    THEN
+		SET errorCode = 2;
+        SET errorMessage = "Invalid Password";
+	ELSE
+		SET errorCode = 0;
+        SET errorMessage = '';
+        Set id = @tempID;
+	END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -563,7 +754,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`admin`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `DefaultUIView` AS select `I`.`ItineraryName` AS `ItineraryName`,`I`.`StartDate` AS `StartDate`,`I`.`EndDate` AS `EndDate`,`D`.`CurrentDay` AS `CurrentDay`,`A`.`ActivityName` AS `ActivityName`,`A`.`StartTime` AS `StartTime`,`A`.`EndTime` AS `EndTime` from ((`Itinerary` `I` left join `PlannedDay` `D` on((`I`.`ItineraryID` = `D`.`ItineraryID`))) left join `PlannedActivity` `A` on((`D`.`PlannedDayID` = `A`.`PlannedDayID`))) */;
+/*!50001 VIEW `DefaultUIView` AS select `I`.`ItineraryID` AS `ItineraryID`,`I`.`ItineraryName` AS `ItineraryName`,`I`.`StartDate` AS `StartDate`,`I`.`EndDate` AS `EndDate`,`A`.`ActivityID` AS `ActivityID`,`A`.`ActivityName` AS `ActivityName`,`A`.`Latitude` AS `Latitude`,`A`.`Longitude` AS `Longitude`,`Q`.`StartTime` AS `StartTime`,`Q`.`EndTime` AS `EndTime`,`Q`.`Description` AS `Description` from ((`Itinerary` `I` join `ItineraryItem` `Q` on((`I`.`ItineraryID` = `Q`.`ItineraryID`))) join `Activity` `A` on((`Q`.`ActivityID` = `A`.`ActivityID`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -578,4 +769,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-10-25 10:13:50
+-- Dump completed on 2021-10-30 16:55:32
