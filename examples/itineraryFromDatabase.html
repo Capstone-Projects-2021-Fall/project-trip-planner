@@ -72,33 +72,115 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       dayMaxEvents: true, // allow "more" link when too many events
       events: []
     });
-    var requestItinerary = {
+
+
+    /**getParameterByName parses through the query parameters passed when the user chooses an itinerary from
+    the list of itineraries. It retrieves the value from the name it is being passed as and then returns that 
+    value**/
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    /**
+     * Fill in calendar with activities from database
+     */
+    function loadItinerary(id){
+      //HTTP request parameters to get the itinerary with its ID
+      var requestItinerary = {
         method: 'GET',
         headers: {
           "Access-Control-Allow-Headers":"*"
           }
 
       };
+
       // make API call with parameters and use promises to get response
-      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement", requestItinerary).then(response => response.text()) // <---
+      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement?page="+ Number(id), requestItinerary).then(response => response.text()) // <---
       .then( function(data){let value = JSON.parse(data);
-    console.log(value);
-     let count = (Object.keys(value).length);
-    for(let index = 0; index < count; index++){
-      calendar.addEvent({
-            title: value[index]["title"],
-            start: Date.parse(value[index]["day"] + " " + value[index]["start"]),
-            end: Date.parse(value[index]["day"] + " " + value[index]["end"])
-          });
-    } }//end data function
+      
+      let count = (Object.keys(value).length);
+      //loops through returned json file to extract every activity from the itinerary
+      for(let index = 0; index < count; index++){
+        console.log(value[index]);
+        calendar.addEvent({
+          title: value[index]["title"],
+          start: Date.parse(value[index]["day"] + " " + value[index]["start"]),
+          end: Date.parse(value[index]["day"] + " " + value[index]["end"])
+        });
+      } }//end data function
+      );//end fetch.then
+    }
+    
 
-    );//end fetch.then
 
 
-
-
-
+    //Load Itinerary
+    let itineraryID = getParameterByName("page");
+    loadItinerary(itineraryID);
     calendar.render();
+
+    
+    
+    /** 
+     * Update itinerary everytime the user saves it
+     **/
+    document.getElementById("save").addEventListener("click", function(){
+      let index = 0;
+      let saveEvents = {
+        //change itinerary id when creating new itinerary feature is added
+        "sourceItineraryID": '10',
+        "activities":[]             
+      };
+      calendarArr = calendar.getEvents();
+    
+      //loop through events from calendar and prepare them into an array to be sent off to the database
+      for(index; index < calendarArr.length; index++){
+        let title = calendarArr[index]["_def"]["title"];
+        let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
+        let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
+        saveEvents.activities.push({
+          "title":title,
+          "start":start,
+          "end":end
+          });
+      }
+      
+      var json = JSON.stringify(saveEvents);
+      // create a JSON object with parameters for API call and store in a variable
+      var requestOptions = {
+        mode: 'no-cors',
+        method: 'POST',
+        body:json,
+      };
+      // make API call with parameters and use promises to get response
+      fetch(" https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ActivityManagement", requestOptions)  
+    });
+
+
+
+    /**
+    var requestItinerary2 = {
+         method: 'GET',
+        headers: {
+          "Access-Control-Allow-Headers":"*"
+          }
+
+      };
+      // make API call with parameters and use promises to get response
+      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/Itinerary", requestItinerary2).then(response => response.text()).then( 
+        function(data){
+          console.log(data);
+        });**/
+
+
+
+
   });//end of dom content loaded
 
 
@@ -138,8 +220,8 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <body>
 
 
-<!--  <button id="myBtn">Create Itinerary</button>-->
-<!--  <button type="button">Save Itinerary</button>-->
+<button id="myBtn">Create Itinerary</button>
+  <button id ="save" type="button">Save Itinerary</button>
 
 <div id='calendar'></div>
 
