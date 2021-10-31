@@ -87,11 +87,12 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    //retrieve the chosen itinerary ID
-    let itineraryID = getParameterByName("page");
-
-    //HTTP request parameters to get the itinerary with its ID
-    var requestItinerary = {
+    /**
+     * Fill in calendar with activities from database
+     */
+    function loadItinerary(id){
+      //HTTP request parameters to get the itinerary with its ID
+      var requestItinerary = {
         method: 'GET',
         headers: {
           "Access-Control-Allow-Headers":"*"
@@ -99,25 +100,29 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
       };
 
-    // make API call with parameters and use promises to get response
-    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement?page="+ itineraryID, requestItinerary).then(response => response.text()) // <---
-    .then( function(data){let value = JSON.parse(data);
+      // make API call with parameters and use promises to get response
+      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement?page="+ Number(id), requestItinerary).then(response => response.text()) // <---
+      .then( function(data){let value = JSON.parse(data);
+      
+      let count = (Object.keys(value).length);
+      //loops through returned json file to extract every activity from the itinerary
+      for(let index = 0; index < count; index++){
+        console.log(value[index]);
+        calendar.addEvent({
+          title: value[index]["title"],
+          start: Date.parse(value[index]["day"] + " " + value[index]["start"]),
+          end: Date.parse(value[index]["day"] + " " + value[index]["end"])
+        });
+      } }//end data function
+      );//end fetch.then
+    }
     
-    let count = (Object.keys(value).length);
-    //loops through returned json file to extract every activity from the itinerary
-    for(let index = 0; index < count; index++){
-      calendar.addEvent({
-        title: value[index]["title"],
-        start: Date.parse(value[index]["day"] + " " + value[index]["start"]),
-        end: Date.parse(value[index]["day"] + " " + value[index]["end"])
-      });
-    } }//end data function
-    );//end fetch.then
 
 
 
-
-
+    //Load Itinerary
+    let itineraryID = getParameterByName("page");
+    loadItinerary(itineraryID);
     calendar.render();
 
     
