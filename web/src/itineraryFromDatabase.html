@@ -103,26 +103,29 @@
       let count = (Object.keys(value).length);
       //loops through returned json file to extract every activity from the itinerary
       for(let index = 0; index < count; index++){
-        console.log(value[index]);
         calendar.addEvent({
-          title: value[index]["title"],
-          start: Date.parse(value[index]["day"] + " " + value[index]["start"]),
-          end: Date.parse(value[index]["day"] + " " + value[index]["end"])
+          title: value[index]["ActivityName"],
+          start: Date.parse(value[index]["StartTime"]),
+          end: Date.parse(value[index]["EndTime"]),
+          extendedProps: {
+            Latitude: value[index]["Latitude"],
+            Longitude: value[index]["Longitude"],
+            Address: value[index]["Address"],
+            AdditionalInformation: value[index]["AdditionalInformation"],
+          }
         });
-      } }//end data function
+      } 
+    }//end data function
       );//end fetch.then
     }
     
-
-
 
     //Load Itinerary
     let itineraryID = getParameterByName("page");
     loadItinerary(itineraryID);
     calendar.render();
 
-    
-    
+      
     /** 
      * Update itinerary everytime the user saves it
      **/
@@ -130,7 +133,7 @@
       let index = 0;
       let saveEvents = {
         //change itinerary id when creating new itinerary feature is added
-        "sourceItineraryID": '10',
+        "sourceItineraryID": itineraryID,
         "activities":[]             
       };
       calendarArr = calendar.getEvents();
@@ -138,12 +141,20 @@
       //loop through events from calendar and prepare them into an array to be sent off to the database
       for(index; index < calendarArr.length; index++){
         let title = calendarArr[index]["_def"]["title"];
+        let additionalInformation = calendarArr[index]["_def"]["extendedProps"]["AdditionalInformation"];
+        let latitude = calendarArr[index]["_def"]["extendedProps"]["Latitude"];
+        let longitude = calendarArr[index]["_def"]["extendedProps"]["Longitude"];
+        let address = calendarArr[index]["_def"]["extendedProps"]["Address"]
         let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
         let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
         saveEvents.activities.push({
           "title":title,
           "start":start,
-          "end":end
+          "end":end,
+          "address":address,
+          "additionalInformation": additionalInformation,
+          "latitude": latitude,
+          "longitude":longitude
           });
       }
       
@@ -157,26 +168,6 @@
       // make API call with parameters and use promises to get response
       fetch(" https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ActivityManagement", requestOptions)  
     });
-
-
-
-    /**
-    var requestItinerary2 = {
-         method: 'GET',
-        headers: {
-          "Access-Control-Allow-Headers":"*"
-          }
-
-      };
-      // make API call with parameters and use promises to get response
-      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/Itinerary", requestItinerary2).then(response => response.text()).then( 
-        function(data){
-          console.log(data);
-        });**/
-
-
-
-
   });//end of dom content loaded
 
 
