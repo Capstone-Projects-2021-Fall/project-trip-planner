@@ -49,13 +49,23 @@
       selectable: true,
       selectMirror: true,
       select: function(arg) {
-        var title = prompt('Event Title:');
+        var title = prompt('Event Title: ');
+        var address = prompt("Address: ");
+        var description = prompt("Description: ");
+        var longitude = prompt("Longitude: ");
+        var latitude = prompt("Latitude: ");
         if (title) {
           calendar.addEvent({
             title: title,
             start: arg.start,
             end: arg.end,
-            allDay: arg.allDay
+            allDay: arg.allDay,
+            extendedProps: {
+            Latitude: longitude,
+            Longitude: latitude,
+            Address: address,
+            AdditionalInformation: description
+          }
           })
         }
         calendar.unselect()
