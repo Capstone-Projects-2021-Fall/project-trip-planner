@@ -1,14 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<title>W3.CSS Template</title>
+<title>Sign Up</title>
 <meta charset='utf-8' />
 <link href='signup.css' rel='stylesheet' />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href='..web/src/searchbar.css' rel="stylesheet"  />
+<link href='..web/src/dropdown.css' rel="stylesheet" />
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <link rel="stylesheet" href="common.css" />
 <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 <!-- Navbar -->
@@ -78,7 +82,7 @@
                
 
                 <div class="form-group">
-                    <input type="button" onclick="callAPI(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('password').value, document.getElementById('firstName').value, document.getElementById('lastName').value, document.getElementById('DOB').value)"  name="submit" class="btn btn-primary" value="Submit">
+                    <input type="button" onclick="callAPI(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('password').value, document.getElementById('firstName').value, document.getElementById('lastName').value, document.getElementById('DOB').value);document.location='account.html'"  name="submit" class="btn btn-primary" value="Submit">
                 </div>
             </form>
         </div>
