@@ -19,37 +19,31 @@ def lambda_handler(event, context):
         connection = pymysql.connect(endpoint, user=username, passwd=password, db=database_name)
 
         body = json.loads(event['body'])
-        itineraryID = "10"#body["sourceItineraryID"]
+        itineraryID = body["sourceItineraryID"]
         #upload events one at a time
+        
+        #Note: MySql has a JSON_TABLE command, i am looking into using it to eliminate this for loop - it is just one call to the database instead of multiple in a for loop. -Jett
+        #For now, though, this is fine.
+        
         for activity in body["activities"]:
             #parse into datetime object
             dateTimeStart = parser.parse(activity['start'])
             dateTimeEnd = parser.parse(activity['end'])
-
+            
             #collect necessary parameters to pass into stored procedure 
             title = activity['title']
-            day = dateTimeStart.date().isoformat()
-            startTime = dateTimeStart.time().isoformat()
-            endTime = dateTimeEnd.time().isoformat()
-                
-            args = [itineraryID, title, day, startTime, endTime]
-#           #currently set to compare similar activity titles to make sure there is no overlap. 
-#           check = "SELECT ActivityName from database.PlannedActivity Where EXISTS(Select * FROM database.PlannedActivity where ActivityName = '" + title +"');"
-#
-#           cursor = connection.cursor()
-#           cursor.execute(check)
-#           results = cursor.fetchall()
-#           row_count = cursor.rowcount
-#           cursor.close()
+            latitude = activity['latitude']
+            longitude = activity['longitude']
+            address = activity['address']
+            description = activity['additionalInformation']
+            startTime = dateTimeStart.isoformat()
+            endTime = dateTimeEnd.isoformat()
+      
+            args = [title, float(latitude), float(longitude), address, int(itineraryID), startTime, endTime, description, 0, ""]
 
-#           if row_count ==0:
-#               cursor = connection.cursor()
-#               cursor.callproc('ActivityCreate', args)
-#               connection.commit()
-#               cursor.close()
 
             cursor = connection.cursor()
-            cursor.callproc('ActivityCreate', args)
+            cursor.callproc('CreateItineraryItemWithActivity', args)
             connection.commit()
             cursor.close()
 

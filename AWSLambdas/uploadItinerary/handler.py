@@ -14,20 +14,23 @@ def lambda_handler(event, context):
         #connection
         connection = pymysql.connect(endpoint, user=username, passwd=password, db=database_name)
         cursor = connection.cursor()
+        queryString = event["queryStringParameters"]["page"]
+        args = [queryString, 0, ""] 
+        #i don't think this will ever actually error, but whatever -Jett
+        newArgs = cursor.callproc('RetrieveActivitiesForGivenItinerary', args)
+        #we don't really have anywhere to send them anyway. 
 
-        #args = [event['queryStringParameters']['userID']]
-        #HAS TO BE REPLACED WITH USER ID AS WELL AS ITINERARY NAME AT SOME POINT
-        args = [2]
-        cursor.callproc('GetItineraryInformationNoActivities', args)
-    
         results = cursor.fetchall()
         itineraryJson = { }
         for count, index in enumerate(results):
             temp = {}
-            temp["day"] = index[0]
-            temp["title"] = index[1]
-            temp["start"] = index[2]
-            temp["end"] = index[3]
+            temp["ActivityName"] = index[1]
+            temp["Latitude"] = index[2]
+            temp["Longitude"] = index[3]
+            temp["Address"] = index[4]
+            temp["StartTime"] = index[5]
+            temp["EndTime"] = index[6]
+            temp["AdditionalInformation"] = index[7]
             itineraryJson[count] = temp
         cursor.close()
         connection.close()
