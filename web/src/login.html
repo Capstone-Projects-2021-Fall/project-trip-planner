@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>W3.CSS Template</title>
+  <title>Login</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script defer src="../lib/login-page.js"></script>
@@ -49,8 +49,12 @@
         <form id="login-form">
             <input type="text" name="username" id="username" class="login-form-field" placeholder="Username">
             <input type="password" name="password" id="password" class="login-form-field" placeholder="Password">
-            <input type="button" value="Login" id="login-form-submit" onclick="callAPI(document.getElementById('username').value, document.getElementById('password').value)">
+            <!--<input type="button" value="Login" id="login-form-submit" onclick="callAPI(document.getElementById('username').value, document.getElementById('password').value)"> -->
         </form>
+        <button onclick="document.location='account.html'" class="w3-button w3-green w3-padding-large w3-large w3-margin-top">Submit</button>
+        <div>
+            <p><a href="signup.html">Not a user? Click here to sign up!</a></p>
+        </div>
 
     </main>
 </header>
