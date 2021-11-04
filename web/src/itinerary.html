@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="common.css">
   <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+  <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
   <script>
 
 
@@ -60,6 +61,9 @@
  //Get the button that saves the modal
     var saveBtnEventDetails = document.getElementById("saveBtnEventDetails");
 
+    //get the button for uploading photos
+    var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
+
     // Get the <span> element that closes the modal
     var spanEventDetails = document.getElementsByClassName("close")[0];
 
@@ -69,11 +73,25 @@
       eventDetailsModal.style.display = "none";
     }
 
+    uploadPhotosButton.onclick = function(){
+      const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
+      const options = {
+      accept: ["image/*"],
+      onUploadDone: file => {
+      console.log(file);
+      }//end on upload done
+        };//end options
+    client.picker(options).open();
+
+    //https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6
+    }//end on click upload photos button
 
     saveBtnEventDetails.onclick = function() {
       eventDetailsModal.style.display = "none";
 
     }//end onclick save button
+
+
 
     function createAndLoadCalendar(startDate, endDate){
     console.log("create function called");
@@ -406,6 +424,8 @@ label {
         <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
       </div>
       <div class="form-group" align="middle">
+        <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
+
         <label>Uploaded Photos:</label>
       </div>
 
