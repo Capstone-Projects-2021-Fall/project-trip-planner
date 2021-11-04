@@ -61,8 +61,6 @@
  //Get the button that saves the modal
     var saveBtnEventDetails = document.getElementById("saveBtnEventDetails");
 
-    //get the button for uploading photos
-    var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
 
     // Get the <span> element that closes the modal
     var spanEventDetails = document.getElementsByClassName("close")[0];
@@ -73,18 +71,7 @@
       eventDetailsModal.style.display = "none";
     }
 
-    uploadPhotosButton.onclick = function(){
-      const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
-      const options = {
-      accept: ["image/*"],
-      onUploadDone: file => {
-      console.log(file);
-      }//end on upload done
-        };//end options
-    client.picker(options).open();
 
-    //https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6
-    }//end on click upload photos button
 
     saveBtnEventDetails.onclick = function() {
       eventDetailsModal.style.display = "none";
@@ -131,7 +118,10 @@
             title: title,
             start: arg.start,
             end: arg.end,
-            allDay: arg.allDay
+            allDay: arg.allDay,
+            extendedProps: {
+            photos: []
+            }//end extended props
           })
         }
         calendar.unselect()
@@ -144,6 +134,33 @@
         document.getElementById("eventName").innerHTML=arg.event.title;
         document.getElementById("startDateEventDetails").innerHTML = arg.event.start;
         document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
+
+        //get the button for uploading photos
+    var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
+
+    uploadPhotosButton.onclick = function(){
+      const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
+      const options = {
+      accept: ["image/*"],
+      onUploadDone: file => {
+      console.log(file);
+
+      //loop through uploaded photos and add them to the photos array for the event
+      console.log(file["filesUploaded"]["0"]["url"]);//should be the url
+      var url = file["filesUploaded"]["0"]["url"];
+      console.log("url " + url);
+      var currentPhotoArray = arg.event.extendedProps.photos;
+      console.log("currentPhotoArray " + currentPhotoArray);
+      var addedPhotoArray = currentPhotoArray.push(url);
+      console.log("addedPhotoArray: " + addedPhotoArray[0]);
+      arg.event.setExtendedProp( "photos",addedPhotoArray);
+      console.log("photos array: " + arg.event.extendedProps.photos[0]);
+      }//end on upload done
+        };//end options
+    client.picker(options).open();
+
+    //https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6
+    }//end on click upload photos button
 
 
         //console.log(arg);
