@@ -1,43 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Add Map</title>
-  
-    <style type="text/css">
-      #map {
-        height: 400px;
-        width: 100%;
-      }
-    </style>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"   integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script 
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&libraries=&v=weekly"
-      async>
-    </script>
 
-    <script>
-      // Initialize and add the map
-      function initMap() {
-        // The location of Temple University
-        const location = { lat: 39.9812, lng: -75.1497 };
-        // The map, centered at location
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 15,
-          center: location,
-        });
-        // The marker, positioned at location
-        const marker = new google.maps.Marker({
-          position: location,
-          map: map,
-        });
-      }
-
-    </script>
+    <title>My Geocode app</title>
   </head>
   <body>
-    <h3>Trip Planner</h3>
     <div class ="container" >
       <h2 id="text-center">Enter Location: </h2>
       <form id="location-form">
@@ -49,20 +19,13 @@
       <div class="card-block" id="address-components"></div>
       <div class="card-block" id="geometry"></div>
     </div>
-    <!--The div element for the map -->
-    <div id="map"></div>
-
-    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-    <!-- github personal token: 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 -->
     <script>
 
         //Get location form
         var locationForm = document.getElementById('location-form');
+
         //Listen for submittion
         locationForm.addEventListener('submit',geocode);
-
-        lat = 0.0;
-        lng = 0.0;
         
         function geocode(e){
           //Prevent actual submit
@@ -99,8 +62,8 @@
                 addressComponentsOutput += '</ul>';
 
                 //Geometry
-              lat = response.data.results[0].geometry.location.lat;
-              lng = response.data.results[0].geometry.location.lng;
+              var lat = response.data.results[0].geometry.location.lat;
+              var lng = response.data.results[0].geometry.location.lng;
               var geometryOutput = `
                   <ul class="list-group">
                     <li class="list-group-item"><strong>Latitude</strong>:${lat}</li>
@@ -108,34 +71,20 @@
                   </ul>  
               `; 
 
+
               //Output to app
-              //document.getElementById('formatted-address').innerHTML = formattedAddressOutput;
-              //document.getElementById('address-components').innerHTML = addressComponentsOutput;
-              //document.getElementById('geometry').innerHTML = geometryOutput;
+              document.getElementById('formatted-address').innerHTML = formattedAddressOutput;
+              document.getElementById('address-components').innerHTML = addressComponentsOutput;
+              document.getElementById('geometry').innerHTML = geometryOutput;
 
             })
             .catch(function(error){
               console.log(error);
             });
         }
-
-      // Initialize and add the map
-      function initMap() {
-        console.log("numbers: " + lat+ "," + lng);
-        const location = { lat: lat, lng: lng };
-        // The map, centered at location
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 15,
-          center: location,
-        });
-        // The marker, positioned at location
-        const marker = new google.maps.Marker({
-          position: location,
-          map: map,
-        });
-      }
-
     </script>
 
+
   </body>
+
 </html>
