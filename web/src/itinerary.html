@@ -143,18 +143,20 @@
       const options = {
       accept: ["image/*"],
       onUploadDone: file => {
-      console.log(file);
+      //console.log(file);
 
       //loop through uploaded photos and add them to the photos array for the event
-      console.log(file["filesUploaded"]["0"]["url"]);//should be the url
+      //console.log(file["filesUploaded"]["0"]["url"]);//should be the url
       var url = file["filesUploaded"]["0"]["url"];
-      console.log("url " + url);
-      var currentPhotoArray = arg.event.extendedProps.photos;
-      console.log("currentPhotoArray " + currentPhotoArray);
-      var addedPhotoArray = currentPhotoArray.push(url);
-      console.log("addedPhotoArray: " + addedPhotoArray[0]);
+      //console.log("url " + url);
+      //console.log("photos array:" + arg.event.extendedProps.photos);
+      var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
+      //console.log("currentPhotoArray " + currentPhotoArray);
+      currentPhotoArray.push(url);
+      var addedPhotoArray = currentPhotoArray.slice(0);
+      //console.log("addedPhotoArray: " + addedPhotoArray);
       arg.event.setExtendedProp( "photos",addedPhotoArray);
-      console.log("photos array: " + arg.event.extendedProps.photos[0]);
+      console.log("photos array: " + arg.event.extendedProps.photos);
       }//end on upload done
         };//end options
     client.picker(options).open();
