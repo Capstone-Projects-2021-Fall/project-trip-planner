@@ -167,14 +167,14 @@
     var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
     //var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];
 
-  //console.log("imgs " + imgs);
+
     arg.event.extendedProps.photos.forEach(function(url, index, originalArray) {
         var div1 = document.createElement('div');
         div1.className = "mySlides fade";
 
-        var div2 = document.createElement('div');
-        div2.className = "numbertext";
-        div2.innerHTML = "4/3";
+        //var div2 = document.createElement('div');
+        //div2.className = "numbertext";
+        //div2.innerHTML = "4/3";
 
         var tempImg = document.createElement('img');
         tempImg.style.width  = "100%";
@@ -187,6 +187,35 @@
 
 
 
+
+        var slideIndex = 1;
+        showSlides(slideIndex);
+
+        // Next/previous controls
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+
+        // Thumbnail image controls
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName("mySlides");
+          var dots = document.getElementsByClassName("dot");
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+              slides[i].style.display = "none";
+          }
+          for (i = 0; i < dots.length; i++) {
+              dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+        }
 
 
       }//end on upload done
@@ -276,34 +305,35 @@
 
   });//end of dom content loaded
 
-  var slideIndex = 1;
-showSlides(slideIndex);
+        var slideIndex = 1;
+        showSlides(slideIndex);
 
-// Next/previous controls
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
+        // Next/previous controls
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
 
-// Thumbnail image controls
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
+        // Thumbnail image controls
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
 
-function showSlides(n) {
-  var i;
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("dot");
-  if (n > slides.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";
-  }
-  for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";
-  dots[slideIndex-1].className += " active";
-}
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName("mySlides");
+          var dots = document.getElementsByClassName("dot");
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+              slides[i].style.display = "none";
+          }
+          for (i = 0; i < dots.length; i++) {
+              dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+        }
+
 
 
 
@@ -610,7 +640,7 @@ label {
   <span class="dot" onclick="currentSlide(3)"></span>
 </div>
 
-      </div>
+
 
       <div style="padding-top: 25px" class="form-group" align="middle">
         <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
