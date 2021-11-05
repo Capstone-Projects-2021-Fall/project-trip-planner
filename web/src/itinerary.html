@@ -167,14 +167,29 @@
     var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
     //var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];
 
+    //remove all children from slide show container, except the prev and next arrows
+
+    const removeChilds = (parent) => {
+    var done =0;
+    while (parent.lastChild && done==0) {
+        //console.log(parent.lastChild);
+        //console.log(parent.lastChild.className);
+        if(parent.lastChild.className != "next" && parent.lastChild.className != "prev"){
+        parent.removeChild(parent.lastChild);
+        }
+        else{ done =1;}
+    }
+      };
+
+
+      // remove all child nodes
+      removeChilds(slideshowContainer);
+
 
     arg.event.extendedProps.photos.forEach(function(url, index, originalArray) {
+
         var div1 = document.createElement('div');
         div1.className = "mySlides fade";
-
-        //var div2 = document.createElement('div');
-        //div2.className = "numbertext";
-        //div2.innerHTML = "4/3";
 
         var tempImg = document.createElement('img');
         tempImg.style.width  = "100%";
@@ -187,7 +202,7 @@
 
 
 
-
+        //display image in carousel
         var slideIndex = 1;
         showSlides(slideIndex);
 
@@ -231,7 +246,6 @@
 
 
         //console.log(arg);
-        //calendar.destroy();//probs dont do this, doesnt seem like a good idea
       },
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
