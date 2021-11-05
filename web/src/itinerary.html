@@ -14,7 +14,7 @@
   <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
   <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
-  
+
   <script>
 
 
@@ -147,41 +147,31 @@
       const options = {
       accept: ["image/*"],
       onUploadDone: file => {
-      //console.log(file);
+          //console.log(file);
 
-      //loop through uploaded photos and add them to the photos array for the event
-      //console.log(file["filesUploaded"]["0"]["url"]);//should be the url
-      var url = file["filesUploaded"]["0"]["url"];
-      //console.log("url " + url);
-      //console.log("photos array:" + arg.event.extendedProps.photos);
-      var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
-      //console.log("currentPhotoArray " + currentPhotoArray);
-      currentPhotoArray.push(url);
-      var addedPhotoArray = currentPhotoArray.slice(0);
-      //console.log("addedPhotoArray: " + addedPhotoArray);
-      arg.event.setExtendedProp( "photos",addedPhotoArray);
-      console.log("photos array: " + arg.event.extendedProps.photos);
-      }//end on upload done
-        };//end options
-    client.picker(options).open();
+          //loop through uploaded photos and add them to the photos array for the event
+          //console.log(file["filesUploaded"]["0"]["url"]);//should be the url
+          var url = file["filesUploaded"]["0"]["url"];
+          //console.log("url " + url);
+          //console.log("photos array:" + arg.event.extendedProps.photos);
+          var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
+          //console.log("currentPhotoArray " + currentPhotoArray);
+          currentPhotoArray.push(url);
+          var addedPhotoArray = currentPhotoArray.slice(0);
+          //console.log("addedPhotoArray: " + addedPhotoArray);
+          arg.event.setExtendedProp( "photos",addedPhotoArray);
+          console.log("photos array: " + arg.event.extendedProps.photos);
 
 
-
-/*
- <div class="mySlides fade">
-    <div class="numbertext">1 / 3</div>
-    <img src="img1.jpg" style="width:100%">
-    <div class="text">Caption Text</div>
-  </div>
-*/
 
     var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
-    var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];//['https://lh3.googleusercontent.com/OS73F30AtxbjUfbFHBcil7z2j08pWngbKl18HK3A3Tst4ouwsPyCHpNLZRfigD_Z39cddd6C_PD_E55eBSeZqFiUE3heexo28DjJ2BtNGE8GhBpZSMkN42M4-oSfUX4oVGoXejXO=w1920-h1080','https://lh3.googleusercontent.com/ywyjoz-18ihimmJ0szGV02BHTe-e9lCeV5M2TnpyWPU_UnC0Qypp4-kmJOInJrXp-Y56FEKui5SPhRYbSVEnmK0kiy4EXFPB7KqPu3UzCtKWxUxUPix3-mYglkK-vzG-KHvRbxaU=w1920-h1080'];
+    //var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];
 
-    imgs.forEach(function(url, index, originalArray) {
+  //console.log("imgs " + imgs);
+    arg.event.extendedProps.photos.forEach(function(url, index, originalArray) {
         var div1 = document.createElement('div');
         div1.className = "mySlides fade";
-        
+
         var div2 = document.createElement('div');
         div2.className = "numbertext";
         div2.innerHTML = "4/3";
@@ -193,10 +183,21 @@
         div1.appendChild(tempImg);
         slideshowContainer.appendChild(div1);
     });
-    console.log(slideshowContainer);
-    //container.divPhoto(docFrag);
+    //console.log(slideshowContainer);
+
+
+
+
+
+      }//end on upload done
+        };//end options
+      client.picker(options).open();
+
 
     //https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6
+
+
+
     }//end on click upload photos button
 
 
@@ -271,7 +272,7 @@
   }//end create calendar function
 
 
-  
+
 
   });//end of dom content loaded
 
@@ -302,7 +303,7 @@ function showSlides(n) {
   }
   slides[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += " active";
-} 
+}
 
 
 
@@ -607,12 +608,12 @@ label {
   <span class="dot" onclick="currentSlide(1)"></span>
   <span class="dot" onclick="currentSlide(2)"></span>
   <span class="dot" onclick="currentSlide(3)"></span>
-</div> 
+</div>
 
       </div>
 
       <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="SAVE">
+        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
       </div>
     </form>
   </div>
