@@ -1,20 +1,26 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+<head>
 <title>Sign Up</title>
 <meta charset='utf-8' />
-<link href='signup.css' rel='stylesheet' />
+<link href='CSS/signup.css' rel='stylesheet' />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href='..web/src/searchbar.css' rel="stylesheet"  />
-<link href='..web/src/dropdown.css' rel="stylesheet" />
+<link href='CSS/searchbar.css' rel="stylesheet"  />
+<link href='CSS/dropdown.css' rel="stylesheet" />
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-<link rel="stylesheet" href="common.css" />
+<link rel="stylesheet" href="CSS/common.css" />
 <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+<script src="JavaScript/signup.js"></script>
+
+</head>
+
+
 <!-- Navbar -->
 <div class="w3-top">
     <div class="w3-bar w3-red w3-card w3-left-align w3-large">
@@ -86,26 +92,7 @@
                 </div>
             </form>
         </div>
-        <script>
-            var callAPI = (username, email, password, firstName, lastName, dob)=>{
-                // instantiate a headers object
-                var myHeaders = new Headers();
-                // add content type header to object
-                myHeaders.append("Content-Type", "application/json");
-                // using built in JSON utility package turn object to string and store in a variable
-                var raw = JSON.stringify({"username":username,"email":email, "password": password, "firstName":firstName,"lastName": lastName, "DOB":dob});
-
-                // create a JSON object with parameters for API call and store in a variable
-                var requestOptions = {
-                    method: 'POST',
-                    body:raw
-                };
-                // make API call with parameters and use promises to get response
-                fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/UserManagement", requestOptions)
-                .catch(error => console.log('error', error));
-            }; 
-            
-        </script>
+       
             </form>
             
 
