@@ -1,113 +1,121 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-<title>Trip Planner</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href='CSS/searchbar.css' rel='stylesheet' >
-<link href='CSS/dropdown.css' rel='stylesheet' >
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="common.css">
-<link rel="icon" type="image/ico" href="../resources/favicon.ico" />
-<script src = "JavaScript/homepage.js"></script>
+<head>
+	<title>Trip Planner</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link href='CSS/searchbar.css' rel='stylesheet'>
+	<link href='CSS/dropdown.css' rel='stylesheet'>
+	<link href='CSS/navbar.css' rel='stylesheet' />
+	<link href="CSS/common.css" rel="stylesheet" type="text/css" />
+
+	<link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+
+	<script src="JavaScript/homepage.js"></script>
+	<script src="JavaScript/menuToggle.js"></script>
+</head>
 <body>
+	<!-- Navbar -->
+	<nav class="w3-top">
+		<div class="w3-bar w3-red w3-card w3-left-align w3-large">
+			<!-- This menu toggle likely needs fixing. I think it's for bootstraps on mobile or small screens -->
+			<a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+			<a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+			<a href="signup.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Sign Up</a>
+			<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
+			<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
+			<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
+			<div class="topnav">
+				<div class="dropdown">
+					<button class="dropbtn">▼</button>
+					<div class="dropdown-content">
+						<a href="#">User</a>
+						<a href="#">Itineraries</a>
+					</div>
+				</div>
+				<a class="active" href="#home"></a>
+				<div class="search-container">
+					<input type="text" placeholder="Search.." name="search">
+					<button onclick="document.location='searchResults.html'" type="submit"><i class="fa fa-search"></i></button>
+				</div>
+			</div>
+		</div>
 
-<!-- Navbar -->
-<div class="w3-top">
-    <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-        <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-        <a href="homepage.html" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-        <a href="signup.html" target="_self" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Sign Up</a>
-        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
-        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
-        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-        <div class="topnav">
-            <div class="dropdown">
-                <button class="dropbtn">▼</button>
-                <div class="dropdown-content">
-                    <a href="#">User</a>
-                    <a href="#">Itineraries</a>
-                </div>
-            </div>
-            <div class="search-container">
-                <input type="text" placeholder="Search.." name="search">
-                <button type="submit"><i class="fa fa-search"></i></button>
-                <div> <p> </p></div>
-            </div>
-            <div> <p> </p> </div>
-        </div>
-        <!--spacing-->
-        <div> <p> </p></div>
-    </div>
+		<!-- Navbar on small screens -->
+		<!-- See above comment about bootstrap mobile.
+		<div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
+			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
+			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
+			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
+		</div>-->
+	</nav>
 
-    <!-- Navbar on small screens -->
-    <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
-    </div>
-</div>
+	<!-- Header -->
+	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
+		<h1 class="w3-margin w3-jumbo">Collaborative Trip Planner</h1>
+		<button onclick="document.location='login.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create New Itinerary</button>
+		<button onclick="document.location='itineraryFromDatabase.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Open Saved Itinerary</button>
+	</header>
 
-<!-- Header -->
-<header class="w3-container w3-red w3-center" style="padding:128px 16px">
-    <h1 class="w3-margin w3-jumbo">Collaborative Trip Planner</h1>
-    <button onclick="document.location='login.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create New Itinerary</button>
-    <button onclick="document.location='itineraryFromDatabase.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Open Saved Itinerary</button>
-</header>
+	<!-- Main for formatting consistency? idk-->
+	<main>
+		<!-- First Grid -->
+		<div class="w3-row-padding w3-padding-64 w3-container">
+			<div class="w3-content">
+				<div class="w3-twothird">
+					<h1>About</h1>
+					<h5 class="w3-padding-32">
+						A web application that allows multiple users to collaborate on a trip itinerary in real time.
+						Changes made by any one user will update the trip itinerary for every user who is currently viewing the trip.
+						Any text entered will be parsed by the application for keywords such as locations, events, and times.
+						These keywords will then be used to search the web for possible additions to the trip itinerary similar to existing events already added by the user.
+						Users can approve these additions and they will be added to the itinerary.
+						Trip itineraries can be saved to be edited later or shared with other users on the website as inspiration for their own trip.
+					</h5>
 
-<!-- First Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-    <div class="w3-content">
-        <div class="w3-twothird">
-            <h1>About</h1>
-            <h5 class="w3-padding-32">A web application that allows multiple users to collaborate on a trip itinerary in real time.
-                Changes made by any one user will update the trip itinerary for every user who is currently viewing the trip.
-                Any text entered will be parsed by the application for keywords such as locations, events, and times.
-                These keywords will then be used to search the web for possible additions to the trip itinerary similar to existing events already added by the user.
-                Users can approve these additions and they will be added to the itinerary.
-                Trip itineraries can be saved to be edited later or shared with other users on the website as inspiration for their own trip.</h5>
+				</div>
 
-        </div>
+				<div class="w3-third w3-center">
+					<i class="fa w3-padding-64 w3-text-red"></i>
+				</div>
+			</div>
+		</div>
 
-        <div class="w3-third w3-center">
-            <i class="fa w3-padding-64 w3-text-red"></i>
-        </div>
-    </div>
-</div>
+		<!-- Second Grid -->
+		<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+			<div class="w3-content">
+				<div class="w3-third w3-center">
+					<i class="fa w3-padding-64 w3-text-red w3-margin-right"></i>
+				</div>
 
-<!-- Second Grid -->
-<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-    <div class="w3-content">
-        <div class="w3-third w3-center">
-            <i class="fa w3-padding-64 w3-text-red w3-margin-right"></i>
-        </div>
+				<div class="w3-twothird">
+					<h1>System Overview</h1>
+					<h5 class="w3-padding-32">
+						Trip Planner is a web application with social networking features that enables users to collaborate on a trip itinerary in real time.
+						Users will be able to quickly sign up using their G-mail account which allows them to connect with contacts from their email.
+						The platform will allow users to express themselves by liking shared trip itineraries and following other users.
+						Users will connect by contributing to a trip by suggesting locations and events.
+						The application will also provide automated suggestions based on similar trips and events happening around that time. Itineraries will have features that allow users to follow the post to contribute at a later time or use as an inspiration for a personal trip. Users will also be able to add photos and videos of visited locations so that future travelers can have a reference.
+					</h5>
 
-        <div class="w3-twothird">
-            <h1>System Overview</h1>
-            <h5 class="w3-padding-32">Trip Planner is a web application with social networking features that enables users to collaborate on a trip itinerary in real time.
-                Users will be able to quickly sign up using their G-mail account which allows them to connect with contacts from their email.
-                The platform will allow users to express themselves by liking shared trip itineraries and following other users.
-                Users will connect by contributing to a trip by suggesting locations and events.
-                The application will also provide automated suggestions based on similar trips and events happening around that time. Itineraries will have features that allow users to follow the post to contribute at a later time or use as an inspiration for a personal trip. Users will also be able to add photos and videos of visited locations so that future travelers can have a reference.</h5>
-
-        </div>
-    </div>
-</div>
-
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-    <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
-</div>
-
-<!-- Footer -->
-<footer class="w3-container w3-padding-64 w3-center w3-opacity">
-    <div class="w3-xlarge w3-padding-32">
-    </div>
-    <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
-</footer>
+				</div>
+			</div>
+		</div>
+	</main>
+	<!-- Footer -->
+	<footer class="w3-container w3-padding-64 w3-center w3-opacity">
+		<div class="w3-xlarge w3-padding-32">
+		</div>
+		<p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+	</footer>
 
 
 </body>

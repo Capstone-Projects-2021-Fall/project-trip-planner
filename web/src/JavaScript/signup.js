@@ -1,4 +1,5 @@
-var callAPI = (username, email, password, firstName, lastName, dob)=>{
+CallAPI = (username, email, password, firstName, lastName, dob)
+{
     // instantiate a headers object
     var myHeaders = new Headers();
     // add content type header to object

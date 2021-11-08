@@ -1,141 +1,142 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
-<title>Itinerary</title>
+
 <head>
-  <meta charset='utf-8' />
-  <link href='../lib/main.css' rel='stylesheet' />
-  <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>
-  <script src='../lib/main.js'></script>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="CSS/common.css">
-  <link rel="stylesheet" href="CSS/itinerary.css">
-  <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+    <meta charset='utf-8' />
+    <link href='../lib/main.css' rel='stylesheet' />
+    <title>Itinerary</title>
+    <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>
+    <script src='../lib/main.js'></script>
+    <link href="CSS/dropdown.css" rel="stylesheet" type="text/css" />
+    <link href="CSS/navbar.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="CSS/common.css">
+    <link rel="stylesheet" href="CSS/itinerary.css">
+    <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
+    <link href='CSS/navbar.css' rel='stylesheet' />
+    <link href="CSS/common.css" rel="stylesheet" type="text/css" />
 
-  <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
-  <script src="JavaScript/itinerary.js"></script>
+    <script src="JavaScript/itinerary.js"></script>
+    <!-- Do we still need this?-->
+    <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
 </head>
 <body>
+    <!--  <button id="myBtn">Create Itinerary</button>-->
+    <!--  <button type="button">Save Itinerary</button>-->
 
+    <div id='calendar'></div>
 
-<!--  <button id="myBtn">Create Itinerary</button>-->
-<!--  <button type="button">Save Itinerary</button>-->
+    <!-- modal itin creation form -->
+    <div id="myModal" class="modal">
 
-<div id='calendar'></div>
+        <div class="modal-content">
+            <span class="close">&times;</span>
 
-<!-- modal itin creation form -->
-<div id="myModal" class="modal">
+            <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+                <h1 align="center" style="color: white">Create Your Trip</h1>
+            </header>
 
-  <div class="modal-content">
-    <span class="close">&times;</span>
+            <form action="" method="post">
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Trip Name:</label>
+                    <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
+                </div>
+                <div class="form-group" align="center">
+                    <label>Start Date:</label>
+                    <input type="date" class="form-control" name="startDate" id="startDate" required>
+                </div>
+                <div class="form-group" align="center">
+                    <label>End Date:</label>
+                    <input type="date" class="form-control" name="endDate" id="endDate" required>
+                </div>
+                <div class="form-group" align="center">
+                    <label>Location:</label>
+                    <input type="text" class="form-control" name="location" id="location" required>
+                </div>
+                <div class="form-group" align="center">
+                    <label>Visibility:</label>
+                    <select style="padding: 5px" name="Visibility:">
+                        <option value="private" selected>Private</option>
+                        <option value="public">Public</option>
+                    </select>
+                </div>
+                <div style="padding-top: 25px" class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-      <h1 align="middle" style="color: white" >Create Your Trip</h1>
-    </header>
+    <!-- modal event edit form -->
+    <div id="eventDetailsModal" class="modal" style="display:none">
 
-    <form action="" method= "post">
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Trip Name:</label>
-        <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Start Date:</label>
-        <input type="date" class="form-control" name="startDate" id="startDate" required>
-      </div>
-      <div class="form-group" align="middle">
-        <label>End Date:</label>
-        <input type="date" class="form-control" name="endDate" id="endDate" required>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Location:</label>
-        <input type="text" class="form-control" name="location" id="location" required>
-      </div>
-      <div class="form-group"  align="middle">
-        <label>Visibility:</label>
-        <select style="padding: 5px" name = "Visibility:">
-          <option value = "private" selected>Private</option>
-          <option value = "public">Public</option>
-        </select>
-      </div>
-      <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
-      </div>
-    </form>
-  </div>
-</div>
+        <div class="modal-content">
+            <span class="close">&times;</span>
 
-<!-- modal event edit form -->
-<div id="eventDetailsModal" class="modal" style="display:none">
+            <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+                <h1 align="center" style="color: white">Event Details</h1>
+            </header>
 
-  <div class="modal-content">
-    <span class="close">&times;</span>
+            <form action="" method="post">
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Event Name:</label>
+                    <label id="eventName"></label>
+                </div>
+                <div class="form-group" align="center">
+                    <label>Start Time:</label>
+                    <label id="startDateEventDetails"></label>
+                </div>
+                <div class="form-group" align="center">
+                    <label>End Time:</label>
+                    <label id="endDateEventDetails"></label>
+                </div>
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Notes:</label>
+                    <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
+                </div>
+                <div class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
 
-    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-      <h1 align="middle" style="color: white" >Event Details</h1>
-    </header>
+                    <label>Uploaded Photos:</label>
+                </div>
+                <!-- Slideshow container -->
+                <div class="slideshow-container">
 
-    <form action="" method= "post">
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Event Name:</label>
-        <label id = "eventName"></label>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Start Time:</label>
-        <label id = "startDateEventDetails"></label>
-      </div>
-      <div class="form-group" align="middle">
-        <label>End Time:</label>
-        <label id = "endDateEventDetails"></label>
-      </div>
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Notes:</label>
-        <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
-      </div>
-      <div class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
+                    <!-- Next and previous buttons -->
+                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                </div>
+                <br>
 
-        <label>Uploaded Photos:</label>
-      </div>
- <!-- Slideshow container -->
-<div class="slideshow-container">
-
-  <!-- Next and previous buttons -->
-  <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-  <a class="next" onclick="plusSlides(1)">&#10095;</a>
-</div>
-<br>
-
-<!-- The dots/circles -->
-<div style="text-align:center">
-  <span class="dot" onclick="currentSlide(1)"></span>
-  <span class="dot" onclick="currentSlide(2)"></span>
-  <span class="dot" onclick="currentSlide(3)"></span>
-</div>
+                <!-- The dots/circles -->
+                <div style="text-align:center">
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
 
 
 
-      <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
-      </div>
-    </form>
-  </div>
-</div>
+                <div style="padding-top: 25px" class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+        <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
+    </div>
 
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-  <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
-</div>
+    <!-- Footer -->
+    <footer class="w3-container w3-padding-64 w3-center w3-opacity">
+        <div class="w3-xlarge w3-padding-32">
+        </div>
 
-
+    </footer>
 </body>
-
-<!-- Footer -->
-<footer class="w3-container w3-padding-64 w3-center w3-opacity">
-  <div class="w3-xlarge w3-padding-32">
-  </div>
-
-</footer>
 </html>
