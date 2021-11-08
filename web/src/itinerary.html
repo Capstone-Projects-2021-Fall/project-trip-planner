@@ -20,12 +20,6 @@
 </head>
 <body>
 
-
-<!--  <button id="myBtn">Create Itinerary</button>-->
-<!--  <button type="button">Save Itinerary</button>-->
-
-<div id='calendar'></div>
-
 <!-- modal itin creation form -->
 <div id="myModal" class="modal">
 
@@ -67,62 +61,6 @@
   </div>
 </div>
 
-<!-- modal event edit form -->
-<div id="eventDetailsModal" class="modal" style="display:none">
-
-  <div class="modal-content">
-    <span class="close">&times;</span>
-
-    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-      <h1 align="middle" style="color: white" >Event Details</h1>
-    </header>
-
-    <form action="" method= "post">
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Event Name:</label>
-        <label id = "eventName"></label>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Start Time:</label>
-        <label id = "startDateEventDetails"></label>
-      </div>
-      <div class="form-group" align="middle">
-        <label>End Time:</label>
-        <label id = "endDateEventDetails"></label>
-      </div>
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Notes:</label>
-        <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
-      </div>
-      <div class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
-
-        <label>Uploaded Photos:</label>
-      </div>
- <!-- Slideshow container -->
-<div class="slideshow-container">
-
-  <!-- Next and previous buttons -->
-  <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-  <a class="next" onclick="plusSlides(1)">&#10095;</a>
-</div>
-<br>
-
-<!-- The dots/circles -->
-<div style="text-align:center">
-  <span class="dot" onclick="currentSlide(1)"></span>
-  <span class="dot" onclick="currentSlide(2)"></span>
-  <span class="dot" onclick="currentSlide(3)"></span>
-</div>
-
-
-
-      <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
-      </div>
-    </form>
-  </div>
-</div>
 
 
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
