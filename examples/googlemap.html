@@ -101,6 +101,7 @@
                 //Geometry
               lat = response.data.results[0].geometry.location.lat;
               lng = response.data.results[0].geometry.location.lng;
+              //console.log("numbers: " + lat+ "," + lng);
               var geometryOutput = `
                   <ul class="list-group">
                     <li class="list-group-item"><strong>Latitude</strong>:${lat}</li>
@@ -118,11 +119,11 @@
               console.log(error);
             });
         }
-
+      
       // Initialize and add the map
       function initMap() {
-        console.log("numbers: " + lat+ "," + lng);
-        const location = { lat: lat, lng: lng };
+      
+        const location = { lat: 30, lng: -70 };
         // The map, centered at location
         const map = new google.maps.Map(document.getElementById("map"), {
           zoom: 15,
