@@ -35,7 +35,112 @@
       <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
     </div>
   </div>
-  <script>
+</head>
+</html>
+<script>
+//MAP SCRIPT
+
+let map;
+let marker;
+let geocoder;
+let responseDiv;
+let response;
+
+var address = "New York City";
+
+function initMap() {
+map = new google.maps.Map(document.getElementById("map"), {
+zoom: 4,
+center: { lat: 37, lng: -95},
+mapTypeControl: false,
+});
+
+geocoder = new google.maps.Geocoder();
+codeAddress(geocoder, map);
+
+}
+function codeAddress(geocoder, map) {
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
+
+/* const inputText = document.createElement("input");
+
+inputText.type = "text";
+inputText.placeholder = "Enter a location";
+
+const submitButton = document.createElement("input");
+
+submitButton.type = "button";
+submitButton.value = "Search";
+submitButton.classList.add("button", "button-primary");
+
+const clearButton = document.createElement("input");
+
+clearButton.type = "button";
+clearButton.value = "Clear";
+clearButton.classList.add("button", "button-secondary");
+response = document.createElement("pre");
+response.id = "response";
+response.innerText = "";
+responseDiv = document.createElement("div");
+responseDiv.id = "response-container";
+responseDiv.appendChild(response);
+
+const instructionsElement = document.createElement("p");
+
+
+map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
+map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
+map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
+map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
+map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
+marker = new google.maps.Marker({
+map,
+});
+map.addListener("click", (e) => {
+geocode({ location: e.latLng });
+});
+submitButton.addEventListener("click", () =>
+geocode({ address: inputText.value })
+);
+clearButton.addEventListener("click", () => {
+clear();
+});
+clear();
+}
+
+function clear() {
+marker.setMap(null);
+responseDiv.style.display = "none";
+}
+
+function geocode(request) {
+clear();
+geocoder
+.geocode(request)
+.then((result) => {
+const { results } = result;
+
+map.setCenter(results[0].geometry.location);
+marker.setPosition(results[0].geometry.location);
+marker.setMap(map);
+responseDiv.style.display = "block";
+response.innerText = JSON.stringify(result, null, 2);
+return results;
+})
+.catch((e) => {
+alert("Geocode was not successful for the following reason: " + e);
+});*/
 
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -318,93 +423,9 @@
           slides[slideIndex-1].style.display = "block";
           dots[slideIndex-1].className += " active";
         }
-
-//MAP SCRIPT
-let map;
-let marker;
-let geocoder;
-let responseDiv;
-let response;
-
-function initMap() {
-map = new google.maps.Map(document.getElementById("map"), {
-zoom: 4,
-center: { lat: 37, lng: -95},
-mapTypeControl: false,
-});
-geocoder = new google.maps.Geocoder();
-
-const inputText = document.createElement("input");
-
-inputText.type = "text";
-inputText.placeholder = "Enter a location";
-
-const submitButton = document.createElement("input");
-
-submitButton.type = "button";
-submitButton.value = "Search";
-submitButton.classList.add("button", "button-primary");
-
-const clearButton = document.createElement("input");
-
-clearButton.type = "button";
-clearButton.value = "Clear";
-clearButton.classList.add("button", "button-secondary");
-response = document.createElement("pre");
-response.id = "response";
-response.innerText = "";
-responseDiv = document.createElement("div");
-responseDiv.id = "response-container";
-responseDiv.appendChild(response);
-
-const instructionsElement = document.createElement("p");
-
-
-map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
-map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
-map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
-map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
-marker = new google.maps.Marker({
-map,
-});
-map.addListener("click", (e) => {
-geocode({ location: e.latLng });
-});
-submitButton.addEventListener("click", () =>
-geocode({ address: inputText.value })
-);
-clearButton.addEventListener("click", () => {
-clear();
-});
-clear();
-}
-
-function clear() {
-marker.setMap(null);
-responseDiv.style.display = "none";
-}
-
-function geocode(request) {
-clear();
-geocoder
-.geocode(request)
-.then((result) => {
-const { results } = result;
-
-map.setCenter(results[0].geometry.location);
-marker.setPosition(results[0].geometry.location);
-marker.setMap(map);
-responseDiv.style.display = "block";
-response.innerText = JSON.stringify(result, null, 2);
-return results;
-})
-.catch((e) => {
-alert("Geocode was not successful for the following reason: " + e);
-});
-}
 </script>
-  <style>
+
+<style>
 
 
   body {
@@ -696,10 +717,9 @@ overflow: hidden;
 padding: 1rem;
 font-size: medium;
 }
-
 </style>
 
-</head>
+<html>
 <body>
 
 
@@ -806,8 +826,7 @@ font-size: medium;
   </div>
 </div>
 
-<div id="map" style = "display: none"></div>
-
+ <div id="map" style="display:none" ></div>
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&v=weekly"

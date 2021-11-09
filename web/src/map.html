@@ -26,15 +26,34 @@ let geocoder;
 let responseDiv;
 let response;
 
+var address = "New York City";
+
 function initMap() {
 map = new google.maps.Map(document.getElementById("map"), {
 zoom: 4,
 center: { lat: 37, lng: -95},
-mapTypeControl: false,
+mapTypeControl: true,
 });
-geocoder = new google.maps.Geocoder();
 
-const inputText = document.createElement("input");
+geocoder = new google.maps.Geocoder();
+codeAddress(geocoder, map);
+
+}
+function codeAddress(geocoder, map) {
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
+
+/* const inputText = document.createElement("input");
 
 inputText.type = "text";
 inputText.placeholder = "Enter a location";
@@ -101,10 +120,11 @@ return results;
 })
 .catch((e) => {
 alert("Geocode was not successful for the following reason: " + e);
-});
-}
+});*/
 
 </script>
+
+
 <style>
 /* Always set the map height explicitly to define the size of the div
 * element that contains the map. */
