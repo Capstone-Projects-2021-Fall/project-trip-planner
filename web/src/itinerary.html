@@ -130,6 +130,10 @@
               type: 'timeGrid',
               duration: { days: diffDays +1 },
               buttonText: 'Whole Trip'
+            },
+            listWeek:
+            {
+              duration: { days: diffDays +1 }
             }
           },
       navLinks: true, // can click day/week names to navigate views
@@ -272,63 +276,6 @@
         //console.log(arg);
       },
       dayMaxEvents: true, // allow "more" link when too many events
-      events: [
-        {
-          title: 'All Day Event',
-          start: '2021-09-01'
-
-        },
-        {
-          title: 'Long Event',
-          start: '2021-09-07',
-          end: '2021-09-10'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2021-09-09T16:00:00'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2021-09-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2021-09-11',
-          end: '2021-09-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2021-09-12T10:30:00',
-          end: '2021-09-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2021-09-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2021-09-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2021-09-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2021-09-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2021-09-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2021-09-28'
-        }
-      ]
     });
 
   var button2 = document.getElementById("saveBtn");
