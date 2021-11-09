@@ -72,7 +72,7 @@ map.addListener("click", (e) => {
 geocode({ location: e.latLng });
 });
 submitButton.addEventListener("click", () =>
-geocode({ address: inputText.value })
+geocode({ address: "Chicago" })
 );
 clearButton.addEventListener("click", () => {
 clear();

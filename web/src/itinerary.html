@@ -37,6 +37,90 @@
   </div>
   <script>
 
+  let map;
+      let marker;
+      let geocoder;
+      let responseDiv;
+      let response;
+
+      function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 4,
+      center: { lat: 37, lng: -95},
+      mapTypeControl: false,
+      });
+      geocoder = new google.maps.Geocoder();
+
+      const inputText = document.createElement("input");
+
+      inputText.type = "text";
+      inputText.placeholder = "Enter a location";
+
+      const submitButton = document.createElement("input");
+
+      submitButton.type = "button";
+      submitButton.value = "Search";
+      submitButton.classList.add("button", "button-primary");
+
+      const clearButton = document.createElement("input");
+
+      clearButton.type = "button";
+      clearButton.value = "Clear";
+      clearButton.classList.add("button", "button-secondary");
+      response = document.createElement("pre");
+      response.id = "response";
+      response.innerText = "";
+      responseDiv = document.createElement("div");
+      responseDiv.id = "response-container";
+      responseDiv.appendChild(response);
+
+      const instructionsElement = document.createElement("p");
+
+
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
+      map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
+      map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
+      marker = new google.maps.Marker({
+      map,
+      });
+      map.addListener("click", (e) => {
+      geocode({ location: e.latLng });
+      });
+      submitButton.addEventListener("click", () =>
+      geocode({ address: "Chicago" })
+      );
+      clearButton.addEventListener("click", () => {
+      clear();
+      });
+      clear();
+      }
+
+      function clear() {
+      marker.setMap(null);
+      responseDiv.style.display = "none";
+      }
+      function geocode(request) {
+      clear();
+      geocoder
+      .geocode(request)
+      .then((result) => {
+      const { results } = result;
+
+      map.setCenter(results[0].geometry.location);
+      marker.setPosition(results[0].geometry.location);
+      marker.setMap(map);
+      responseDiv.style.display = "block";
+      response.innerText = JSON.stringify(result, null, 2);
+      return results;
+      })
+      .catch((e) => {
+      alert("Geocode was not successful for the following reason: " + e);
+      });
+      }
+
+
 
   document.addEventListener('DOMContentLoaded', function() {
  //SCRIPT FOR MODAL ITINERARY MODAL FORM
@@ -138,6 +222,7 @@
       selectMirror: true,
       select: function(arg) {
         var title = prompt('Event Title:');
+        var address = prompt("Address: ");
         if (title) {
           calendar.addEvent({
             title: title,
@@ -145,7 +230,8 @@
             end: arg.end,
             allDay: arg.allDay,
             extendedProps: {
-            photos: []
+            photos: [],
+            Address: address
             }//end extended props
           })
         }
@@ -160,6 +246,34 @@
         document.getElementById("eventName").innerHTML=arg.event.title;
         document.getElementById("startDateEventDetails").innerHTML = arg.event.start;
         document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
+
+
+        //MAP SCRIPT
+        geocode({ address: arg.event.extendedProps.Address });
+
+
+      function geocode(request) {
+      clear();
+      geocoder
+      .geocode(request)
+      .then((result) => {
+      const { results } = result;
+
+      map.setCenter(results[0].geometry.location);
+      marker.setPosition(results[0].geometry.location);
+      marker.setMap(map);
+      responseDiv.style.display = "block";
+      response.innerText = JSON.stringify(result, null, 2);
+      return results;
+      })
+      .catch((e) => {
+      alert("Geocode was not successful for the following reason: " + e);
+      });
+      }
+
+
+
+
 
         //get the button for uploading photos
     var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
@@ -372,90 +486,7 @@
           dots[slideIndex-1].className += " active";
         }
 
-//MAP SCRIPT
-let map;
-let marker;
-let geocoder;
-let responseDiv;
-let response;
 
-function initMap() {
-map = new google.maps.Map(document.getElementById("map"), {
-zoom: 4,
-center: { lat: 37, lng: -95},
-mapTypeControl: false,
-});
-geocoder = new google.maps.Geocoder();
-
-const inputText = document.createElement("input");
-
-inputText.type = "text";
-inputText.placeholder = "Enter a location";
-
-const submitButton = document.createElement("input");
-
-submitButton.type = "button";
-submitButton.value = "Search";
-submitButton.classList.add("button", "button-primary");
-
-const clearButton = document.createElement("input");
-
-clearButton.type = "button";
-clearButton.value = "Clear";
-clearButton.classList.add("button", "button-secondary");
-response = document.createElement("pre");
-response.id = "response";
-response.innerText = "";
-responseDiv = document.createElement("div");
-responseDiv.id = "response-container";
-responseDiv.appendChild(response);
-
-const instructionsElement = document.createElement("p");
-
-
-map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
-map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
-map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
-map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
-marker = new google.maps.Marker({
-map,
-});
-map.addListener("click", (e) => {
-geocode({ location: e.latLng });
-});
-submitButton.addEventListener("click", () =>
-geocode({ address: inputText.value })
-);
-clearButton.addEventListener("click", () => {
-clear();
-});
-clear();
-}
-
-function clear() {
-marker.setMap(null);
-responseDiv.style.display = "none";
-}
-
-function geocode(request) {
-clear();
-geocoder
-.geocode(request)
-.then((result) => {
-const { results } = result;
-
-map.setCenter(results[0].geometry.location);
-marker.setPosition(results[0].geometry.location);
-marker.setMap(map);
-responseDiv.style.display = "block";
-response.innerText = JSON.stringify(result, null, 2);
-return results;
-})
-.catch((e) => {
-alert("Geocode was not successful for the following reason: " + e);
-});
-}
 </script>
   <style>
 
@@ -862,10 +893,7 @@ font-size: medium;
 <div id="map" style = "display: none"></div>
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-<script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&v=weekly"
-        async
-></script>
+
 
 
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
@@ -881,4 +909,8 @@ font-size: medium;
   </div>
 
 </footer>
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&v=weekly"
+        async
+></script>
 </html>
