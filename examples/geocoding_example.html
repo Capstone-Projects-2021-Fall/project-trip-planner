@@ -19,6 +19,7 @@
 
 
 <script>
+
 let map;
 let marker;
 let geocoder;
@@ -27,8 +28,8 @@ let response;
 
 function initMap() {
 map = new google.maps.Map(document.getElementById("map"), {
-zoom: 8,
-center: { lat: -34.397, lng: 150.644 },
+zoom: 4,
+center: { lat: 37, lng: -95},
 mapTypeControl: false,
 });
 geocoder = new google.maps.Geocoder();
@@ -41,7 +42,7 @@ inputText.placeholder = "Enter a location";
 const submitButton = document.createElement("input");
 
 submitButton.type = "button";
-submitButton.value = "Geocode";
+submitButton.value = "Search";
 submitButton.classList.add("button", "button-primary");
 
 const clearButton = document.createElement("input");
@@ -58,9 +59,7 @@ responseDiv.appendChild(response);
 
 const instructionsElement = document.createElement("p");
 
-instructionsElement.id = "instructions";
-instructionsElement.innerHTML =
-"<strong>Instructions</strong>: Enter an address in the textbox to geocode or click on the map to reverse geocode.";
+
 map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
 map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
 map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
