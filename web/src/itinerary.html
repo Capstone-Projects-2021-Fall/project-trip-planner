@@ -150,6 +150,7 @@
       },
       eventClick: function(arg) {//when they click on an event
         eventDetailsModal.style.display = "block";
+        document.getElementById("map").style.display = "block";
         //need to change the event start time or end time or title here
         //then apply those changes using event functions
 
@@ -855,7 +856,7 @@ font-size: medium;
   </div>
 </div>
 
-<div id="map"></div>
+<div id="map" style = "display: none"></div>
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script
