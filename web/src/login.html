@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href='CSS/searchbar.css' />
-    <link rel="stylesheet" href='CSS/dropdown.css' />
     <link rel="stylesheet" href="CSS/common.css" />
     <link rel="stylesheet" href='CSS/navbar.css' />
 
@@ -32,20 +30,17 @@
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-            <div class="topnav">
-                <div class="dropdown">
-                    <button class="dropbtn">▼</button>
-                    <div class="dropdown-content">
-                        <a href="#">User</a>
-                        <a href="#">Itineraries</a>
-                    </div>
-                </div>
-                <a class="active" href="#home"></a>
-                <div class="search-container">
-                    <input type="text" placeholder="Search.." name="search">
-                    <button onclick="document.location='searchResults.html'" type="submit"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
+            <div class="w3-hide-small topnav">
+				<label for="dropdown">Search For</label>	
+				<select id="dropdown">
+					<option value="Users">Users</option>
+					<option value="Itineraries">Itineraries</option>
+				</select>
+				<div class="search-container">
+					<input type="text" placeholder="Search.." name="search">
+					<button onclick="document.location='searchResults.html'" type="submit"><i class="fa fa-search"></i></button>
+				</div>
+			</div>
         </div>
 
         <!-- Navbar on small screens -->
@@ -70,10 +65,10 @@
             <p id="login-error-msg"></p>
         </div>
 
-        <form id="login-form">
-            <input type="text" name="username" id="username" class="login-form-field" placeholder="Username">
+        <form autocomplete="off" id="login-form">
+            <input type="text" name="email" id="email" class="login-form-field" placeholder="Email Address">
             <input type="password" name="password" id="password" class="login-form-field" placeholder="Password">
-            <input type="button" value="Login" id="login-form-submit" onclick="CallAPI(document.getElementById('username').value, document.getElementById('password').value)">
+            <input type="button" value="Login" id="login-form-submit" onclick="CallAPI()">
         </form>
     </main>
 </body>

@@ -11,15 +11,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link href='CSS/searchbar.css' rel='stylesheet'>
-    <link href='CSS/dropdown.css' rel='stylesheet'>
-    <link href='CSS/navbar.css' rel='stylesheet' />
     <link href="CSS/common.css" rel="stylesheet" type="text/css" />
+    <link href='CSS/navbar.css' rel='stylesheet' />
 
     <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
-    <script src="JavaScript/homepage.js"></script>
     <script src="JavaScript/common.js"></script>
+
 </head>
 <body>
     <!-- Navbar -->
@@ -32,20 +30,17 @@
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-            <div class="topnav">
-                <div class="dropdown">
-                    <button class="dropbtn">▼</button>
-                    <div class="dropdown-content">
-                        <a href="#">User</a>
-                        <a href="#">Itineraries</a>
-                    </div>
-                </div>
-                <a class="active" href="#home"></a>
-                <div class="search-container">
-                    <input type="text" placeholder="Search.." name="search">
-                    <button onclick="document.location='searchResults.html'" type="submit"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
+            <div class="w3-hide-small topnav">
+				<label for="dropdown">Search For</label>	
+				<select id="dropdown">
+					<option value="Users">Users</option>
+					<option value="Itineraries">Itineraries</option>
+				</select>
+				<div class="search-container">
+					<input type="text" placeholder="Search.." name="search">
+					<button onclick="document.location='searchResults.html'" type="submit"><i class="fa fa-search"></i></button>
+				</div>
+			</div>
         </div>
 
         <!-- Navbar on small screens -->
@@ -66,17 +61,8 @@
 
     <!-- Second Grid -->
     <main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-        <div class="w3-content">
-            <div class="w3-third w3-center">
-                <i class="fa w3-padding-64 w3-text-red w3-margin-right"></i>
-            </div>
-            <ul>
-                <li>I</li>
-                <li>Hardcoded</li>
-                <li>This</li>
-                <li>But</li>
-                <li>This is where we'd list out the itineraries/users?</li>
-            </ul>
+        <div class="w3-content" id="itinerary-list-holder">
+            
         </div>
     </main>
 

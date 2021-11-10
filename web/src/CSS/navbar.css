@@ -1,60 +1,48 @@
-* {box-sizing: border-box;}
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 .topnav {
   overflow: hidden;
   background-color: #2C3E50;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #2196F3;
-  color: white;
+  float: right;
+  padding: 6px 0px;
+  font-size:18px;
 }
 
 .topnav .search-container {
   float: right;
-  padding: 10px 16px;
-  padding-bottom: 50px;
+  padding: 0px 16px;
+  margin-right: 16px;
 }
 
 .topnav input[type=text] {
   padding: 6px;
-  margin-top: 8px;
-  font-size: 17px;
+  font-size: 18px;
   border: none;
 }
 
 .topnav .search-container button {
   float: right;
-  padding: 6px 10px;
-  margin-top: 8px;
-  margin-right: 16px;
+  padding: 7px 10px;
   background: #ddd;
   font-size: 17px;
   border: none;
   cursor: pointer;
+  display: inline-block;
 }
 
 .topnav .search-container button:hover {
   background: #ccc;
+}
+
+.topnav #dropdown {
+    padding: 6px 4px;
+    vertical-align: middle;
+    display:inline-block;
+    margin-left: 6px;
+    font-size: 18px;
+}
+
+.topnav label {
+    font-size: 18px;
+    padding: 10px 0px;
 }
 
 @media screen and (max-width: 600px) {
@@ -72,9 +60,4 @@ body {
   .topnav input[type=text] {
     border: 1px solid #ccc;
   }
-<<<<<<< HEAD:web/src/CSS/searchbar.css
 }
-=======
-}
-</style>
->>>>>>> main:web/src/navbar.css

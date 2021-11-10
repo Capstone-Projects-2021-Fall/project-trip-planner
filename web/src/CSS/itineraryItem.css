@@ -1,0 +1,46 @@
+/* This is the style sheet that handles the format of ALL itinerary items when they are populated via a search */
+
+.itinerary-list-holder
+{
+	display:flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-content: center;
+}
+
+.itinerary-item
+{
+	font-size:24px;
+	border: 2px solid black;
+	padding: 10px;
+}
+
+/* Block is temporary for these, i have no idea what they should be. Someone else can handle this, frankly" */
+
+.item-title
+{
+	display: block;
+}
+
+.item-date
+{
+	display: block;
+}
+
+.item-author
+{
+	display: block;
+}
+
+/* Responsive layout - makes a one column layout instead of a two-column layout */
+/*
+@media (max-width: 800px) {
+	.itinerary-list-holder 
+	{
+		display:flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		align-content: center;
+	}
+}
+*/

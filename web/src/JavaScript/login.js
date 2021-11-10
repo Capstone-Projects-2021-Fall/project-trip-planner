@@ -1,5 +1,8 @@
 function CallAPI(email, password) 
 {
+	var email = document.getElementById('email').value;
+	var password = document.getElementById('password').value;
+
 	// instantiate a headers object
 	var myHeaders = new Headers();
 	// add content type header to object
