@@ -27,19 +27,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   saveBtn.onclick = function() {
       modal.style.display = "none";
+
       var itineraryName = document.getElementById("tripName").value;
       var startDate = new Date(document.getElementById("startDate").value);
       var endDate = new Date(document.getElementById("endDate").value);
       var location = document.getElementById("location").value;
       //HARDCODED USERID VALUE, MUST CHANGE!
       var userID = 2;
+
       //visibility variable most likely not working cause it has to check which option has been selected
       //var visibility = document.getElementById("visibility").value;
       var newItinerary = {
         "itineraryName": itineraryName,
         "startDate":startDate,
         "endDate":endDate,
-        "userID": userID
+        "userID": userID,
+        "location":location
       };
       newItinerary = JSON.stringify(newItinerary);
       /*
@@ -55,8 +58,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
       // make API call with parameters and use promises to get response
       //fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ItineraryManagement", postItinerary).then(response => response.text());
+      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetUserItinerary", postItinerary).then(response => response.text()) // <---
+      .then( function(data){
+        let page = JSON.parse(data);
+        window.location.href = "itineraryFromDatabase.html?page=" + page;
+      }      
+    );
 
-      window.location.href = "itineraryFromDatabase.html";
     } //end onclick save button
 
   
