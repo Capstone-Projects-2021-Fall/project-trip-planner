@@ -27,10 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   saveBtn.onclick = function() {
       modal.style.display = "none";
-      var itineraryName = document.getElementById("tripName").value;
-      var startDate = new Date(document.getElementById("startDate").value);
-      var endDate = new Date(document.getElementById("endDate").value);
-      var location = document.getElementById("location").value;
+     
       //HARDCODED USERID VALUE, MUST CHANGE!
       var userID = 2;
       //visibility variable most likely not working cause it has to check which option has been selected
