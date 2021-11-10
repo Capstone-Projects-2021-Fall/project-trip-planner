@@ -45,7 +45,7 @@
 
       function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 4,
+      zoom: 16,
       center: { lat: 37, lng: -95},
       mapTypeControl: false,
       });
@@ -75,26 +75,12 @@
       responseDiv.appendChild(response);
 
       const instructionsElement = document.createElement("p");
-
-
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
-      map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
-      map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
       marker = new google.maps.Marker({
       map,
       });
       map.addListener("click", (e) => {
       geocode({ location: e.latLng });
       });
-      submitButton.addEventListener("click", () =>
-      geocode({ address: "Chicago" })
-      );
-      clearButton.addEventListener("click", () => {
-      clear();
-      });
-      clear();
       }
 
       function clear() {
