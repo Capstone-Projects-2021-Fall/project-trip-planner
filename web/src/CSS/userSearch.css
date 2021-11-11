@@ -1,0 +1,46 @@
+/* This is the style sheet that handles the format of ALL user items when they are populated via a search */
+
+.user-list-holder
+{
+	display:flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-content: center;
+}
+
+.user-item
+{
+	font-size:24px;
+	border: 2px solid black;
+	padding: 10px;
+}
+
+/* Block is temporary for these, i have no idea what they should be. Someone else can handle this, frankly" */
+
+.item-screenname
+{
+	display: block;
+}
+
+.item-fullname
+{
+	display: block;
+}
+
+.item-dob
+{
+	display: block;
+}
+
+/* Responsive layout - makes a one column layout instead of a two-column layout */
+/*
+@media (max-width: 800px) {
+	.user-list-holder 
+	{
+		display:flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		align-content: center;
+	}
+}
+*/

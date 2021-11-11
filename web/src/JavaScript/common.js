@@ -31,3 +31,121 @@ function GetCookie(cname)
 
 	return null;
 }
+
+function fillItineraries(container, response, isUserSearch)
+{
+	console.log("Hello");
+	//container.setHTML()
+	//container.innerHTML = 
+	if (response.status == 200)
+	{
+		response.json().then(results =>
+		{
+			console.log(results);
+			if (results.length == 0)
+			{
+
+				var elem = document.createElement("div");
+				elem.classList.add("itinerary-empty");
+
+				var niceText;
+				if (isUserSearch)
+				{
+					niceText = document.createTextNode("You have no itineraries. Create one!");
+				}
+				else 
+				{
+					niceText = document.createTextNode("No results. That's unfortunate! Try expanding your search area or using more general search terms.");
+				}
+				elem.appendChild(niceText);
+
+				container.appendChild(elem);
+			}
+			else
+			{
+				//json elements are formatted as such:
+				results.forEach(element => 
+				{
+					
+					var elem = document.createElement("div");
+					elem.classList.add("itinerary-item");
+
+					var nameHolder = document.createElement("div");
+					nameHolder.classList.add("item-title");
+					var nameContent = document.createTextNode(element["ItineraryName"]);
+					nameHolder.appendChild(nameContent);
+					elem.appendChild(nameHolder);
+
+					var startHolder = document.createElement("div");
+					startHolder.classList.add("item-date");
+					var startContent = document.createTextNode("Starts: " + element["StartDate"]);
+					startHolder.appendChild(startContent);
+					elem.appendChild(startHolder);
+
+					var endHolder = document.createElement("div");
+					endHolder.classList.add("item-date");
+					var endContent = document.createTextNode("Ends: " + element["EndDate"]);
+					endHolder.appendChild(endContent);
+					elem.appendChild(endHolder);
+
+					var nameHolder = document.createElement("div");
+					nameHolder.classList.add("item-author");
+
+					var id = element["ItineraryID"];
+
+					//User search does not pull the creator id or name because it's the same as the current user. so these wouldn't be valid.
+					if (!isUserSearch)
+					{
+						var userID = parseInt(GetCookie("id"));
+
+						var creatorText = "Creator: " + element["CreatorName"];
+						var creatorID = element["CreatorID"];
+					
+						//may be null if a user not logged in does a search. 
+						if (userID && creatorID == userID)
+						{
+							creatorText += " (you)";
+						}
+
+						var nameContent= document.createTextNode(creatorText);
+						nameHolder.appendChild(nameContent);
+						elem.appendChild(nameHolder);
+					}
+					elem.onclick = function() 
+					{
+						document.location = "itineraryRewrite.html?id=" + id;
+					};
+
+					container.appendChild(elem);
+				});
+			}
+		});
+	}
+	else 
+	{
+		var elem = document.createElement("div");
+		elem.classList.add("something-broke");
+
+		var niceText = document.createTextNode("something went wrong. Try refreshing the page?");
+
+		elem.appendChild(niceText);
+
+		container.appendChild(elem);
+	}
+}
+
+function PerformSearch()
+{
+	var selectBox = document.getElementById("dropdown");
+	var content = document.getElementById("quick-search").value;
+
+	if (selectBox.value == "Itineraries")
+	{
+		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content);
+	}
+	//fallback to users if something breaks. should just be users and itineraries but whatever.
+	else 
+	{
+		document.location = "userSearch.html?query=" + encodeURIComponent(content);
+	}
+}
