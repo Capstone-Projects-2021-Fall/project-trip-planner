@@ -1,6 +1,12 @@
 import pymysql
 import json
+
+import dateutil.parser
+
+from myutils import *
+
 #configuration values
+
 endpoint = 'tripplannerdb.cmmyrzbau9mp.us-west-2.rds.amazonaws.com'
 username = 'admin'
 password = 'TripPlanner'
@@ -8,57 +14,45 @@ database_name = 'database'
 
 
 def lambda_handler(event, context):
-    http_method = event["requestContext"]["http"]["method"]
-    #http_method = event["httpMethod"]
-    if http_method == 'GET':
-        #connection
-        connection = pymysql.connect(endpoint, user=username, passwd=password, db=database_name)
-        cursor = connection.cursor()
-
-        #args = [event['queryStringParameters']['userID']]
-        #HAS TO BE REPLACED WITH USER ID AS WELL AS ITINERARY NAME AT SOME POINT
-        args = [2]
-        cursor.callproc('GetItineraryInformationNoActivities', args)
+    http_method = event["httpMethod"]
     
-        results = cursor.fetchall()
-        itineraryJson = { }
-        for count, index in enumerate(results):
-            temp = {}
-            temp["day"] = index[0]
-            temp["title"] = index[1]
-            temp["start"] = index[2]
-            temp["end"] = index[3]
-            itineraryJson[count] = temp
-        cursor.close()
-        connection.close()
-        return {
-            "statusCode": 200,
-            "body": json.dumps(itineraryJson, default=str),
-            "headers": {
-                "Access-Control-Allow-Headers":"*",
-                "Accept":"json"
-        }
-        }
-    elif http_method == 'POST':
+    if http_method == 'POST':
         #connection
+        
         connection = pymysql.connect(endpoint, user=username, passwd=password, db=database_name)
         cursor = connection.cursor()
 
         body = json.loads(event['body'])
-        title = body['name']
+        title = body['itineraryName']
         startDate = body['startDate']
         endDate = body['endDate']
         userID = body['userID']
+        addlInfo = body['additionalInformation']
 
-        args = [title, startDate, endDate, userID]
+        startDate = dateutil.parser.isoparse(startDate).date()
+        endDate = dateutil.parser.isoparse(endDate).date()
 
-        cursor.callproc('CreateItinerary', args)
+        args = [title, startDate, endDate, userID, addlInfo, None, None, None]
+        
+        resultTuple = pymysql_CallProcAndGetArgs(cursor, "CreateItinerary", args)
+        
+        newArgs = resultTuple[0]
+        results = resultTuple[1]
+        
         connection.commit()
         connection.close()
-        cursor.close()
-        return {
+        
+        itineraryID = newArgs[5];
+        
+        if (itineraryID is None):
+            errData = errorData = { "errorCode" : newArgs[6], "errorMessage" : newArgs[7] }
+            #409 is a generic conflict error. that's good enough for us.
+            return {
+                'statusCode': 409,
+                'body': json.dumps(errData, default=str)
+            }
+        else:
+            return {
                 'statusCode': 200,
-                'body': json.dumps(args)
-        }  
-
-       
+                'body': itineraryID
+            }  
