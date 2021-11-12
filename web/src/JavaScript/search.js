@@ -1,87 +1,182 @@
-document.addEventListener('DOMContentLoaded', OnLoad);
+//Only needed on the search results pages. 
 
-function OnLoad(event)
+function FindUsers()
 {
-	var userID = parseInt(GetCookie("id"));
+	var searchSection = new URLSearchParams(window.location.search);
 
-	if (userID == null)
+	var container = document.getElementById('itinerary-list-holder');
+
+	//null if not found. that works here.
+	var query = searchSection.get("query");
+	/*
+	TODO: maybe add these? allow end user to refine user search? wasn't part of spec, isn't strictly speaking hard, but more work for frontend devs. 
+	var firstName = searchSection.get("firstName");
+	var lastName = searchSection.get("lastName");
+	*/
+
+	if (query)
 	{
-		document.location = "login.html";
+		query = decodeURIComponent(query);
+
+		var raw = JSON.stringify({ "query": query});
+
+		// create a JSON object with parameters for API call and store in a variable
+		var requestOptions = {
+			method: 'POST',
+			body: raw,
+		};
+	
+		console.log(requestOptions);
+	
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForUser", requestOptions).then(response => fillUsers(container, response));
 	}
-    //currently is not validating the users login info. just compares if they have a cookie
-    else{
-        var container = document.getElementById("search-results");
+	else 
+	{
+		var elem = document.createElement("div");
+		elem.classList.add("no-search");
 
-        //convert user input to json
-        let search = getParameterByName("search");
-        let raw = {
-            "search": search
-        }
-        raw = JSON.stringify(raw);
-        console.log(raw);
+		var niceText = document.createTextNode("no search information provided. try refining your search.");
 
-        //HTTP request parameters to get the activities with user input
-        var searchActivities = {
-          method: 'POST',
-          body:raw,
-          headers: {
-            "Access-Control-Allow-Headers":"*"
-            }
-    
-        };
-        // make API call with parameters and use promises to get response
-        fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchItinerariesByActivity", searchActivities).then(response => searchResults(container, response));
-    }
+		elem.appendChild(niceText);
+
+		container.appendChild(elem);
+	}
 }
 
-function searchResults(container, response)
+//Quick find does not work with any other parameters (i.e. lat, long, distance away). I should just create one function for that but that stuff isn't in place yet so i'm just going with what i can test.
+function QuickFindItineraries()
 {
+	var searchSection = new URLSearchParams(window.location.search);
+
+	var container = document.getElementById('itinerary-list-holder');
+
+	//null if not found. that works here.
+	var query = searchSection.get("query");
+	/*
+	TODO: add these. if both latitude and longitude aren't provided, these should be ignored. if maxDistance is missing, default to 25 miles.
+	var latitude = searchSection.get("latitude");
+	var longitude = searchSection.get("longitude");
+	var distanceAway = searchSection.get("maxDistance");
+	*/
+
+	if (query)
+	{
+		query = decodeURIComponent(query);
+
+		var raw = JSON.stringify({ "query": query});
+
+		// create a JSON object with parameters for API call and store in a variable
+		var requestOptions = {
+			method: 'POST',
+			body: raw,
+		};
+	
+		console.log(requestOptions);
+	
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForItineraryWithNameLike", requestOptions).then(response => fillItineraries(container, response, false));
+	}
+	else 
+	{
+		var elem = document.createElement("div");
+		elem.classList.add("no-search");
+
+		var niceText = document.createTextNode("no search information provided. try refining your search.");
+
+		elem.appendChild(niceText);
+
+		container.appendChild(elem);
+	}
+}
+
+function fillUsers(container, response)
+{
+	console.log("Hello");
 	//container.setHTML()
 	//container.innerHTML = 
 	if (response.status == 200)
 	{
-		response.json().then(output =>
-		{
-            console.log((output));
-			//i am expecting a list of json object, the array/list/whatever in an entry called results. if you can do it without this extra step, by all means change it.
+		var userID = parseInt(GetCookie("id"));
 
-			if (output.length == 0)
+		response.json().then(results =>
+		{
+			console.log(results);
+			if (results.length == 0)
 			{
+
 				var elem = document.createElement("div");
-				elem.classList.add("itinerary-empty");
-                var niceText = document.createTextNode("No results. That's unfortunate! Try expanding your search area or using more general search terms.");
-                elem.appendChild(niceText);
+				elem.classList.add("users-empty");
+
+				var niceText = document.createTextNode("No results. That's unfortunate! Try using different or more general search terms.");
+
+				elem.appendChild(niceText);
+
 				container.appendChild(elem);
 			}
 			else
 			{
 				//json elements are formatted as such:
-				output.forEach(element => 
-				{			
+				results.forEach(element => 
+				{
+					
 					var elem = document.createElement("div");
-					elem.classList.add("w3-padding-24");
+					elem.classList.add("user-item");
+
+					var screenHolder = document.createElement("div");
+					screenHolder.classList.add("user-screenname");
+					var screenContent = document.createTextNode(element["ScreenName"]);
+					screenHolder.appendChild(screenContent);
+					elem.appendChild(screenHolder);
 
 					var nameHolder = document.createElement("div");
-					nameHolder.classList.add("item-title");
-					var nameContent = document.createTextNode("Activity Name: " + element["ActivityName"]);
+					nameHolder.classList.add("item-fullname");
+
+					var fName = element["FirstName"];
+					var lName = element["LastName"];
+					
+					var nameText;
+					if (fName && lName)
+					{
+						 nameText = "Name: " + fName + " " + lName;
+					}
+					else if (fName)
+					{
+						nameText = "Name: " + fName + " (no last name provided)";
+					}
+					else if (lName)
+					{
+						nameText = "Last Name: " + fName + " (no first name provided)";
+					}
+					else 
+					{
+						nameText = "No name provided";
+					}
+					var nameContent = document.createTextNode(nameText);
 					nameHolder.appendChild(nameContent);
 					elem.appendChild(nameHolder);
 
-					var startHolder = document.createElement("div");
-					startHolder.classList.add("item-date");
-					var startContent = document.createTextNode("Starts: " + element["Address"]);
-					startHolder.appendChild(startContent);
-					elem.appendChild(startHolder);
+					var dobHolder = document.createElement("div");
+					dobHolder.classList.add("item-dob");
 
-					var endHolder = document.createElement("div");
-					endHolder.classList.add("item-date");
-					var endContent = document.createTextNode("Ends: " + element["Latitude"]);
-					endHolder.appendChild(endContent);
-					elem.appendChild(endHolder);
+					var dob = element["DateOfBirth"];
+					var dobText;
+					if (dob)
+					{
+						dobText = "Date of Birth: " + dob;
+					}
+					else 
+					{
+						dobText = "No date of birth provided";
+					}
+
+					var dobContent = document.createTextNode(dobText);
+					dobHolder.appendChild(dobContent);
+					elem.appendChild(dobHolder);
+
+					var id = element["UserID"];
 
 					elem.onclick = function() 
 					{
-						document.location = "itineraryFromDatabase.html?id=" + id;
+						document.location = "viewUser.html?id=" + id;
 					};
 
 					container.appendChild(elem);
@@ -90,18 +185,3 @@ function searchResults(container, response)
 		});
 	}
 }
-
-
-/**getParameterByName parses through the query parameters passed when the user chooses an itinerary from
- the list of itineraries. It retrieves the value from the name it is being passed as and then returns that 
-value**/
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
-

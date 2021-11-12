@@ -2,68 +2,838 @@
 <html>
 
 <head>
-    <meta charset='utf-8' />
-    <link href='../lib/main.css' rel='stylesheet' />
-    <title>Itinerary</title>
-    <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>
-    <script src='../lib/main.js'></script>
-
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+  <meta charset='utf-8' />
+  <link href='../lib/main.css' rel='stylesheet' />
+  <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <script src='../lib/main.js'></script>
+  <link href="dropdown.css" rel="stylesheet" type="text/css"/>
+  <link href="navbar.css" rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="common.css">
+  <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
     <link href="CSS/common.css" rel="stylesheet" type="text/css" />
     <link href='CSS/navbar.css' rel='stylesheet' />
     <link rel="stylesheet" href="CSS/itinerary.css">
 
-    <script src="JavaScript/common.js"></script>
-    <script src="JavaScript/itinerary.js"></script>
+    <!-- Navbar on small screens -->
+    <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
+    </div>
+  </div>
+  <script>
+
+  let map;
+      let marker;
+      let geocoder;
+      let responseDiv;
+      let response;
+
+      function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 16,
+      center: { lat: 37, lng: -95},
+      mapTypeControl: false,
+      });
+      geocoder = new google.maps.Geocoder();
+
+      const inputText = document.createElement("input");
+
+      inputText.type = "text";
+      inputText.placeholder = "Enter a location";
+
+      const submitButton = document.createElement("input");
+
+      submitButton.type = "button";
+      submitButton.value = "Search";
+      submitButton.classList.add("button", "button-primary");
+
+      const clearButton = document.createElement("input");
+
+      clearButton.type = "button";
+      clearButton.value = "Clear";
+      clearButton.classList.add("button", "button-secondary");
+      response = document.createElement("pre");
+      response.id = "response";
+      response.innerText = "";
+      responseDiv = document.createElement("div");
+      responseDiv.id = "response-container";
+      responseDiv.appendChild(response);
+
+      const instructionsElement = document.createElement("p");
+      marker = new google.maps.Marker({
+      map,
+      });
+      map.addListener("click", (e) => {
+      geocode({ location: e.latLng });
+      });
+      }
+
+      function clear() {
+      marker.setMap(null);
+      responseDiv.style.display = "none";
+      }
+      function geocode(request) {
+      clear();
+      geocoder
+      .geocode(request)
+      .then((result) => {
+      const { results } = result;
+
+      map.setCenter(results[0].geometry.location);
+      marker.setPosition(results[0].geometry.location);
+      marker.setMap(map);
+      responseDiv.style.display = "block";
+      response.innerText = JSON.stringify(result, null, 2);
+      return results;
+      })
+      .catch((e) => {
+      alert("Geocode was not successful for the following reason: " + e);
+      });
+      }
+
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+ //SCRIPT FOR MODAL ITINERARY MODAL FORM
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    //var btn = document.getElementById("myBtn");
+
+    //Get the button that saves the modal
+    var saveBtn = document.getElementById("saveBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    saveBtn.onclick = function() {
+      console.log("save click funciton called");
+      modal.style.display = "none";
+      var date1 = new Date(document.getElementById("startDate").value);
+      var date2 = new Date(document.getElementById("endDate").value);
+
+      createAndLoadCalendar(date1, date2);
+
+    }//end onclick save button
+ //END OF SCRIPT FOR MODAL ITINERARY MODAL FORM
+
+ //SCRIPT FOR EVENT DETAILS MODAL
+ //get the modal
+ var eventDetailsModal = document.getElementById("eventDetailsModal");
+
+ //Get the button that saves the modal
+    var saveBtnEventDetails = document.getElementById("saveBtnEventDetails");
+
+
+    // Get the <span> element that closes the modal
+    var spanEventDetails = document.getElementsByClassName("close")[0];
+
+
+    // When the user clicks on <span> (x), close the modal
+    spanEventDetails.onclick = function() {
+      eventDetailsModal.style.display = "none";
+      document.getElementById("map").style.display = "none";
+
+    }
+
+
+
+    saveBtnEventDetails.onclick = function() {
+      eventDetailsModal.style.display = "none";
+      document.getElementById("map").style.display = "none";
+
+    }//end onclick save button
+
+
+
+    function createAndLoadCalendar(startDate, endDate){
+    console.log("create function called");
+  var calendarEl = document.getElementById('calendar');
+  //calculate how many days the trip is
+      //var date1 = new Date(document.getElementById("startDate").value);
+      //var date2 = new Date(document.getElementById("endDate").value);
+      var diffTime = Math.abs(endDate - startDate);
+      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialDate: startDate,
+      initialView: 'timeGridAnyDay',
+      nowIndicator: true,
+
+
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+         right: 'timeGridAnyDay,listWeek' // buttons for switching between views
+          },
+          views: {
+            timeGridAnyDay: {
+              type: 'timeGrid',
+              duration: { days: diffDays +1 },
+              buttonText: 'Whole Trip'
+            },
+            listWeek: {
+            duration: { days: diffDays +1 }
+            }
+          },
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+      selectable: true,
+      selectMirror: true,
+      select: function(arg) {
+        var title = prompt('Event Title:');
+        var address = prompt("Address: ");
+        if (title) {
+          calendar.addEvent({
+            title: title,
+            start: arg.start,
+            end: arg.end,
+            allDay: arg.allDay,
+            extendedProps: {
+            photos: [],
+            Address: address
+            }//end extended props
+          })
+        }
+        calendar.unselect()
+      },
+      eventClick: function(arg) {//when they click on an event
+        eventDetailsModal.style.display = "block";
+        document.getElementById("map").style.display = "block";
+        //need to change the event start time or end time or title here
+        //then apply those changes using event functions
+
+        document.getElementById("eventName").innerHTML=arg.event.title;
+        document.getElementById("startDateEventDetails").innerHTML = arg.event.start;
+        document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
+
+
+        //MAP SCRIPT
+        geocode({ address: arg.event.extendedProps.Address });
+
+
+      function geocode(request) {
+      clear();
+      geocoder
+      .geocode(request)
+      .then((result) => {
+      const { results } = result;
+
+      map.setCenter(results[0].geometry.location);
+      marker.setPosition(results[0].geometry.location);
+      marker.setMap(map);
+      responseDiv.style.display = "block";
+      response.innerText = JSON.stringify(result, null, 2);
+      return results;
+      })
+      .catch((e) => {
+      alert("Geocode was not successful for the following reason: " + e);
+      });
+      }
+
+
+
+
+
+        //get the button for uploading photos
+    var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
+
+
+
+    uploadPhotosButton.onclick = function(){
+      const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
+      const options = {
+      accept: ["image/*"],
+      onUploadDone: file => {
+          //console.log(file);
+
+          //loop through uploaded photos and add them to the photos array for the event
+          //console.log(file["filesUploaded"]["0"]["url"]);//should be the url
+          var url = file["filesUploaded"]["0"]["url"];
+          //console.log("url " + url);
+          //console.log("photos array:" + arg.event.extendedProps.photos);
+          var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
+          //console.log("currentPhotoArray " + currentPhotoArray);
+          currentPhotoArray.push(url);
+          var addedPhotoArray = currentPhotoArray.slice(0);
+          //console.log("addedPhotoArray: " + addedPhotoArray);
+          arg.event.setExtendedProp( "photos",addedPhotoArray);
+          console.log("photos array: " + arg.event.extendedProps.photos);
+
+
+
+    var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
+    //var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];
+
+    //remove all children from slide show container, except the prev and next arrows
+
+    const removeChilds = (parent) => {
+    var done =0;
+    while (parent.lastChild && done==0) {
+        //console.log(parent.lastChild);
+        //console.log(parent.lastChild.className);
+        if(parent.lastChild.className != "next" && parent.lastChild.className != "prev"){
+        parent.removeChild(parent.lastChild);
+        }
+        else{ done =1;}
+    }
+      };
+
+
+      // remove all child nodes
+      removeChilds(slideshowContainer);
+
+
+    arg.event.extendedProps.photos.forEach(function(url, index, originalArray) {
+
+        var div1 = document.createElement('div');
+        div1.className = "mySlides fade";
+
+        var tempImg = document.createElement('img');
+        tempImg.style.width  = "100%";
+        tempImg.src = url;
+
+        div1.appendChild(tempImg);
+        slideshowContainer.appendChild(div1);
+    });
+    //console.log(slideshowContainer);
+
+
+
+        //display image in carousel
+        var slideIndex = 1;
+        showSlides(slideIndex);
+
+        // Next/previous controls
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+
+        // Thumbnail image controls
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName("mySlides");
+          var dots = document.getElementsByClassName("dot");
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+              slides[i].style.display = "none";
+          }
+          for (i = 0; i < dots.length; i++) {
+              dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+        }
+
+
+      }//end on upload done
+        };//end options
+      client.picker(options).open();
+
+
+    //https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6
+
+
+
+    }//end on click upload photos button
+
+
+        //console.log(arg);
+      },
+      dayMaxEvents: true, // allow "more" link when too many events
+      events: [
+        {
+          title: 'All Day Event',
+          start: '2021-09-01'
+
+        },
+        {
+          title: 'Long Event',
+          start: '2021-09-07',
+          end: '2021-09-10'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2021-09-09T16:00:00'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2021-09-16T16:00:00'
+        },
+        {
+          title: 'Conference',
+          start: '2021-09-11',
+          end: '2021-09-13'
+        },
+        {
+          title: 'Meeting',
+          start: '2021-09-12T10:30:00',
+          end: '2021-09-12T12:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2021-09-12T12:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2021-09-12T14:30:00'
+        },
+        {
+          title: 'Happy Hour',
+          start: '2021-09-12T17:30:00'
+        },
+        {
+          title: 'Dinner',
+          start: '2021-09-12T20:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2021-09-13T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2021-09-28'
+        }
+      ]
+    });
+
+  var button2 = document.getElementById("saveBtn");
+  button2.onclick = function(){console.log("clicked");}
+
+    calendar.render();
+
+  }//end create calendar function
+
+
+
+
+  });//end of dom content loaded
+
+        var slideIndex = 1;
+        showSlides(slideIndex);
+
+        // Next/previous controls
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+
+        // Thumbnail image controls
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName("mySlides");
+          var dots = document.getElementsByClassName("dot");
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+              slides[i].style.display = "none";
+          }
+          for (i = 0; i < dots.length; i++) {
+              dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+        }
+
+
+</script>
+  <style>
+
+
+  body {
+    margin: 60px 10px;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+  button
+  {
+    margin: 0 auto;
+    margin-left: 355px;
+    margin-bottom: 10px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 0.4em 0.65em;
+    border-radius: 0.25em;
+    font-weight: 400;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: gray;
+  margin: 0% auto; /* 0% from the top and centered */
+  padding: 20px;
+  border: 0px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:300px}
+.w3-red {background-color:#2C3E50 !important}
+
+input[type=text] {
+  width: 60%;
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=date] {
+
+  width: 75%;
+
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #f1f1f1;
+  text-align: center;
+}
+
+input[type=submit] {
+  width: 20%;
+  padding: 15px;
+  margin: 15px 0 22px 0;
+  display: block;
+  border: none;
+  background: #194d33;
+  color: white;
+}
+
+h1 {
+    font-size: 3em;
+    font-color: white;
+}
+
+label {
+  display: block;
+  text-align: center;
+  }
+
+.form-group {
+  display: block;
+ }
+
+.input {
+  display: block;
+  text-align: center;
+}
+* {box-sizing:border-box}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Hide the images by default */
+.mySlides {
+  display: none;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+/*END OF CSS FOR MODAL FORM*/
+
+/*MAP CSS*/
+/* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+#map {
+height: 100%;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+height: 100%;
+margin: 0;
+padding: 30px;
+}
+
+input[type="text"] {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+line-height: 40px;
+margin-right: 0;
+min-width: 25%;
+}
+
+input[type="button"] {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+height: 40px;
+cursor: pointer;
+margin-left: 5px;
+}
+input[type="button"]:hover {
+background: #ebebeb;
+}
+input[type="button"].button-primary {
+background-color: #1a73e8;
+color: white;
+}
+input[type="button"].button-primary:hover {
+background-color: #1765cc;
+}
+input[type="button"].button-secondary {
+background-color: white;
+color: #1a73e8;
+}
+input[type="button"].button-secondary:hover {
+background-color: #d2e3fc;
+}
+
+#response-container {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+overflow: auto;
+max-height: 50%;
+max-width: 90%;
+background-color: rgba(255, 255, 255, 0.95);
+font-size: small;
+}
+
+#instructions {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+padding: 1rem;
+font-size: medium;
+}
+
+</style>
 
 </head>
 <body>
+    <!--  <button id="myBtn">Create Itinerary</button>-->
+    <!--  <button type="button">Save Itinerary</button>-->
 
-<!-- modal itin creation form -->
-<div id="myModal" class="modal">
+    <div id='calendar'></div>
 
-  <div class="modal-content">
-    <span class="close">&times;</span>
+   
 
-    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-      <h1 align="middle" style="color: white" >Create Your Trip</h1>
-    </header>
+    <!-- modal event edit form -->
+    <div id="eventDetailsModal" class="modal" style="display:none">
 
-    <form action="" method= "post">
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Trip Name:</label>
-        <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
+        <div class="modal-content">
+            <span class="close">&times;</span>
+
+            <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+                <h1 align="center" style="color: white">Event Details</h1>
+            </header>
+
+            <form action="" method="post">
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Event Name:</label>
+                    <label id="eventName"></label>
+                </div>
+                <div class="form-group" align="center">
+                    <label>Start Time:</label>
+                    <label id="startDateEventDetails"></label>
+                </div>
+                <div class="form-group" align="center">
+                    <label>End Time:</label>
+                    <label id="endDateEventDetails"></label>
+                </div>
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Notes:</label>
+                    <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
+                </div>
+                <div class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
+
+        <label>Uploaded Photos:</label>
       </div>
-      <div class="form-group" align="middle">
-        <label>Start Date:</label>
-        <input type="date" class="form-control" name="startDate" id="startDate" required>
+      <!-- Slideshow container -->
+      <div class="slideshow-container">
+
+        <!-- Next and previous buttons -->
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
       </div>
-      <div class="form-group" align="middle">
-        <label>End Date:</label>
-        <input type="date" class="form-control" name="endDate" id="endDate" required>
+      <br>
+
+      <!-- The dots/circles -->
+      <div style="text-align:center">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
       </div>
-      <div class="form-group" align="middle">
-        <label>Location:</label>
-        <input type="text" class="form-control" name="location" id="location" required>
-      </div>
-      <div class="form-group"  align="middle">
-        <label>Visibility:</label>
-        <select style="padding: 5px" name = "Visibility:">
-          <option value = "private" selected>Private</option>
-          <option value = "public">Public</option>
-        </select>
-      </div>
-      <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
-      </div>
-    </form>
-  </div>
-</div>
+
+
+
+                <div style="padding-top: 25px" class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
+                </div>
+            </form>
+        </div>
+    </div>
+
+<div id="map" style = "display: none"></div>
+
+<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 
 
 
@@ -71,6 +841,14 @@
   <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
 </div>
 
+    <!-- Footer -->
+    <footer class="w3-container w3-padding-64 w3-center w3-opacity">
+        <div class="w3-xlarge w3-padding-32">
+        </div>
 
-</body>
+</footer>
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&v=weekly"
+        async
+></script>
 </html>

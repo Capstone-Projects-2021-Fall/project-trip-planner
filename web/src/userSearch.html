@@ -13,11 +13,23 @@
 
     <link href="CSS/common.css" rel="stylesheet" type="text/css" />
     <link href='CSS/navbar.css' rel='stylesheet' />
+    <link href='CSS/userSearch.css' rel='stylesheet' />
+
 
     <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
     <script src="JavaScript/common.js"></script>
     <script src="JavaScript/search.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', OnLoad);
+
+        function OnLoad(event)
+        {
+            FindUsers();
+        }
+
+    </script>
 
 </head>
 <body>
@@ -38,8 +50,8 @@
 					<option value="Itineraries">Itineraries</option>
 				</select>
 				<div class="search-container">
-					<input type="text" placeholder="Search.." name="search" id="search">
-					<button onclick="document.location='searchResults.html?search=' + search.value" type="submit"><i class="fa fa-search"></i></button>
+					<input type="text" id="quick-search" placeholder="Search.." name="search">
+					<button onclick="PerformSearch()" type="submit"><i class="fa fa-search"></i></button>
 				</div>
 			</div>
         </div>
@@ -62,9 +74,7 @@
 
     <!-- Second Grid -->
     <main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-        <div class="w3-content" id="search-results">
-            
-        </div>
+        <div class="w3-content" id="itinerary-list-holder"></div>
     </main>
 
     <!-- Footer -->
