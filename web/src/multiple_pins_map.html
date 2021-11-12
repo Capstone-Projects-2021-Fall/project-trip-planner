@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marker Accessibility</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+</head>
+<body>
+<div id="map"></div>
+
+<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap&v=weekly"
+        async
+></script>
+</body>
+</html>
+
+<style>
+/* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+#map {
+height: 100%;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+height: 100%;
+margin: 0;
+padding: 0;
+}
+</style>
+
+<script>
+// The following example creates five accessible and
+// focusable markers.
+function initMap() {
+const map = new google.maps.Map(document.getElementById("map"), {
+zoom: 13,
+center: { lat: 39.9526, lng: -75.1652 },
+});
+// Set LatLng and title text for the markers. The first marker (Boynton Pass)
+// receives the initial focus when tab is pressed. Use arrow keys to
+// move between markers; press tab again to cycle through the map controls.
+const tourStops = [
+[{ lat: 39.9528, lng: -75.1635 }, "City Hall"],
+[{ lat: 39.9656, lng: -75.1810 }, "Art Museum"],
+[{ lat: 39.9720, lng: - 75.1963 }, "Philadelphia Zoo"],
+[{ lat: 39.9489, lng: -75.1500 }, "Independence hall"],
+[{ lat: 39.98138, lng: -75.155565 }, "Temple University"],
+];
+// Create an info window to share between markers.
+const infoWindow = new google.maps.InfoWindow();
+
+// Create the markers.
+tourStops.forEach(([position, title], i) => {
+const marker = new google.maps.Marker({
+position,
+map,
+title: `${i + 1}. ${title}`,
+label: `${i + 1}`,
+optimized: false,
+});
+
+// Add a click listener for each marker, and set up the info window.
+marker.addListener("click", () => {
+infoWindow.close();
+infoWindow.setContent(marker.getTitle());
+infoWindow.open(marker.getMap(), marker);
+});
+});
+}
+</script>

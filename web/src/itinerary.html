@@ -375,63 +375,6 @@
         //console.log(arg);
       },
       dayMaxEvents: true, // allow "more" link when too many events
-      events: [
-        {
-          title: 'All Day Event',
-          start: '2021-09-01'
-
-        },
-        {
-          title: 'Long Event',
-          start: '2021-09-07',
-          end: '2021-09-10'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2021-09-09T16:00:00'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2021-09-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2021-09-11',
-          end: '2021-09-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2021-09-12T10:30:00',
-          end: '2021-09-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2021-09-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2021-09-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2021-09-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2021-09-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2021-09-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2021-09-28'
-        }
-      ]
     });
 
   var button2 = document.getElementById("saveBtn");
@@ -779,6 +722,8 @@ font-size: medium;
 <!--  <button id="myBtn">Create Itinerary</button>-->
 <!--  <button type="button">Save Itinerary</button>-->
 
+<!-- <div style="float: left; width: 50%" id='calendar'></div> -->
+
 <div id='calendar'></div>
 
 <!-- modal itin creation form -->
@@ -881,13 +826,13 @@ font-size: medium;
 
 <div id="map" style = "display: none"></div>
 
-<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<!-- Async script executes immediately and must be after any DOM elements used in callback.
 
 
 
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
   <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
-</div>
+</div> -->
 
 
 </body>
@@ -899,7 +844,7 @@ font-size: medium;
 
 </footer>
 <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&v=weekly"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap&v=weekly"
         async
 ></script>
 </html>
