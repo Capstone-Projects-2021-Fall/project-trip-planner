@@ -1,46 +1,117 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var userID = document.cookie;
-    userID = userID.replace(/\D/g, "");
+document.addEventListener('DOMContentLoaded', OnLoad);
 
-    let json = {
-        "userID":userID
-    }
-    json = JSON.stringify(json);
-    
-    var requestItinerary2 = {
-        method: 'POST',
-        body:json
-    };
+function OnLoad(event)
+{
+	var userID = parseInt(GetCookie("id"));
 
-    // make API call with parameters and use promises to get response
-    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetUserItineraries", requestItinerary2)  .then(function (a) {
-        return a.json(); // call the json method on the response to get JSON
-    })
-    .then(function (json) {
-        let list = document.getElementById("itineraryList");
-        for(let index = 0; index < json.length; index++){
-            var entry = document.createElement('h5');
-            var aTag = document.createElement('a');
-            aTag.innerHTML = json[index]["ItineraryName"];
-            aTag.setAttribute("href", "itineraryFromDatabase.html?page="+json[index]["ItineraryName"]);
-            entry.appendChild(aTag)
-            list.appendChild(entry);
-            console.log(json[index]);
-            }//end data function
-    });/*.then( 
-        function(data){
-            let value = JSON.parse(data);
-            let count = (Object.keys(value).length);
-            let list = document.getElementById("itineraryList");
-            for(let index = 0; index < count; index++){
-                var entry = document.createElement('li');
-                var aTag = document.createElement('a');
-                aTag.innerHTML = value[index];
-                aTag.setAttribute("href", "itineraryFromDatabase.html?page="+value[index][0]);
-                entry.appendChild(aTag)
-                list.appendChild(entry);
-                console.log(value[index]);
-             }//end data function
-        });*/
+	if (userID == null)
+	{
+		document.location = "login.html";
+	}
+	else 
+	{
+		var container = document.getElementById("itinerary-list-holder");
+		
+        let json = {
+            "userID":userID
+        }
+        json = JSON.stringify(json);
+        
+        var requestList = {
+            method: 'POST',
+            body:json
+        };
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetUserItineraries", requestList).then(response => fillItineraries(container, response, true));
+	}
+}
 
-});//end of dom content loaded
+function fillItineraries(container, response, isUserSearch)
+{
+	//container.setHTML()
+	//container.innerHTML = 
+	if (response.status == 200)
+	{
+		var userID = parseInt(GetCookie("id"));
+
+		response.json().then(output =>
+		{
+            console.log(output);
+			//i am expecting a list of json object, the array/list/whatever in an entry called results. if you can do it without this extra step, by all means change it.
+
+			if (output.length == 0)
+			{
+
+				var elem = document.createElement("div");
+				elem.classList.add("itinerary-empty");
+
+				var niceText;
+				if (isUserSearch)
+				{
+					niceText = document.createTextNode("You have no itineraries. Create one!");
+				}
+				else 
+				{
+					niceText = document.createTextNode("No results. That's unfortunate! Try expanding your search area or using more general search terms.");
+				}
+				elem.appendChild(niceText);
+
+				container.appendChild(elem);
+			}
+			else
+			{
+				//json elements are formatted as such:
+				output.forEach(element => 
+				{
+					
+					var elem = document.createElement("div");
+					elem.classList.add("w3-padding-24");
+
+					var nameHolder = document.createElement("div");
+					nameHolder.classList.add("item-title");
+					var nameContent = document.createTextNode(element["ItineraryName"]);
+					nameHolder.appendChild(nameContent);
+					elem.appendChild(nameHolder);
+
+					var startHolder = document.createElement("div");
+					startHolder.classList.add("item-date");
+					var startContent = document.createTextNode("Starts: " + element["StartDate"]);
+					startHolder.appendChild(startContent);
+					elem.appendChild(startHolder);
+
+					var endHolder = document.createElement("div");
+					endHolder.classList.add("item-date");
+					var endContent = document.createTextNode("Ends: " + element["EndDate"]);
+					endHolder.appendChild(endContent);
+					elem.appendChild(endHolder);
+
+					var nameHolder = document.createElement("div");
+					nameHolder.classList.add("item-author");
+
+
+					var creatorText = "Creator: " + element["CreatorName"];
+					var creatorID = element["CreatorID"];
+					var id = element["ItineraryID"];
+
+					if (creatorID == userID)
+					{
+						creatorText += " (you)";
+					}
+
+					var nameContent= document.createTextNode(creatorText);
+					nameHolder.appendChild(nameContent);
+					elem.appendChild(nameHolder);
+
+					elem.onclick = function() 
+					{
+						document.location = "itineraryFromDatabase.html?id=" + id;
+					};
+
+					container.appendChild(elem);
+				});
+			}
+		});
+	}
+
+	
+
+}

@@ -1,10 +1,12 @@
+
+
+
 function CallAPI(email, password) 
 {
 	var itineraryName = document.getElementById("tripName").value;
 	var startDate = new Date(document.getElementById("startDate").value);
 	var endDate = new Date(document.getElementById("endDate").value);
 	var note = document.getElementById("note").value;
-	var location = document.getElementById("location").value;
 
 	if (!note)
 	{
@@ -12,6 +14,7 @@ function CallAPI(email, password)
 	}
 
 	var userID = parseInt(GetCookie("id"));
+	//likely should check here to see if cookie is not null.
 
 	console.log("UserID: '" + userID + "'");
 	console.log("Type: '" + typeof(userID) + "'");
@@ -20,12 +23,13 @@ function CallAPI(email, password)
 		"itineraryName": itineraryName,
 		"startDate": startDate,
 		"endDate": endDate,
-		"address": location,
 		"userID": userID,
 		"additionalInformation": note
 	};
 
 	newItinerary = JSON.stringify(newItinerary);
+
+	console.log(newItinerary);
 
 	var postItinerary = {
 		method: 'POST',
@@ -61,6 +65,8 @@ function CallAPI(email, password)
 				 * 3: Invalid Creator ID.This is an error caused by the API, and should never happen.
 				 * 4: Invalid Itinerary Name.It can't be null, empty, or whitespace.
 				 */
+
+				 console.log(output)
 
 				var err = output["errorCode"];
 				if (err == 1)

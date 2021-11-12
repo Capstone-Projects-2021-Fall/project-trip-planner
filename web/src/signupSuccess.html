@@ -11,9 +11,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	<link rel="stylesheet" href='CSS/signup.css' />
-	<link rel="stylesheet" href='CSS/searchbar.css' />
-	<link rel="stylesheet" href='CSS/dropdown.css' />
 	<link rel="stylesheet" href="CSS/common.css" />
 	<link rel="stylesheet" href='CSS/navbar.css' />
 
@@ -33,15 +30,12 @@
 			<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
 			<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
 			<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-			<div class="topnav">
-				<div class="dropdown">
-					<button class="dropbtn">▼</button>
-					<div class="dropdown-content">
-						<a href="#">User</a>
-						<a href="#">Itineraries</a>
-					</div>
-				</div>
-				<a class="active" href="#home"></a>
+			<div class="w3-hide-small topnav">
+				<label for="dropdown">Search For</label>	
+				<select id="dropdown">
+					<option value="Users">Users</option>
+					<option value="Itineraries">Itineraries</option>
+				</select>
 				<div class="search-container">
 					<input type="text" placeholder="Search.." name="search">
 					<button onclick="document.location='searchResults.html'" type="submit"><i class="fa fa-search"></i></button>
@@ -56,11 +50,11 @@
 			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
 			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
 			<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
-		</div>-->
+		</div>
 	</nav>
 
 	<!-- Header -->
-	<header class="w3-container w3-red w3-center" style="padding:50px 16px">
+	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
 		<h1 class="w3-margin w3-jumbo">Success!</h1>
 	</header>
 	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
@@ -69,7 +63,7 @@
 				Normally, we'd send you a verification email and force you to handle that, but for the sake of this project we're not going to spam your inbox.
 				So, you're all set. Click the button below to go to the login page and login!
 			</h3>
-			<a href="login.html" class="btn btn-primary">Let's Go!</a>
+			<button onclick="document.location='login.html'" type="submit" id="letsgo">Let's Go!</button>
 		</div>
 	</main>
 </body>

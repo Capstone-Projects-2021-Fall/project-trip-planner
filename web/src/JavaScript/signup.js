@@ -1,5 +1,12 @@
-CallAPI = (username, email, password, firstName, lastName, dob)
+function CallAPI()
 {
+	var username = document.getElementById('username').value;
+	var email = document.getElementById('email').value;
+	var password = document.getElementById('password').value;
+	var firstName = document.getElementById('firstName').value;
+	var lastName = document.getElementById('lastName').value;
+	var dob = document.getElementById('DOB').value;
+
     // instantiate a headers object
     var myHeaders = new Headers();
     // add content type header to object
@@ -10,10 +17,13 @@ CallAPI = (username, email, password, firstName, lastName, dob)
     // create a JSON object with parameters for API call and store in a variable
     var requestOptions = {
         method: 'POST',
-        body:raw
+        body:raw,
     };
+
+	console.log(raw);
+
     // make API call with parameters and use promises to get response
-    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/UserManagement", requestOptions).then(response =>
+    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateNewUserNormalLogin", requestOptions).then(response =>
     {
         /* ERROR CODES
          * 1: Email already taken.

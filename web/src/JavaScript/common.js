@@ -28,5 +28,6 @@ function GetCookie(cname)
 			return c.substring(name.length, c.length);
 		}
 	}
-	return "";
+
+	return null;
 }
