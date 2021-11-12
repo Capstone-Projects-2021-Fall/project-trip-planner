@@ -45,7 +45,7 @@
 
       function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 4,
+      zoom: 16,
       center: { lat: 37, lng: -95},
       mapTypeControl: false,
       });
@@ -75,26 +75,12 @@
       responseDiv.appendChild(response);
 
       const instructionsElement = document.createElement("p");
-
-
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
-      map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
-      map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
       marker = new google.maps.Marker({
       map,
       });
       map.addListener("click", (e) => {
       geocode({ location: e.latLng });
       });
-      submitButton.addEventListener("click", () =>
-      geocode({ address: "Chicago" })
-      );
-      clearButton.addEventListener("click", () => {
-      clear();
-      });
-      clear();
       }
 
       function clear() {
@@ -214,6 +200,9 @@
               type: 'timeGrid',
               duration: { days: diffDays +1 },
               buttonText: 'Whole Trip'
+            },
+            listWeek: {
+            duration: { days: diffDays +1 }
             }
           },
       navLinks: true, // can click day/week names to navigate views
@@ -790,6 +779,8 @@ font-size: medium;
 <!--  <button id="myBtn">Create Itinerary</button>-->
 <!--  <button type="button">Save Itinerary</button>-->
 
+<!-- <div style="float: left; width: 50%" id='calendar'></div> -->
+
 <div id='calendar'></div>
 
 <!-- modal itin creation form -->
@@ -865,21 +856,21 @@ font-size: medium;
 
         <label>Uploaded Photos:</label>
       </div>
- <!-- Slideshow container -->
-<div class="slideshow-container">
+      <!-- Slideshow container -->
+      <div class="slideshow-container">
 
-  <!-- Next and previous buttons -->
-  <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-  <a class="next" onclick="plusSlides(1)">&#10095;</a>
-</div>
-<br>
+        <!-- Next and previous buttons -->
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+      </div>
+      <br>
 
-<!-- The dots/circles -->
-<div style="text-align:center">
-  <span class="dot" onclick="currentSlide(1)"></span>
-  <span class="dot" onclick="currentSlide(2)"></span>
-  <span class="dot" onclick="currentSlide(3)"></span>
-</div>
+      <!-- The dots/circles -->
+      <div style="text-align:center">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+      </div>
 
 
 
@@ -892,13 +883,13 @@ font-size: medium;
 
 <div id="map" style = "display: none"></div>
 
-<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<!-- Async script executes immediately and must be after any DOM elements used in callback.
 
 
 
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
   <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
-</div>
+</div> -->
 
 
 </body>
@@ -910,7 +901,7 @@ font-size: medium;
 
 </footer>
 <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb0wqkPJvmZzNp1cK6LDZYVU3esXlw3F0&callback=initMap&v=weekly"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap&v=weekly"
         async
 ></script>
 </html>
