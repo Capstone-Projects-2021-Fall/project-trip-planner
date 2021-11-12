@@ -207,7 +207,23 @@
               buttonText: 'Whole Trip'
             },
             listWeek: {
-            duration: { days: diffDays +1 }
+            duration: { days: diffDays +1 },
+            noEventsContent: function(arg) {
+
+
+                //let fragment = document.createElement('div')
+                //fragment.innerHTML="This is where map goes"
+                //fragment.appendChild(document.getElementById('map2'))
+
+
+
+
+                document.getElementById("map2").style.display = "block";
+
+                let arrayOfDomNodes = [ document.getElementById('map2') ]
+                return { domNodes: arrayOfDomNodes }
+              }//end of no content function
+
             }
           },
       navLinks: true, // can click day/week names to navigate views
@@ -699,6 +715,11 @@ height: 100%;
 }
 #map2 {
 height: 100%;
+position: static;
+}
+
+.positioned {
+  position: static !important;
 }
 
 /* Optional: Makes the sample page fill the window. */
@@ -896,7 +917,8 @@ font-size: medium;
 
 
 <div id="map" style = "display: none"></div>
-<div id="map2" style = "display: block" >This is where the map goes</div>
+<div id="map2" style = "display: none" class="positioned" >This is where the map goes</div>
+
 
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback.
