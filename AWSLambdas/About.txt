@@ -2,3 +2,5 @@ The code here is written entirely online via AWS Lambda. Data here is essentiall
 
 AWS doesn't really work with version control on github for now, so this is the only way to show it. we've looked into tools that could help with this, and while Serverless Framework looks promising, (see https://github.com/serverless/serverless), but it's still in Beta and we've decided adding another toolkit to our project that is in active development will only make things more complicated.
 
+Common files included in all versions are in the "Common" folder. You will need them in whatever directory you are using if you decide to test the code manually.
+

@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
-<title>Itinerary</title>
+
 <head>
   <meta charset='utf-8' />
   <link href='../lib/main.css' rel='stylesheet' />
@@ -16,16 +16,9 @@
   <link rel="stylesheet" href="common.css">
   <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
-  <!-- Navbar -->
-  <div class="w3-top">
-    <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-      <a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-      <a href="account.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Itineraries</a>
-      <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
-      <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-    </div>
+    <link href="CSS/common.css" rel="stylesheet" type="text/css" />
+    <link href='CSS/navbar.css' rel='stylesheet' />
+    <link rel="stylesheet" href="CSS/itinerary.css">
 
     <!-- Navbar on small screens -->
     <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
@@ -774,83 +767,42 @@ font-size: medium;
 
 </head>
 <body>
+    <!--  <button id="myBtn">Create Itinerary</button>-->
+    <!--  <button type="button">Save Itinerary</button>-->
 
+    <div id='calendar'></div>
 
-<!--  <button id="myBtn">Create Itinerary</button>-->
-<!--  <button type="button">Save Itinerary</button>-->
+   
 
-<div id='calendar'></div>
+    <!-- modal event edit form -->
+    <div id="eventDetailsModal" class="modal" style="display:none">
 
-<!-- modal itin creation form -->
-<div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
 
-  <div class="modal-content">
-    <span class="close">&times;</span>
+            <header class="w3-container w3-red w3-center" style="padding:40px 70px">
+                <h1 align="center" style="color: white">Event Details</h1>
+            </header>
 
-    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-      <h1 align="middle" style="color: white" >Create Your Trip</h1>
-    </header>
-
-    <form action="" method= "post">
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Trip Name:</label>
-        <input style="text-align: center" type="text" class="form-control" name="tripName" id="tripName" required>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Start Date:</label>
-        <input type="date" class="form-control" name="startDate" id="startDate" required>
-      </div>
-      <div class="form-group" align="middle">
-        <label>End Date:</label>
-        <input type="date" class="form-control" name="endDate" id="endDate" required>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Location:</label>
-        <input type="text" class="form-control" name="location" id="location" required>
-      </div>
-      <div class="form-group"  align="middle">
-        <label>Visibility:</label>
-        <select style="padding: 5px" name = "Visibility:">
-          <option value = "private" selected>Private</option>
-          <option value = "public">Public</option>
-        </select>
-      </div>
-      <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtn" class="btn btn-primary" value="Save">
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- modal event edit form -->
-<div id="eventDetailsModal" class="modal" style="display:none">
-
-  <div class="modal-content">
-    <span class="close">&times;</span>
-
-    <header class="w3-container w3-red w3-center" style="padding:40px 70px">
-      <h1 align="middle" style="color: white" >Event Details</h1>
-    </header>
-
-    <form action="" method= "post">
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Event Name:</label>
-        <label id = "eventName"></label>
-      </div>
-      <div class="form-group" align="middle">
-        <label>Start Time:</label>
-        <label id = "startDateEventDetails"></label>
-      </div>
-      <div class="form-group" align="middle">
-        <label>End Time:</label>
-        <label id = "endDateEventDetails"></label>
-      </div>
-      <div style="padding-top: 20px" class="form-group"  align="middle">
-        <label>Notes:</label>
-        <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
-      </div>
-      <div class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
+            <form action="" method="post">
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Event Name:</label>
+                    <label id="eventName"></label>
+                </div>
+                <div class="form-group" align="center">
+                    <label>Start Time:</label>
+                    <label id="startDateEventDetails"></label>
+                </div>
+                <div class="form-group" align="center">
+                    <label>End Time:</label>
+                    <label id="endDateEventDetails"></label>
+                </div>
+                <div style="padding-top: 20px" class="form-group" align="center">
+                    <label>Notes:</label>
+                    <input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
+                </div>
+                <div class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
 
         <label>Uploaded Photos:</label>
       </div>
@@ -872,12 +824,12 @@ font-size: medium;
 
 
 
-      <div style="padding-top: 25px" class="form-group" align="middle">
-        <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
-      </div>
-    </form>
-  </div>
-</div>
+                <div style="padding-top: 25px" class="form-group" align="center">
+                    <input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
+                </div>
+            </form>
+        </div>
+    </div>
 
 <div id="map" style = "display: none"></div>
 
@@ -889,13 +841,10 @@ font-size: medium;
   <h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
 </div>
 
-
-</body>
-
-<!-- Footer -->
-<footer class="w3-container w3-padding-64 w3-center w3-opacity">
-  <div class="w3-xlarge w3-padding-32">
-  </div>
+    <!-- Footer -->
+    <footer class="w3-container w3-padding-64 w3-center w3-opacity">
+        <div class="w3-xlarge w3-padding-32">
+        </div>
 
 </footer>
 <script
