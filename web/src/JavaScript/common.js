@@ -32,24 +32,25 @@ function GetCookie(cname)
 	return null;
 }
 
-function fillItineraries(container, response, isUserSearch)
+function fillItineraries(container, response, isAccount)
 {
 	console.log("Hello");
 	//container.setHTML()
 	//container.innerHTML = 
 	if (response.status == 200)
 	{
-		response.json().then(results =>
+		response.json().then(res =>
 		{
-			console.log(results);
-			if (results.length == 0)
+			//console.log(res);
+			console.log("Type: " + typeof(res));
+			if (res.length == 0)
 			{
 
 				var elem = document.createElement("div");
 				elem.classList.add("itinerary-empty");
 
 				var niceText;
-				if (isUserSearch)
+				if (isAccount)
 				{
 					niceText = document.createTextNode("You have no itineraries. Create one!");
 				}
@@ -64,7 +65,7 @@ function fillItineraries(container, response, isUserSearch)
 			else
 			{
 				//json elements are formatted as such:
-				results.forEach(element => 
+				for (const element of res)
 				{
 					
 					var elem = document.createElement("div");
@@ -88,14 +89,14 @@ function fillItineraries(container, response, isUserSearch)
 					endHolder.appendChild(endContent);
 					elem.appendChild(endHolder);
 
-					var nameHolder = document.createElement("div");
-					nameHolder.classList.add("item-author");
-
 					var id = element["ItineraryID"];
 
 					//User search does not pull the creator id or name because it's the same as the current user. so these wouldn't be valid.
-					if (!isUserSearch)
+					if (!isAccount)
 					{
+						var nameHolder = document.createElement("div");
+						nameHolder.classList.add("item-author");
+
 						var userID = parseInt(GetCookie("id"));
 
 						var creatorText = "Creator: " + element["CreatorName"];
@@ -117,7 +118,7 @@ function fillItineraries(container, response, isUserSearch)
 					};
 
 					container.appendChild(elem);
-				});
+				};
 			}
 		});
 	}
