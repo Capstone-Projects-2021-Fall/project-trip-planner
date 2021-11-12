@@ -20,6 +20,7 @@
 
 	<script src="JavaScript/homepage.js"></script>
 	<script src="JavaScript/common.js"></script>
+	<script src="JavaScript/account.js"></script>
 </head>
 <body>
 	<!-- TODO: check if id cookie already there, if it is, go to account page. also, add log out option or we're forever stuck (for two hours or until the browser is closed, anyway, whichever is first)-->
@@ -73,8 +74,9 @@
 
 			<div class="w3-twothird">
 				<h1>Your Itineraries</h1>
-				<h5 class="w3-padding-32">Add Saved Itineraries here</h5>
-
+				<div id="itineraryList">
+					<h5 class="w3-padding-32"></h5>
+				</div>
 			</div>
 		</div>
 	</main>
