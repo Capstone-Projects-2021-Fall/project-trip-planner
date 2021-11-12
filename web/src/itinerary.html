@@ -36,12 +36,20 @@
     </div>
   </div>
   <script>
-      let map;
+      //let map;
       let map2;
-      let marker;
+      //let marker;
       let marker2;
 
       function initMap() {
+
+      // Generate Second Map
+      map2 = new google.maps.Map(document.getElementById("map2"), {
+           zoom: 16,
+           center: { lat: 37, lng: -95},
+           mapTypeControl: false,
+           });                                                                
+
         // Generate First Map
          map = new google.maps.Map(document.getElementById("map"), {
               zoom: 16,
@@ -50,12 +58,13 @@
               });
 
 
-        // Generate Second Map
-        map2 = new google.maps.Map(document.getElementById("map2"), {
-             zoom: 16,
-             center: { lat: 37, lng: -95},
-             mapTypeControl: false,
-             });
+
+
+
+
+
+
+            
 
 
         marker = new google.maps.Marker({
@@ -75,6 +84,7 @@
 
       function clear() {
       marker.setMap(null);
+      marker2.setMap(null);
       //responseDiv.style.display = "none";
       }
       function geocode(request) {
@@ -89,6 +99,9 @@
       marker.setMap(map);
       //responseDiv.style.display = "block";
       //response.innerText = JSON.stringify(result, null, 2);
+       map2.setCenter(results[0].geometry.location);
+       marker2.setPosition(results[0].geometry.location);
+       marker2.setMap(map2);
       return results;
       })
       .catch((e) => {
@@ -244,6 +257,10 @@
       map.setCenter(results[0].geometry.location);
       marker.setPosition(results[0].geometry.location);
       marker.setMap(map);
+
+      map2.setCenter(results[0].geometry.location);
+      marker2.setPosition(results[0].geometry.location);
+      marker2.setMap(map2);
       //responseDiv.style.display = "block";
       //response.innerText = JSON.stringify(result, null, 2);
       return results;
@@ -680,6 +697,9 @@ label {
 #map {
 height: 100%;
 }
+#map2 {
+height: 100%;
+}
 
 /* Optional: Makes the sample page fill the window. */
 html,
@@ -874,8 +894,9 @@ font-size: medium;
   </div>
 </div>
 
-<div id="map2" style = "display: block" >This is where the map goes</div>
+
 <div id="map" style = "display: none"></div>
+<div id="map2" style = "display: block" >This is where the map goes</div>
 
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback.
@@ -896,7 +917,7 @@ font-size: medium;
 
 </footer>
 <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap&v=weekly"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap"
         async
 ></script>
 </html>
