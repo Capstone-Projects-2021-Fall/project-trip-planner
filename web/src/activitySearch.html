@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Search Results</title>
@@ -13,20 +13,20 @@
 
     <link href="CSS/common.css" rel="stylesheet" type="text/css" />
     <link href='CSS/navbar.css' rel='stylesheet' />
-    <link href="CSS/itineraryItem.css" rel="stylesheet" type="text/css" />
+    <link href='CSS/userSearch.css' rel='stylesheet' />
+
 
     <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
     <script src="JavaScript/common.js"></script>
     <script src="JavaScript/search.js"></script>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', OnLoad);
 
         function OnLoad(event)
         {
-            QuickFindItineraries();
+            FindActivities();
         }
 
     </script>
@@ -48,7 +48,8 @@
 				<select id="dropdown">
 					<option value="Users">Users</option>
 					<option value="Itineraries">Itineraries</option>
-					<option value="Activities">Activities</option>
+					<option value ="Activities">Activities</option>
+
 				</select>
 				<div class="search-container">
 					<input type="text" id="quick-search" placeholder="Search.." name="search">
@@ -75,10 +76,6 @@
 
     <!-- Second Grid -->
     <main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-        <div class="w3-content">
-            <h3>Refine Your search</h3>
-            <h4>&lt;Not Implemented Yet&gt;</h4>
-        </div>
         <div class="w3-content" id="itinerary-list-holder"></div>
     </main>
 

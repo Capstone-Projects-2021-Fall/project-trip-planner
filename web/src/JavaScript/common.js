@@ -34,9 +34,6 @@ function GetCookie(cname)
 
 function fillItineraries(container, response, isAccount)
 {
-	console.log("Hello");
-	//container.setHTML()
-	//container.innerHTML = 
 	if (response.status == 200)
 	{
 		response.json().then(res =>
@@ -73,7 +70,7 @@ function fillItineraries(container, response, isAccount)
 
 					var nameHolder = document.createElement("div");
 					nameHolder.classList.add("item-title");
-					var nameContent = document.createTextNode(element["ItineraryName"]);
+					var nameContent = document.createTextNode("Itinerary Name: " + element["ItineraryName"]);
 					nameHolder.appendChild(nameContent);
 					elem.appendChild(nameHolder);
 
@@ -145,8 +142,11 @@ function PerformSearch()
 		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content);
 	}
 	//fallback to users if something breaks. should just be users and itineraries but whatever.
-	else 
+	else if (selectBox.value == "Users")
 	{
 		document.location = "userSearch.html?query=" + encodeURIComponent(content);
+	}
+	else if (selectBox.value == "Activities"){
+		document.location = "activitySearch.html?query=" + encodeURIComponent(content);
 	}
 }
