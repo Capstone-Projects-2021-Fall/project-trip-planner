@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // make API call with parameters and use promises to get response
-    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/UpdateItineray?page="+ Number(id), requestItinerary).then(response => response.text()) // <---
+    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary?page="+ Number(id), requestItinerary).then(response => response.text()) // <---
     .then( function(data){let value = JSON.parse(data);
     
     let count = (Object.keys(value).length);
@@ -233,13 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
       let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
       let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
       saveEvents.activities.push({
-        "title":title,
-        "start":start,
-        "end":end,
-        "address":address,
-        "additionalInformation": additionalInformation,
-        "latitude": latitude,
-        "longitude":longitude
+        "ActivitiyName":title,
+        "StartTime":start,
+        "EndTime":end,
+        "Address":address,
+        "AdditionalInformation": additionalInformation,
+        "Latitude": latitude,
+        "Longitude":longitude
         });
     }
     
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
       body:json,
     };
     // make API call with parameters and use promises to get response
-    fetch(" https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/ActivityManagement", requestOptions)  
+    fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions)  
   });
 
 
