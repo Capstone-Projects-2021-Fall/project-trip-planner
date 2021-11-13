@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //Load Itinerary
   let calendar = createAndLoadCalendar();
-  let itineraryID = getParameterByName("page");
+  let itineraryID = getParameterByName("itinerary_id");
   loadItinerary(itineraryID);
   calendar.render();
 
