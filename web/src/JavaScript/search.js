@@ -52,6 +52,10 @@ function QuickFindItineraries()
 
 	//null if not found. that works here.
 	var query = searchSection.get("query");
+	var mode = searchSection.get("mode");
+
+	
+
 	/*
 	TODO: add these. if both latitude and longitude aren't provided, these should be ignored. if maxDistance is missing, default to 25 miles.
 	var latitude = searchSection.get("latitude");
@@ -63,57 +67,37 @@ function QuickFindItineraries()
 	{
 		query = decodeURIComponent(query);
 
-		var raw = JSON.stringify({ "query": query});
-
-		// create a JSON object with parameters for API call and store in a variable
-		var requestOptions = {
-			method: 'POST',
-			body: raw,
-		};
-	
-		console.log(requestOptions);
-	
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForItineraryWithNameLike", requestOptions).then(response => fillItineraries(container, response, false));
-	}
-	else 
-	{
-		var elem = document.createElement("div");
-		elem.classList.add("no-search");
-
-		var niceText = document.createTextNode("no search information provided. try refining your search.");
-
-		elem.appendChild(niceText);
-
-		container.appendChild(elem);
-	}
-}
-
-function FindActivities(){
-	var searchSection = new URLSearchParams(window.location.search);
-
-	var container = document.getElementById('itinerary-list-holder');
-
-	//null if not found. that works here.
-	var query = searchSection.get("query");
-	/*
-	TODO: maybe add these? allow end user to refine user search? wasn't part of spec, isn't strictly speaking hard, but more work for frontend devs. 
-	var firstName = searchSection.get("firstName");
-	var lastName = searchSection.get("lastName");
-	*/
-
-	if (query)
-	{
-		query = decodeURIComponent(query);
-
-		var raw = JSON.stringify({ "search": query});
-
-		// create a JSON object with parameters for API call and store in a variable
-		var requestOptions = {
-			method: 'POST',
-			body: raw,
-		};
 		
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchItinerariesByActivity", requestOptions).then(response => fillItineraries(container, response, true));
+
+		
+
+		// create a JSON object with parameters for API call and store in a variable
+		
+
+		var addr;
+		var raw;
+		if (mode && mode == "ByActivity")
+		{
+			addr = "https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchItinerariesByActivity";
+			raw = JSON.stringify({ "search": query});
+		}
+		else 
+		{
+			addr = "https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForItineraryWithNameLike";
+			raw = JSON.stringify({ "query": query});
+		}
+
+
+		var requestOptions = 
+		{
+			method: 'POST',
+			body: raw,
+		};
+		console.log(requestOptions);
+
+
+	
+		fetch(addr, requestOptions).then(response => fillItineraries(container, response, false));
 	}
 	else 
 	{
@@ -121,7 +105,9 @@ function FindActivities(){
 		elem.classList.add("no-search");
 
 		var niceText = document.createTextNode("no search information provided. try refining your search.");
+
 		elem.appendChild(niceText);
+
 		container.appendChild(elem);
 	}
 }

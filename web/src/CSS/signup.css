@@ -1,7 +1,7 @@
 * {box-sizing: border-box}
 
 /* Full-width input fields */
-  .signupFormContent {
+ .form-control {
   width: 50%;
   padding: 15px;
   margin: 15px 0 22px 0;
