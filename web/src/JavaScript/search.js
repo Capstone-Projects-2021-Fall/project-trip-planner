@@ -67,13 +67,8 @@ function QuickFindItineraries()
 	{
 		query = decodeURIComponent(query);
 
-		
-
-		
-
 		// create a JSON object with parameters for API call and store in a variable
 		
-
 		var addr;
 		var raw;
 		if (mode && mode == "ByActivity")
@@ -94,8 +89,6 @@ function QuickFindItineraries()
 			body: raw,
 		};
 		console.log(requestOptions);
-
-
 	
 		fetch(addr, requestOptions).then(response => fillItineraries(container, response, false));
 	}
@@ -118,91 +111,90 @@ function fillUsers(container, response)
 	{
 		var userID = parseInt(GetCookie("id"));
 
-		response.json().then(results =>
+		var results = JsonOrNull(response);
+
+		console.log(results);
+		if (!results || results.length == 0)
 		{
-			console.log(results);
-			if (results.length == 0)
+
+			var elem = document.createElement("div");
+			elem.classList.add("users-empty");
+
+			var niceText = document.createTextNode("No results. That's unfortunate! Try using different or more general search terms.");
+
+			elem.appendChild(niceText);
+
+			container.appendChild(elem);
+		}
+		else
+		{
+			//json elements are formatted as such:
+			results.forEach(element => 
 			{
-
+				
 				var elem = document.createElement("div");
-				elem.classList.add("users-empty");
+				elem.classList.add("user-item");
 
-				var niceText = document.createTextNode("No results. That's unfortunate! Try using different or more general search terms.");
+				var screenHolder = document.createElement("div");
+				screenHolder.classList.add("user-screenname");
+				var screenContent = document.createTextNode(element["ScreenName"]);
+				screenHolder.appendChild(screenContent);
+				elem.appendChild(screenHolder);
 
-				elem.appendChild(niceText);
+				var nameHolder = document.createElement("div");
+				nameHolder.classList.add("item-fullname");
+
+				var fName = element["FirstName"];
+				var lName = element["LastName"];
+				
+				var nameText;
+				if (fName && lName)
+				{
+					 nameText = "Name: " + fName + " " + lName;
+				}
+				else if (fName)
+				{
+					nameText = "Name: " + fName + " (no last name provided)";
+				}
+				else if (lName)
+				{
+					nameText = "Last Name: " + fName + " (no first name provided)";
+				}
+				else 
+				{
+					nameText = "No name provided";
+				}
+				var nameContent = document.createTextNode(nameText);
+				nameHolder.appendChild(nameContent);
+				elem.appendChild(nameHolder);
+
+				var dobHolder = document.createElement("div");
+				dobHolder.classList.add("item-dob");
+
+				var dob = element["DateOfBirth"];
+				var dobText;
+				if (dob)
+				{
+					dobText = "Date of Birth: " + dob;
+				}
+				else 
+				{
+					dobText = "No date of birth provided";
+				}
+
+				var dobContent = document.createTextNode(dobText);
+				dobHolder.appendChild(dobContent);
+				elem.appendChild(dobHolder);
+
+				var id = element["UserID"];
+
+				elem.onclick = function() 
+				{
+					document.location = "viewUser.html?id=" + id;
+				};
 
 				container.appendChild(elem);
-			}
-			else
-			{
-				//json elements are formatted as such:
-				results.forEach(element => 
-				{
-					
-					var elem = document.createElement("div");
-					elem.classList.add("user-item");
-
-					var screenHolder = document.createElement("div");
-					screenHolder.classList.add("user-screenname");
-					var screenContent = document.createTextNode(element["ScreenName"]);
-					screenHolder.appendChild(screenContent);
-					elem.appendChild(screenHolder);
-
-					var nameHolder = document.createElement("div");
-					nameHolder.classList.add("item-fullname");
-
-					var fName = element["FirstName"];
-					var lName = element["LastName"];
-					
-					var nameText;
-					if (fName && lName)
-					{
-						 nameText = "Name: " + fName + " " + lName;
-					}
-					else if (fName)
-					{
-						nameText = "Name: " + fName + " (no last name provided)";
-					}
-					else if (lName)
-					{
-						nameText = "Last Name: " + fName + " (no first name provided)";
-					}
-					else 
-					{
-						nameText = "No name provided";
-					}
-					var nameContent = document.createTextNode(nameText);
-					nameHolder.appendChild(nameContent);
-					elem.appendChild(nameHolder);
-
-					var dobHolder = document.createElement("div");
-					dobHolder.classList.add("item-dob");
-
-					var dob = element["DateOfBirth"];
-					var dobText;
-					if (dob)
-					{
-						dobText = "Date of Birth: " + dob;
-					}
-					else 
-					{
-						dobText = "No date of birth provided";
-					}
-
-					var dobContent = document.createTextNode(dobText);
-					dobHolder.appendChild(dobContent);
-					elem.appendChild(dobHolder);
-
-					var id = element["UserID"];
-
-					elem.onclick = function() 
-					{
-						document.location = "viewUser.html?id=" + id;
-					};
-
-					container.appendChild(elem);
-				});
-			}
-		});
+			});
+		}
 	}
 }
