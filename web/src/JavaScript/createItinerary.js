@@ -51,7 +51,7 @@ function CallAPI(email, password)
 			response.text().then(output =>
 			{
 				console.log(output);
-				document.location = "itinerary.html?itinerary_id=" + output;
+				document.location = "itineraryFromDatabase.html?itinerary_id=" + output;
 			});
 		}
 		else 
