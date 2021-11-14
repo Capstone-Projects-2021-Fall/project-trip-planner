@@ -78,7 +78,10 @@
 				<label>Password*</label>
 				<input type="password" class="form-control" name="password" id="password" required>
 			</div>
-
+			<div class="form-group">
+				<label>Confirm Password*</label>
+				<input type="password" class="form-control" name="confirm_password" id="ConfirmPassword" onfocus="ClearValidation()" onblur="ValidatePassword()" required>
+			</div>
 			<div class="form-group">
 				<label>First Name</label>
 				<input type="text" class="form-control" name="firstName" id="firstName">
@@ -88,10 +91,7 @@
 				<label>Last Name</label>
 				<input type="text" class="form-control" name="lastName" id="lastName">
 			</div>
-			<!--                <div class="form-group">-->
-			<!--                    <label>Confirm Password</label>-->
-			<!--                    <input type="password" name="confirm_password" id="txtConfirmPassword" required>-->
-			<!--                </div>-->
+
 			<div class="form-group">
 				<label>Date of Birth</label>
 				<input type="date" class="form-control" name="DOB" id="DOB">
@@ -99,7 +99,7 @@
 
 			<div id="error-msg-holder">
 				<p id="error-msg"></p>
-			</div> 
+			</div>
 
 			<div class="form-group">
 				<input type="button" onclick="CallAPI()" name="submit" class="btn btn-primary" value="Submit">

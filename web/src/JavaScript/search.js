@@ -52,6 +52,10 @@ function QuickFindItineraries()
 
 	//null if not found. that works here.
 	var query = searchSection.get("query");
+	var mode = searchSection.get("mode");
+
+	
+
 	/*
 	TODO: add these. if both latitude and longitude aren't provided, these should be ignored. if maxDistance is missing, default to 25 miles.
 	var latitude = searchSection.get("latitude");
@@ -63,17 +67,30 @@ function QuickFindItineraries()
 	{
 		query = decodeURIComponent(query);
 
-		var raw = JSON.stringify({ "query": query});
-
 		// create a JSON object with parameters for API call and store in a variable
-		var requestOptions = {
+		
+		var addr;
+		var raw;
+		if (mode && mode == "ByActivity")
+		{
+			addr = "https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchItinerariesByActivity";
+			raw = JSON.stringify({ "search": query});
+		}
+		else 
+		{
+			addr = "https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForItineraryWithNameLike";
+			raw = JSON.stringify({ "query": query});
+		}
+
+
+		var requestOptions = 
+		{
 			method: 'POST',
 			body: raw,
 		};
-	
 		console.log(requestOptions);
 	
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForItineraryWithNameLike", requestOptions).then(response => fillItineraries(container, response, false));
+		fetch(addr, requestOptions).then(response => fillItineraries(container, response, false));
 	}
 	else 
 	{
@@ -90,17 +107,14 @@ function QuickFindItineraries()
 
 function fillUsers(container, response)
 {
-	console.log("Hello");
-	//container.setHTML()
-	//container.innerHTML = 
 	if (response.status == 200)
 	{
 		var userID = parseInt(GetCookie("id"));
 
-		response.json().then(results =>
+		JsonOrNull(response, results =>
 		{
 			console.log(results);
-			if (results.length == 0)
+			if (!results || results.length == 0)
 			{
 
 				var elem = document.createElement("div");

@@ -34,16 +34,14 @@ function GetCookie(cname)
 
 function fillItineraries(container, response, isAccount)
 {
-	console.log("Hello");
-	//container.setHTML()
-	//container.innerHTML = 
 	if (response.status == 200)
 	{
-		response.json().then(res =>
+		JsonOrNull(response, res =>
 		{
+
 			//console.log(res);
-			console.log("Type: " + typeof(res));
-			if (res.length == 0)
+			console.log("Type: " + typeof (res));
+			if (!res || res.length == 0)
 			{
 
 				var elem = document.createElement("div");
@@ -67,13 +65,13 @@ function fillItineraries(container, response, isAccount)
 				//json elements are formatted as such:
 				for (const element of res)
 				{
-					
+
 					var elem = document.createElement("div");
 					elem.classList.add("itinerary-item");
 
 					var nameHolder = document.createElement("div");
 					nameHolder.classList.add("item-title");
-					var nameContent = document.createTextNode(element["ItineraryName"]);
+					var nameContent = document.createTextNode("Itinerary Name: " + element["ItineraryName"]);
 					nameHolder.appendChild(nameContent);
 					elem.appendChild(nameHolder);
 
@@ -101,18 +99,18 @@ function fillItineraries(container, response, isAccount)
 
 						var creatorText = "Creator: " + element["CreatorName"];
 						var creatorID = element["CreatorID"];
-					
+
 						//may be null if a user not logged in does a search. 
 						if (userID && creatorID == userID)
 						{
 							creatorText += " (you)";
 						}
 
-						var nameContent= document.createTextNode(creatorText);
+						var nameContent = document.createTextNode(creatorText);
 						nameHolder.appendChild(nameContent);
 						elem.appendChild(nameHolder);
 					}
-					elem.onclick = function() 
+					elem.onclick = function () 
 					{
 						document.location = "itineraryRewrite.html?id=" + id;
 					};
@@ -135,6 +133,24 @@ function fillItineraries(container, response, isAccount)
 	}
 }
 
+//function JsonOrNull(response)
+//{
+//	response.text().then(text =>
+//	{
+//		console.log("'" + text + "'");
+//		if (text)
+//		{
+//			console.log("parsing");
+//			return JSON.parse(text);
+//		}
+//		else 
+//		{
+//			console.log("null");
+//			return null;
+//		}
+//	});
+//}
+
 function PerformSearch()
 {
 	var selectBox = document.getElementById("dropdown");
@@ -144,9 +160,32 @@ function PerformSearch()
 	{
 		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content);
 	}
-	//fallback to users if something breaks. should just be users and itineraries but whatever.
-	else 
+	else if (selectBox.value == "Activities")
+	{
+		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content) + "&mode=ByActivity";
+	}
+	//fallback to users if something breaks. should just be these three but whatever.
+	else //if (selectBox.value == "Users")
 	{
 		document.location = "userSearch.html?query=" + encodeURIComponent(content);
 	}
+}
+
+function JsonOrNull(response, callback)
+{
+	response.text().then(text =>
+	{
+		var result;
+		if (text)
+		{
+			console.log("parsing");
+			result = JSON.parse(text);
+		}
+		else 
+		{
+			console.log("null");
+			result = null;
+		}
+		callback(result);
+	});
 }
