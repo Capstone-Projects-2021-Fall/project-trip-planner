@@ -39,7 +39,6 @@ hr {
 
 /* Float cancel and signup buttons and add an equal width */
 .cancelbtn, .signupBtn {
-  float: center;
   width: 15%;
 }
 
@@ -53,6 +52,10 @@ hr {
   content: "";
   clear: both;
   display: table;
+}
+
+.invalid-password {
+    border: 3px solid red;
 }
 
 /* Change styles for cancel button and signup button on extra small screens */
