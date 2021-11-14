@@ -1,76 +1,77 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+
     let map;
-      let marker;
-      let geocoder;
-      let responseDiv;
-      let response;
-
-      function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 16,
-      center: { lat: 37, lng: -95},
-      mapTypeControl: false,
-      });
-      geocoder = new google.maps.Geocoder();
-
-      const inputText = document.createElement("input");
-
-      inputText.type = "text";
-      inputText.placeholder = "Enter a location";
-
-      const submitButton = document.createElement("input");
-
-      submitButton.type = "button";
-      submitButton.value = "Search";
-      submitButton.classList.add("button", "button-primary");
-
-      const clearButton = document.createElement("input");
-
-      clearButton.type = "button";
-      clearButton.value = "Clear";
-      clearButton.classList.add("button", "button-secondary");
-      response = document.createElement("pre");
-      response.id = "response";
-      response.innerText = "";
-      responseDiv = document.createElement("div");
-      responseDiv.id = "response-container";
-      responseDiv.appendChild(response);
-
-      const instructionsElement = document.createElement("p");
-      marker = new google.maps.Marker({
-      map,
-      });
-      map.addListener("click", (e) => {
-      geocode({ location: e.latLng });
-      });
-      }
-
-      function clear() {
-      marker.setMap(null);
-      responseDiv.style.display = "none";
-      }
-      function geocode(request) {
-      clear();
-      geocoder
-      .geocode(request)
-      .then((result) => {
-      const { results } = result;
-
-      map.setCenter(results[0].geometry.location);
-      marker.setPosition(results[0].geometry.location);
-      marker.setMap(map);
-      responseDiv.style.display = "block";
-      response.innerText = JSON.stringify(result, null, 2);
-      return results;
-      })
-      .catch((e) => {
-      alert("Geocode was not successful for the following reason: " + e);
-      });
-      }
+    let marker;
+    let geocoder;
+    let responseDiv;
+    let response;
 
 
-      
+    function initMap() {
+
+        // Generate Second Map
+        map2 = new google.maps.Map(document.getElementById("map2"), {
+             zoom: 16,
+             center: { lat: 37, lng: -95},
+             mapTypeControl: false,
+             });
+  
+          // Generate First Map
+           map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                center: { lat: 37, lng: -95},
+                mapTypeControl: false,
+                });
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+          marker = new google.maps.Marker({
+                map,
+                });
+  
+          marker2 = new google.maps.Marker({
+                map2,
+                });
+  
+        geocoder = new google.maps.Geocoder();
+  
+  
+  
+    }
+
+    function clear() {
+    marker.setMap(null);
+    responseDiv.style.display = "none";
+    }
+    function geocode(request) {
+    clear();
+    geocoder
+    .geocode(request)
+    .then((result) => {
+    const { results } = result;
+
+    map.setCenter(results[0].geometry.location);
+    marker.setPosition(results[0].geometry.location);
+    marker.setMap(map);
+    responseDiv.style.display = "block";
+    response.innerText = JSON.stringify(result, null, 2);
+    return results;
+    })
+    .catch((e) => {
+    alert("Geocode was not successful for the following reason: " + e);
+    });
+    }
+
+    
     var eventDetailsModal = document.getElementById("eventDetailsModal");
     //Get the button that saves the modal
     var saveBtnEventDetails = document.getElementById("saveBtnEventDetails");
@@ -83,7 +84,14 @@ document.addEventListener('DOMContentLoaded', function() {
     saveBtnEventDetails.onclick = function() {
         eventDetailsModal.style.display = "none";
     } //end onclick save button
-  
+
+    saveBtnEventDetails.onclick = function() {
+      eventDetailsModal.style.display = "none";
+      document.getElementById("map").style.display = "none";
+
+    }//end onclick save button
+
+    
     function createAndLoadCalendar() {
       var calendarEl = document.getElementById('calendar');
       var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -132,7 +140,42 @@ document.addEventListener('DOMContentLoaded', function() {
           calendar.unselect()
         },
         eventClick: function(arg) { //when they click on an event
-          eventDetailsModal.style.display = "block";
+            eventDetailsModal.style.display = "block";
+            eventDetailsModal.style.display = "block";
+            document.getElementById("map").style.display = "block";
+
+
+
+
+        //MAP SCRIPT
+        geocode({ address: arg.event.extendedProps.Address });
+
+
+      function geocode(request) {
+      clear();
+      geocoder
+      .geocode(request)
+      .then((result) => {
+      const { results } = result;
+
+      map.setCenter(results[0].geometry.location);
+      marker.setPosition(results[0].geometry.location);
+      marker.setMap(map);
+      responseDiv.style.display = "block";
+      response.innerText = JSON.stringify(result, null, 2);
+      return results;
+      })
+      .catch((e) => {
+      alert("Geocode was not successful for the following reason: " + e);
+      });
+      }
+
+
+
+
+
+
+            eventDetailsModal.style.display = "block";
           //need to change the event start time or end time or title here
           //then apply those changes using event functions
           document.getElementById("eventName").innerHTML = arg.event.title;
