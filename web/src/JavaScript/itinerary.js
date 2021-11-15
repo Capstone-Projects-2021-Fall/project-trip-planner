@@ -193,12 +193,11 @@ document.addEventListener('DOMContentLoaded', function() {
               var url = file["filesUploaded"]["0"]["url"];
               //console.log("url " + url);
               //console.log("photos array:" + arg.event.extendedProps.photos);
-              var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
+              var currentPhotoArray = arg.event.extendedProps.photos;
               //console.log("currentPhotoArray " + currentPhotoArray);
               currentPhotoArray.push(url);
-              var addedPhotoArray = currentPhotoArray.slice(0);
               //console.log("addedPhotoArray: " + addedPhotoArray);
-              arg.event.setExtendedProp( "photos",addedPhotoArray);
+              arg.event.setExtendedProp( "photos",currentPhotoArray);
               console.log("photos array: " + arg.event.extendedProps.photos);
     
     
