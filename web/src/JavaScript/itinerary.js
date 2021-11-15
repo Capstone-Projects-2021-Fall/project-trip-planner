@@ -1,77 +1,76 @@
+let map;
+let marker;
+let geocoder;
+let responseDiv;
+let response;
+
+function initMap() {
+map = new google.maps.Map(document.getElementById("map"), {
+zoom: 16,
+center: { lat: 37, lng: -95},
+mapTypeControl: false,
+});
+geocoder = new google.maps.Geocoder();
+
+const inputText = document.createElement("input");
+
+inputText.type = "text";
+inputText.placeholder = "Enter a location";
+
+const submitButton = document.createElement("input");
+
+submitButton.type = "button";
+submitButton.value = "Search";
+submitButton.classList.add("button", "button-primary");
+
+const clearButton = document.createElement("input");
+
+clearButton.type = "button";
+clearButton.value = "Clear";
+clearButton.classList.add("button", "button-secondary");
+response = document.createElement("pre");
+response.id = "response";
+response.innerText = "";
+responseDiv = document.createElement("div");
+responseDiv.id = "response-container";
+responseDiv.appendChild(response);
+
+const instructionsElement = document.createElement("p");
+marker = new google.maps.Marker({
+map,
+});
+map.addListener("click", (e) => {
+geocode({ location: e.latLng });
+});
+}
+
+function clear() {
+marker.setMap(null);
+responseDiv.style.display = "none";
+}
+function geocode(request) {
+clear();
+geocoder
+.geocode(request)
+.then((result) => {
+const { results } = result;
+
+map.setCenter(results[0].geometry.location);
+marker.setPosition(results[0].geometry.location);
+marker.setMap(map);
+responseDiv.style.display = "block";
+response.innerText = JSON.stringify(result, null, 2);
+return results;
+})
+.catch((e) => {
+alert("Geocode was not successful for the following reason: " + e);
+});
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
 
-    let map;
-    let marker;
-    let geocoder;
-    let responseDiv;
-    let response;
-
-
-    function initMap() {
-
-        // Generate Second Map
-        map2 = new google.maps.Map(document.getElementById("map2"), {
-             zoom: 16,
-             center: { lat: 37, lng: -95},
-             mapTypeControl: false,
-             });
-  
-          // Generate First Map
-           map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 16,
-                center: { lat: 37, lng: -95},
-                mapTypeControl: false,
-                });
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-          marker = new google.maps.Marker({
-                map,
-                });
-  
-          marker2 = new google.maps.Marker({
-                map2,
-                });
-  
-        geocoder = new google.maps.Geocoder();
-  
-  
-  
-    }
-
-    function clear() {
-    marker.setMap(null);
-    responseDiv.style.display = "none";
-    }
-    function geocode(request) {
-    clear();
-    geocoder
-    .geocode(request)
-    .then((result) => {
-    const { results } = result;
-
-    map.setCenter(results[0].geometry.location);
-    marker.setPosition(results[0].geometry.location);
-    marker.setMap(map);
-    responseDiv.style.display = "block";
-    response.innerText = JSON.stringify(result, null, 2);
-    return results;
-    })
-    .catch((e) => {
-    alert("Geocode was not successful for the following reason: " + e);
-    });
-    }
-
-    
     var eventDetailsModal = document.getElementById("eventDetailsModal");
     //Get the button that saves the modal
     var saveBtnEventDetails = document.getElementById("saveBtnEventDetails");
@@ -139,130 +138,151 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           calendar.unselect()
         },
-        eventClick: function(arg) { //when they click on an event
-            eventDetailsModal.style.display = "block";
+        eventClick: function(arg) {//when they click on an event
             eventDetailsModal.style.display = "block";
             document.getElementById("map").style.display = "block";
-
-
-
-
-        //MAP SCRIPT
-        geocode({ address: arg.event.extendedProps.Address });
-
-
-      function geocode(request) {
-      clear();
-      geocoder
-      .geocode(request)
-      .then((result) => {
-      const { results } = result;
-
-      map.setCenter(results[0].geometry.location);
-      marker.setPosition(results[0].geometry.location);
-      marker.setMap(map);
-      responseDiv.style.display = "block";
-      response.innerText = JSON.stringify(result, null, 2);
-      return results;
-      })
-      .catch((e) => {
-      alert("Geocode was not successful for the following reason: " + e);
-      });
-      }
-
-
-
-
-
-
-            eventDetailsModal.style.display = "block";
-          //need to change the event start time or end time or title here
-          //then apply those changes using event functions
-          document.getElementById("eventName").innerHTML = arg.event.title;
-          document.getElementById("startDateEventDetails").innerHTML = arg.event.start;
-          document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
-          //get the button for uploading photos
-          var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
-          uploadPhotosButton.onclick = function() {
-            const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
-            const options = {
-              accept: ["image/*"],
-              onUploadDone: file => {
-                //console.log(file);
-                //loop through uploaded photos and add them to the photos array for the event
-                //console.log(file["filesUploaded"]["0"]["url"]);//should be the url
-                var url = file["filesUploaded"]["0"]["url"];
-                //console.log("url " + url);
-                //console.log("photos array:" + arg.event.extendedProps.photos);
-                var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
-                //console.log("currentPhotoArray " + currentPhotoArray);
-                currentPhotoArray.push(url);
-                var addedPhotoArray = currentPhotoArray.slice(0);
-                //console.log("addedPhotoArray: " + addedPhotoArray);
-                arg.event.setExtendedProp("photos", addedPhotoArray);
-                console.log("photos array: " + arg.event.extendedProps.photos);
-                var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
-                //var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];
-                //remove all children from slide show container, except the prev and next arrows
-                const removeChilds = (parent) => {
-                  var done = 0;
-                  while (parent.lastChild && done == 0) {
-                    //console.log(parent.lastChild);
-                    //console.log(parent.lastChild.className);
-                    if (parent.lastChild.className != "next" && parent.lastChild.className != "prev") {
-                      parent.removeChild(parent.lastChild);
-                    } else {
-                      done = 1;
-                    }
-                  }
-                };
-                // remove all child nodes
-                removeChilds(slideshowContainer);
-                arg.event.extendedProps.photos.forEach(function(url, index, originalArray) {
-                  var div1 = document.createElement('div');
-                  div1.className = "mySlides fade";
-                  var tempImg = document.createElement('img');
-                  tempImg.style.width = "100%";
-                  tempImg.src = url;
-                  div1.appendChild(tempImg);
-                  slideshowContainer.appendChild(div1);
-                });
-                //display image in carousel
-                var slideIndex = 1;
-                showSlides(slideIndex);
-                // Next/previous controls
-                function plusSlides(n) {
-                  showSlides(slideIndex += n);
-                }
-                // Thumbnail image controls
-                function currentSlide(n) {
-                  showSlides(slideIndex = n);
-                }
+            //need to change the event start time or end time or title here
+            //then apply those changes using event functions
     
-                function showSlides(n) {
-                  var i;
-                  var slides = document.getElementsByClassName("mySlides");
-                  var dots = document.getElementsByClassName("dot");
-                  if (n > slides.length) {
-                    slideIndex = 1
-                  }
-                  if (n < 1) {
-                    slideIndex = slides.length
-                  }
-                  for (i = 0; i < slides.length; i++) {
-                    slides[i].style.display = "none";
-                  }
-                  for (i = 0; i < dots.length; i++) {
-                    dots[i].className = dots[i].className.replace(" active", "");
-                  }
-                  slides[slideIndex - 1].style.display = "block";
-                  dots[slideIndex - 1].className += " active";
-                }
-              } //end on upload done
-            }; //end options
-            client.picker(options).open();
-          } //end on click upload photos button
-        },
+            document.getElementById("eventName").innerHTML=arg.event.title;
+            document.getElementById("startDateEventDetails").innerHTML = arg.event.start;
+            document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
+    
+    
+            //MAP SCRIPT
+            geocode({ address: arg.event.extendedProps.Address });
+    
+    
+          function geocode(request) {
+          clear();
+          geocoder
+          .geocode(request)
+          .then((result) => {
+          const { results } = result;
+    
+          map.setCenter(results[0].geometry.location);
+          marker.setPosition(results[0].geometry.location);
+          marker.setMap(map);
+          responseDiv.style.display = "block";
+          response.innerText = JSON.stringify(result, null, 2);
+          return results;
+          })
+          .catch((e) => {
+          alert("Geocode was not successful for the following reason: " + e);
+          });
+          }
+    
+    
+    
+    
+    
+            //get the button for uploading photos
+        var uploadPhotosButton = document.getElementById("uploadPhotosEventDetails");
+    
+    
+    
+        uploadPhotosButton.onclick = function(){
+          const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
+          const options = {
+          accept: ["image/*"],
+          onUploadDone: file => {
+              //console.log(file);
+    
+              //loop through uploaded photos and add them to the photos array for the event
+              //console.log(file["filesUploaded"]["0"]["url"]);//should be the url
+              var url = file["filesUploaded"]["0"]["url"];
+              //console.log("url " + url);
+              //console.log("photos array:" + arg.event.extendedProps.photos);
+              var currentPhotoArray = arg.event.extendedProps.photos.slice(0);
+              //console.log("currentPhotoArray " + currentPhotoArray);
+              currentPhotoArray.push(url);
+              var addedPhotoArray = currentPhotoArray.slice(0);
+              //console.log("addedPhotoArray: " + addedPhotoArray);
+              arg.event.setExtendedProp( "photos",addedPhotoArray);
+              console.log("photos array: " + arg.event.extendedProps.photos);
+    
+    
+    
+        var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
+        //var imgs = ["https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6"];
+    
+        //remove all children from slide show container, except the prev and next arrows
+    
+        const removeChilds = (parent) => {
+        var done =0;
+        while (parent.lastChild && done==0) {
+            //console.log(parent.lastChild);
+            //console.log(parent.lastChild.className);
+            if(parent.lastChild.className != "next" && parent.lastChild.className != "prev"){
+            parent.removeChild(parent.lastChild);
+            }
+            else{ done =1;}
+        }
+          };
+    
+    
+          // remove all child nodes
+          removeChilds(slideshowContainer);
+    
+    
+        arg.event.extendedProps.photos.forEach(function(url, index, originalArray) {
+    
+            var div1 = document.createElement('div');
+            div1.className = "mySlides fade";
+    
+            var tempImg = document.createElement('img');
+            tempImg.style.width  = "100%";
+            tempImg.src = url;
+    
+            div1.appendChild(tempImg);
+            slideshowContainer.appendChild(div1);
+        });
+        //console.log(slideshowContainer);
+    
+    
+    
+            //display image in carousel
+            var slideIndex = 1;
+            showSlides(slideIndex);
+    
+            // Next/previous controls
+            function plusSlides(n) {
+              showSlides(slideIndex += n);
+            }
+    
+            // Thumbnail image controls
+            function currentSlide(n) {
+              showSlides(slideIndex = n);
+            }
+    
+            function showSlides(n) {
+              var i;
+              var slides = document.getElementsByClassName("mySlides");
+              var dots = document.getElementsByClassName("dot");
+              if (n > slides.length) {slideIndex = 1}
+              if (n < 1) {slideIndex = slides.length}
+              for (i = 0; i < slides.length; i++) {
+                  slides[i].style.display = "none";
+              }
+              for (i = 0; i < dots.length; i++) {
+                  dots[i].className = dots[i].className.replace(" active", "");
+              }
+              slides[slideIndex-1].style.display = "block";
+              dots[slideIndex-1].className += " active";
+            }
+    
+    
+          }//end on upload done
+            };//end options
+          client.picker(options).open();
+    
+    
+        //https://cdn.filestackcontent.com/qsW95M8aRQ2cI5GKZ4I6
+    
+    
+    
+        }//end on click upload photos button
+    },
         dayMaxEvents: true, // allow "more" link when too many events
         events: []
       });
