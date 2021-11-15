@@ -172,6 +172,91 @@ document.addEventListener('DOMContentLoaded', async function ()
 				document.getElementById("endDateEventDetails").innerHTML = arg.event.end;
 
 
+				//add photos
+
+				var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
+                				//remove all children from slide show container, except the prev and next arrows
+
+                                							const removeChilds = (parent) =>
+                                							{
+                                								var done = 0;
+                                								while (parent.lastChild && done == 0)
+                                								{
+                                									//console.log(parent.lastChild);
+                                									//console.log(parent.lastChild.className);
+                                									if (parent.lastChild.className != "next" && parent.lastChild.className != "prev")
+                                									{
+                                										parent.removeChild(parent.lastChild);
+                                									}
+                                									else { done = 1; }
+                                								}
+                                							};
+
+
+                                							// remove all child nodes
+                                							removeChilds(slideshowContainer);
+				//if there are any
+				if(arg.event.extendedProps.photos.length >0){
+
+
+
+
+                							arg.event.extendedProps.photos.forEach(function (url, index, originalArray)
+                							{
+
+                								var div1 = document.createElement('div');
+                								div1.className = "mySlides fade";
+
+                								var tempImg = document.createElement('img');
+                								tempImg.style.width = "100%";
+                								tempImg.src = url;
+
+                								div1.appendChild(tempImg);
+                								slideshowContainer.appendChild(div1);
+                							});
+                							//console.log(slideshowContainer);
+
+
+
+                							//display image in carousel
+
+                							var slideIndex = 1;
+                							showSlides(slideIndex);
+
+                							// Next/previous controls
+                							function plusSlides(n)
+                							{
+                								showSlides(slideIndex += n);
+                							}
+
+                							// Thumbnail image controls
+                							function currentSlide(n)
+                							{
+                								showSlides(slideIndex = n);
+                							}
+
+                							function showSlides(n)
+                							{
+                								var i;
+                								var slides = document.getElementsByClassName("mySlides");
+                								var dots = document.getElementsByClassName("dot");
+                								if (n > slides.length) { slideIndex = 1 }
+                								if (n < 1) { slideIndex = slides.length }
+                								for (i = 0; i < slides.length; i++)
+                								{
+                									slides[i].style.display = "none";
+                								}
+                								for (i = 0; i < dots.length; i++)
+                								{
+                									dots[i].className = dots[i].className.replace(" active", "");
+                								}
+                								slides[slideIndex - 1].style.display = "block";
+                								dots[slideIndex - 1].className += " active";
+                							}
+                		}//end if there are photos
+
+
+
 				//MAP SCRIPT
 				geocode({ address: arg.event.extendedProps.Address });
 
@@ -226,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 							currentPhotoArray.push(url);
 							//console.log("addedPhotoArray: " + addedPhotoArray);
 							arg.event.setExtendedProp("photos", currentPhotoArray);
-							console.log("photos array: " + arg.event.extendedProps.photos);
+							console.log("photos array for event: " +arg.event.title + arg.event.extendedProps.photos);
 
 
 
