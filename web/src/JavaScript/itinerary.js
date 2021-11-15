@@ -352,8 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
       let index = 0;
       let saveEvents = {
         //change itinerary id when creating new itinerary feature is added
-        "sourceItineraryID": itineraryID,
-        "activities":[]             
+        "ItineraryID": itineraryID,
+        "ItineraryItems":[]             
       };
       calendarArr = calendar.getEvents();
     
@@ -366,17 +366,19 @@ document.addEventListener('DOMContentLoaded', function() {
         let address = calendarArr[index]["_def"]["extendedProps"]["Address"]
         let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
         let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
-        saveEvents.activities.push({
+        let photos = calendarArr[index]["_def"]["extendedProps"]["photos"]
+
+        saveEvents.ItineraryItems.push({
           "ActivitiyName":title,
           "StartTime":start,
           "EndTime":end,
           "Address":address,
           "AdditionalInformation": additionalInformation,
           "Latitude": latitude,
-          "Longitude":longitude
+          "Longitude":longitude,
+          "Photos":photos
           });
       }
-      
       var json = JSON.stringify(saveEvents);
       // create a JSON object with parameters for API call and store in a variable
       var requestOptions = {
@@ -385,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
         body:json,
       };
       // make API call with parameters and use promises to get response
-      fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions)  
+      //fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions)  
     });
   
   
