@@ -330,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
             Longitude: value[index]["Longitude"],
             Address: value[index]["Address"],
             AdditionalInformation: value[index]["AdditionalInformation"],
+            photos:value[index]["Photos"]
           }
         });
       } 
