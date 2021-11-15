@@ -13,7 +13,7 @@ function CallAPI(email, password)
 		note = null;
 	}
 
-	var userID = parseInt(GetCookie("id"));
+	var userID = GetIDCookie();
 	//likely should check here to see if cookie is not null.
 
 	console.log("UserID: '" + userID + "'");

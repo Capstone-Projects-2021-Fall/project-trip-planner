@@ -95,7 +95,7 @@ function fillItineraries(container, response, isAccount)
 						var nameHolder = document.createElement("div");
 						nameHolder.classList.add("item-author");
 
-						var userID = parseInt(GetCookie("id"));
+						var userID = GetIDCookie();
 
 						var creatorText = "Creator: " + element["CreatorName"];
 						var creatorID = element["CreatorID"];
@@ -112,7 +112,7 @@ function fillItineraries(container, response, isAccount)
 					}
 					elem.onclick = function () 
 					{
-						document.location = "itineraryRewrite.html?id=" + id;
+						document.location = "itinerary.html?itinerary_id=" + id;
 					};
 
 					container.appendChild(elem);
@@ -188,4 +188,10 @@ function JsonOrNull(response, callback)
 		}
 		callback(result);
 	});
+}
+
+function GetIDCookie()
+{
+	var id = GetCookie("id");
+	return id ? parseInt(id) : null;
 }

@@ -1,10 +1,10 @@
+
   body {
     margin: 60px 10px;
     padding: 0;
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
     font-size: 14px;
   }
-
   button
   {
     margin: 0 auto;
@@ -49,6 +49,11 @@
   cursor: pointer;
 }
 
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:300px}
+.w3-red {background-color:#2C3E50 !important}
+
 input[type=text] {
   width: 60%;
   padding: 15px;
@@ -82,6 +87,7 @@ input[type=submit] {
 
 h1 {
     font-size: 3em;
+    font-color: white;
 }
 
 label {
@@ -190,4 +196,95 @@ label {
 @keyframes fade {
   from {opacity: .4}
   to {opacity: 1}
+}
+
+/*END OF CSS FOR MODAL FORM*/
+
+/*MAP CSS*/
+/* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+#map {
+height: 100%;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+height: 100%;
+margin: 0;
+padding: 30px;
+}
+
+input[type="text"] {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+line-height: 40px;
+margin-right: 0;
+min-width: 25%;
+}
+
+input[type="button"] {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+height: 40px;
+cursor: pointer;
+margin-left: 5px;
+}
+input[type="button"]:hover {
+background: #ebebeb;
+}
+input[type="button"].button-primary {
+background-color: #1a73e8;
+color: white;
+}
+input[type="button"].button-primary:hover {
+background-color: #1765cc;
+}
+input[type="button"].button-secondary {
+background-color: white;
+color: #1a73e8;
+}
+input[type="button"].button-secondary:hover {
+background-color: #d2e3fc;
+}
+
+#response-container {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+overflow: auto;
+max-height: 50%;
+max-width: 90%;
+background-color: rgba(255, 255, 255, 0.95);
+font-size: small;
+}
+
+#instructions {
+background-color: #fff;
+border: 0;
+border-radius: 2px;
+box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+margin: 10px;
+padding: 0 0.5em;
+font: 400 18px Roboto, Arial, sans-serif;
+overflow: hidden;
+padding: 1rem;
+font-size: medium;
 }
