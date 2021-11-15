@@ -74,7 +74,7 @@ function geocode(request)
 }
 
 
-document.addEventListener('DOMContentLoaded', function ()
+document.addEventListener('DOMContentLoaded', async function ()
 {
 
 
@@ -101,11 +101,14 @@ document.addEventListener('DOMContentLoaded', function ()
 	}//end onclick save button
 
 
-	function createAndLoadCalendar()
+	function createAndLoadCalendar(initialDB)
 	{
+		var buzz = initialDB["StartDate"];
+		var zzub = initialDB["EndDate"];
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl, {
-			initialDate: '2021-10-00',
+			initialDate: buzz,
+			validRange: { start: buzz, end: zzub },
 			initialView: 'timeGridAnyDay',
 			nowIndicator: true,
 			headerToolbar: {
@@ -319,6 +322,20 @@ document.addEventListener('DOMContentLoaded', function ()
 			dayMaxEvents: true, // allow "more" link when too many events
 			events: []
 		});
+		var dbEventList = initialDB["items"];
+		dbEventList.forEach(dbEvent => calendar.addEvent({
+			title: dbEvent.title,
+			start: dbEvent.start,
+			end: dbEvent.end,
+			extendedProps: {
+				Latitude: dbEvent.extendedProps.Latitude,
+				Longitude: dbEvent.extendedProps.Longitude,
+				Address: dbEvent.extendedProps.Address,
+				AdditionalInformation: dbEvent.extendedProps.AdditionalInformation,
+				Photos: dbEvent.extendedProps.Photos,
+			}
+		}));
+
 		return calendar;
 	}
     /**getParameterByName parses through the query parameters passed when the user chooses an itinerary from
@@ -338,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function ()
     /**
      * Fill in calendar with activities from database
      */
-	function loadItinerary(id)
+	async function loadItinerary(id)
 	{
 		//HTTP request parameters to get the itinerary with its ID
 		var requestItinerary = {
@@ -349,17 +366,25 @@ document.addEventListener('DOMContentLoaded', function ()
 
 		};
 
+		var dbItems = {items : []};
+
+
 		// make API call with parameters and use promises to get response
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary?page=" + Number(id), requestItinerary).then(response => response.text()) // <---
+		await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary?page=" + Number(id), requestItinerary).then(response => response.text()) // <---
 			.then(function (data)
 			{
-				let value = JSON.parse(data)["ItineraryItems"];
-
+				let jsonData = JSON.parse(data);
+				let value = jsonData["ItineraryItems"];
+				let startDate = Date.parse(jsonData["StartDate"]);
+				let endDate = Date.parse(jsonData["EndDate"]);
+				dbItems["StartDate"] = startDate;
+				dbItems["EndDate"] = endDate;
 				let count = (Object.keys(value).length);
+
 				//loops through returned json file to extract every activity from the itinerary
 				for (let index = 0; index < count; index++)
 				{
-					calendar.addEvent({
+					dbItems.items.push({
 						title: value[index]["ActivityName"],
 						start: Date.parse(value[index]["StartTime"]),
 						end: Date.parse(value[index]["EndTime"]),
@@ -372,15 +397,18 @@ document.addEventListener('DOMContentLoaded', function ()
 						}
 					});
 				}
+				console.log(dbItems);
 			}//end data function
-			);//end fetch.then
+		);//end fetch.then
+
+		return dbItems;
 	}
 
 
 	//Load Itinerary
-	let calendar = createAndLoadCalendar();
 	let itineraryID = getParameterByName("itinerary_id");
-	loadItinerary(itineraryID);
+	let temp = await loadItinerary(itineraryID);
+	let calendar = createAndLoadCalendar(temp);
 	calendar.render();
 
 
@@ -410,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function ()
 			let photos = calendarArr[index]["_def"]["extendedProps"]["photos"]
 
 			saveEvents.ItineraryItems.push({
-				"ActivitiyName": title,
+				"ActivityName": title,
 				"StartTime": start,
 				"EndTime": end,
 				"Address": address,
@@ -429,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function ()
 			body: json,
 		};
 		// make API call with parameters and use promises to get response
-		//fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions); 
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions); 
 	});
 
 

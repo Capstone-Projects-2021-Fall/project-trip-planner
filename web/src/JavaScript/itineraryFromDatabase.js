@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
       let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
       let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
       saveEvents.activities.push({
-        "ActivitiyName":title,
+        "ActivityName":title,
         "StartTime":start,
         "EndTime":end,
         "Address":address,

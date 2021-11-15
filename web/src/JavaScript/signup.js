@@ -17,10 +17,18 @@ function ValidatePassword()
 	if (password != confirmPassword)
 	{
 		confirm.classList.add("invalid-password");
+
+		errWrapper.style.visibility = "visible";
+		errMsg.textContent = "Passwords do not match";
+		return false;
+	}
+	else
+	{
+		errWrapper.style.visibility = "hidden";
+		errMsg.textContent = "";
+		return true;
 	}
 
-	errWrapper.style.visibility = "visible";
-	errMsg.textContent = "Passwords do not match";
 }
 
 function CallAPI()
@@ -36,7 +44,7 @@ function CallAPI()
 	var errMsg = document.getElementById('error-msg');
 
 	var match = ValidatePassword();
-
+	console.log(match);
 	if (match)
 	{
 		// instantiate a headers object
