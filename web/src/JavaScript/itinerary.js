@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let additionalInformation = calendarArr[index]["_def"]["extendedProps"]["AdditionalInformation"];
         let latitude = calendarArr[index]["_def"]["extendedProps"]["Latitude"];
         let longitude = calendarArr[index]["_def"]["extendedProps"]["Longitude"];
-        let address = calendarArr[index]["_def"]["extendedProps"]["Address"]
+        let address = calendarArr[index]["_def"]["extendedProps"]["Address"];
         let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
         let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
         let photos = calendarArr[index]["_def"]["extendedProps"]["photos"]
