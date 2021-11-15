@@ -324,14 +324,15 @@ document.addEventListener('DOMContentLoaded', async function ()
 		});
 		var dbEventList = initialDB["items"];
 		dbEventList.forEach(dbEvent => calendar.addEvent({
-			title: dbEvent["ActivityName"],
-			start: dbEvent["StartTime"],
-			end: dbEvent["EndTime"],
+			title: dbEvent.title,
+			start: dbEvent.start,
+			end: dbEvent.end,
 			extendedProps: {
-				Latitude: dbEvent["Latitude"],
-				Longitude: dbEvent["Longitude"],
-				Address: dbEvent["Address"],
-				AdditionalInformation: dbEvent["AdditionalInformation"],
+				Latitude: dbEvent.extendedProps.Latitude,
+				Longitude: dbEvent.extendedProps.Longitude,
+				Address: dbEvent.extendedProps.Address,
+				AdditionalInformation: dbEvent.extendedProps.AdditionalInformation,
+				Photos: dbEvent.extendedProps.Photos,
 			}
 		}));
 
