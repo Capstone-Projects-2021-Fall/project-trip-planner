@@ -109,7 +109,7 @@ function fillUsers(container, response)
 {
 	if (response.status == 200)
 	{
-		var userID = parseInt(GetCookie("id"));
+		var userID = GetIDCookie();
 
 		JsonOrNull(response, results =>
 		{
