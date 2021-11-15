@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', OnLoad);
 
 function OnLoad(event)
 {
-	var userID = parseInt(GetCookie("id"));
+	var userID = GetIDCookie();
 
 	if (userID == null)
 	{
