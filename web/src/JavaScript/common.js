@@ -112,7 +112,7 @@ function fillItineraries(container, response, isAccount)
 					}
 					elem.onclick = function () 
 					{
-						document.location = "itinerary.html?id=" + id;
+						document.location = "itinerary.html?itinerary_id=" + id;
 					};
 
 					container.appendChild(elem);
