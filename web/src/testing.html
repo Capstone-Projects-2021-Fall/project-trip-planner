@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<div id="map-canvas"></div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initialize" async defer></script>
+
+</html>
+
+<style>
+    html,
+body,
+#map-canvas {
+  height: 90%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+
+</style>
+
+
+
+<script>
+let map;
+let marker;
+var Ireland = "Dublin";
+var locations = ["Philadelphia", "New York City", "Washington DC"];
+
+function initialize() {
+geocoder = new google.maps.Geocoder();
+var latlng = new google.maps.LatLng(53.3496, -6.3263);
+var mapOptions = {
+zoom: 8,
+center: latlng
+}
+map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+marker = new google.maps.Marker({
+              map,
+              });
+codeAddress(locations); //call the function
+}
+
+function codeAddress(address) {
+
+    for(var i = 0; i < address.length; i++)
+        {
+            geocoder.geocode({
+            address: address[i]
+        }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location); //center the map over the result
+            //place a marker at the location
+            var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+        marker.setMap(marker);
+    } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+    }
+   });
+  }
+}
+
+
+</script>
