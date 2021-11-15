@@ -316,7 +316,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
       // make API call with parameters and use promises to get response
       fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary?page="+ Number(id), requestItinerary).then(response => response.text()) // <---
-      .then( function(data){let value = JSON.parse(data);
+      .then( function(data){
+    let value = JSON.parse(data)["ItineraryItems"];
       
       let count = (Object.keys(value).length);
       //loops through returned json file to extract every activity from the itinerary
