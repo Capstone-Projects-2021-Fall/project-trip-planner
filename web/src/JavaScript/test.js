@@ -16,7 +16,7 @@ function OnLoad(event)
 	var photos = ["1", "2", "3"];
 
 		ItineraryItems.push({
-			"ActivitiyName": title,
+			"ActivityName": title,
 			"StartTime": start,
 			"EndTime": end,
 			"Address": address,
@@ -36,7 +36,7 @@ function OnLoad(event)
 	photos = ["1"];
 
 	ItineraryItems.push({
-		"ActivitiyName": title,
+		"ActivityName": title,
 		"StartTime": start,
 		"EndTime": end,
 		"Address": address,

@@ -87,7 +87,7 @@ function fillItineraries(container, response, isAccount)
 					endHolder.appendChild(endContent);
 					elem.appendChild(endHolder);
 
-					var id = element["ItineraryID"];
+					let _id = element["ItineraryID"];
 
 					//User search does not pull the creator id or name because it's the same as the current user. so these wouldn't be valid.
 					if (!isAccount)
@@ -112,7 +112,8 @@ function fillItineraries(container, response, isAccount)
 					}
 					elem.onclick = function () 
 					{
-						document.location = "itinerary.html?itinerary_id=" + id;
+						let k = _id;
+						document.location = "itinerary.html?itinerary_id=" + k;
 					};
 
 					container.appendChild(elem);
