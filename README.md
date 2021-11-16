@@ -7,7 +7,6 @@ A web application that allows multiple users to collaborate on a trip itinerary 
 * Share photos and videos of visited locations
 * Public itineraries
 
-
 # Contributors
 * Gen P. Cohen
 * Jett Everett
@@ -15,3 +14,8 @@ A web application that allows multiple users to collaborate on a trip itinerary 
 * John Lee
 * Sarah N. Paroya
 * Gary Renato Mejia
+
+# How to Run: 
+Since our website is hosted, all you need to do is 
+go onto the site and use the application!
+**_[You can access the website here.](http://cis-linux2.temple.edu:8080/FA21_4330_tuj43525/project-trip-planner/web/src/homepage.html)_**
