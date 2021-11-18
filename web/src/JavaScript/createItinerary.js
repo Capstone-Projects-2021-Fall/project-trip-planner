@@ -1,7 +1,4 @@
-
-
-
-function CallAPI(email, password) 
+function CallAPI() 
 {
 	var itineraryName = document.getElementById("tripName").value;
 	var startDate = new Date(document.getElementById("startDate").value);
@@ -17,7 +14,7 @@ function CallAPI(email, password)
 	//likely should check here to see if cookie is not null.
 
 	console.log("UserID: '" + userID + "'");
-	console.log("Type: '" + typeof(userID) + "'");
+	console.log("Type: '" + typeof (userID) + "'");
 
 	var newItinerary = {
 		"itineraryName": itineraryName,
@@ -66,7 +63,7 @@ function CallAPI(email, password)
 				 * 4: Invalid Itinerary Name.It can't be null, empty, or whitespace.
 				 */
 
-				 console.log(output)
+				console.log(output)
 
 				var err = output["errorCode"];
 				if (err == 1)

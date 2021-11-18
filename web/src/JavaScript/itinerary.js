@@ -175,85 +175,86 @@ document.addEventListener('DOMContentLoaded', async function ()
 				//add photos
 
 				var slideshowContainer = document.getElementsByClassName("slideshow-container")[0];
-                				//remove all children from slide show container, except the prev and next arrows
+				//remove all children from slide show container, except the prev and next arrows
 
-                                							const removeChilds = (parent) =>
-                                							{
-                                								var done = 0;
-                                								while (parent.lastChild && done == 0)
-                                								{
-                                									//console.log(parent.lastChild);
-                                									//console.log(parent.lastChild.className);
-                                									if (parent.lastChild.className != "next" && parent.lastChild.className != "prev")
-                                									{
-                                										parent.removeChild(parent.lastChild);
-                                									}
-                                									else { done = 1; }
-                                								}
-                                							};
+				const removeChilds = (parent) =>
+				{
+					var done = 0;
+					while (parent.lastChild && done == 0)
+					{
+						//console.log(parent.lastChild);
+						//console.log(parent.lastChild.className);
+						if (parent.lastChild.className != "next" && parent.lastChild.className != "prev")
+						{
+							parent.removeChild(parent.lastChild);
+						}
+						else { done = 1; }
+					}
+				};
 
 
-                                							// remove all child nodes
-                                							removeChilds(slideshowContainer);
+				// remove all child nodes
+				removeChilds(slideshowContainer);
 				//if there are any
-				if(arg.event.extendedProps.photos.length >0){
+				if (arg.event.extendedProps.photos.length > 0)
+				{
 
 
 
 
-                							arg.event.extendedProps.photos.forEach(function (url, index, originalArray)
-                							{
+					arg.event.extendedProps.photos.forEach(function (url, index, originalArray)
+					{
 
-                								var div1 = document.createElement('div');
-                								div1.className = "mySlides fade";
+						var div1 = document.createElement('div');
+						div1.className = "mySlides fade";
 
-                								var tempImg = document.createElement('img');
-                								tempImg.style.width = "100%";
-                								tempImg.src = url;
+						var tempImg = document.createElement('img');
+						tempImg.style.width = "100%";
+						tempImg.src = url;
 
-                								div1.appendChild(tempImg);
-                								slideshowContainer.appendChild(div1);
-                							});
-                							//console.log(slideshowContainer);
+						div1.appendChild(tempImg);
+						slideshowContainer.appendChild(div1);
+					});
+					//console.log(slideshowContainer);
 
 
 
-                							//display image in carousel
+					//display image in carousel
 
-                							var slideIndex = 1;
-                							showSlides(slideIndex);
+					var slideIndex = 1;
+					showSlides(slideIndex);
 
-                							// Next/previous controls
-                							function plusSlides(n)
-                							{
-                								showSlides(slideIndex += n);
-                							}
+					// Next/previous controls
+					function plusSlides(n)
+					{
+						showSlides(slideIndex += n);
+					}
 
-                							// Thumbnail image controls
-                							function currentSlide(n)
-                							{
-                								showSlides(slideIndex = n);
-                							}
+					// Thumbnail image controls
+					function currentSlide(n)
+					{
+						showSlides(slideIndex = n);
+					}
 
-                							function showSlides(n)
-                							{
-                								var i;
-                								var slides = document.getElementsByClassName("mySlides");
-                								var dots = document.getElementsByClassName("dot");
-                								if (n > slides.length) { slideIndex = 1 }
-                								if (n < 1) { slideIndex = slides.length }
-                								for (i = 0; i < slides.length; i++)
-                								{
-                									slides[i].style.display = "none";
-                								}
-                								for (i = 0; i < dots.length; i++)
-                								{
-                									dots[i].className = dots[i].className.replace(" active", "");
-                								}
-                								slides[slideIndex - 1].style.display = "block";
-                								dots[slideIndex - 1].className += " active";
-                							}
-                		}//end if there are photos
+					function showSlides(n)
+					{
+						var i;
+						var slides = document.getElementsByClassName("mySlides");
+						var dots = document.getElementsByClassName("dot");
+						if (n > slides.length) { slideIndex = 1 }
+						if (n < 1) { slideIndex = slides.length }
+						for (i = 0; i < slides.length; i++)
+						{
+							slides[i].style.display = "none";
+						}
+						for (i = 0; i < dots.length; i++)
+						{
+							dots[i].className = dots[i].className.replace(" active", "");
+						}
+						slides[slideIndex - 1].style.display = "block";
+						dots[slideIndex - 1].className += " active";
+					}
+				}//end if there are photos
 
 
 
@@ -311,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 							currentPhotoArray.push(url);
 							//console.log("addedPhotoArray: " + addedPhotoArray);
 							arg.event.setExtendedProp("photos", currentPhotoArray);
-							console.log("photos array for event: " +arg.event.title + arg.event.extendedProps.photos);
+							console.log("photos array for event: " + arg.event.title + arg.event.extendedProps.photos);
 
 
 
@@ -423,9 +424,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		return calendar;
 	}
-    /**getParameterByName parses through the query parameters passed when the user chooses an itinerary from
-    the list of itineraries. It retrieves the value from the name it is being passed as and then returns that 
-    value**/
+	/**getParameterByName parses through the query parameters passed when the user chooses an itinerary from
+	the list of itineraries. It retrieves the value from the name it is being passed as and then returns that 
+	value**/
 	function getParameterByName(name, url)
 	{
 		if (!url) url = window.location.href;
@@ -437,9 +438,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 		return decodeURIComponent(results[2].replace(/\+/g, ' '));
 	}
 
-    /**
-     * Fill in calendar with activities from database
-     */
+	/**
+	 * Fill in calendar with activities from database
+	 */
 	async function loadItinerary(id)
 	{
 		//HTTP request parameters to get the itinerary with its ID
@@ -451,7 +452,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		};
 
-		var dbItems = {items : []};
+		var dbItems = { items: [] };
 
 
 		// make API call with parameters and use promises to get response
@@ -484,7 +485,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				}
 				console.log(dbItems);
 			}//end data function
-		);//end fetch.then
+			);//end fetch.then
 
 		return dbItems;
 	}
@@ -497,9 +498,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 	calendar.render();
 
 
-    /** 
-     * Update itinerary everytime the user saves it
-     **/
+	/** 
+	 * Update itinerary everytime the user saves it
+	 **/
 	document.getElementById("save").addEventListener("click", function ()
 	{
 		let index = 0;
@@ -542,7 +543,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			body: json,
 		};
 		// make API call with parameters and use promises to get response
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions); 
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions);
 	});
 
 

@@ -18,16 +18,16 @@ function FindUsers()
 	{
 		query = decodeURIComponent(query);
 
-		var raw = JSON.stringify({ "query": query});
+		var raw = JSON.stringify({ "query": query });
 
 		// create a JSON object with parameters for API call and store in a variable
 		var requestOptions = {
 			method: 'POST',
 			body: raw,
 		};
-	
+
 		console.log(requestOptions);
-	
+
 		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForUser", requestOptions).then(response => fillUsers(container, response));
 	}
 	else 
@@ -54,7 +54,7 @@ function QuickFindItineraries()
 	var query = searchSection.get("query");
 	var mode = searchSection.get("mode");
 
-	
+
 
 	/*
 	TODO: add these. if both latitude and longitude aren't provided, these should be ignored. if maxDistance is missing, default to 25 miles.
@@ -68,28 +68,28 @@ function QuickFindItineraries()
 		query = decodeURIComponent(query);
 
 		// create a JSON object with parameters for API call and store in a variable
-		
+
 		var addr;
 		var raw;
 		if (mode && mode == "ByActivity")
 		{
 			addr = "https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchItinerariesByActivity";
-			raw = JSON.stringify({ "search": query});
+			raw = JSON.stringify({ "search": query });
 		}
 		else 
 		{
 			addr = "https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForItineraryWithNameLike";
-			raw = JSON.stringify({ "query": query});
+			raw = JSON.stringify({ "query": query });
 		}
 
 
-		var requestOptions = 
+		var requestOptions =
 		{
 			method: 'POST',
 			body: raw,
 		};
 		console.log(requestOptions);
-	
+
 		fetch(addr, requestOptions).then(response => fillItineraries(container, response, false));
 	}
 	else 
@@ -131,7 +131,7 @@ function fillUsers(container, response)
 				//json elements are formatted as such:
 				results.forEach(element => 
 				{
-					
+
 					var elem = document.createElement("div");
 					elem.classList.add("user-item");
 
@@ -146,11 +146,11 @@ function fillUsers(container, response)
 
 					var fName = element["FirstName"];
 					var lName = element["LastName"];
-					
+
 					var nameText;
 					if (fName && lName)
 					{
-						 nameText = "Name: " + fName + " " + lName;
+						nameText = "Name: " + fName + " " + lName;
 					}
 					else if (fName)
 					{
@@ -188,7 +188,7 @@ function fillUsers(container, response)
 
 					var id = element["UserID"];
 
-					elem.onclick = function() 
+					elem.onclick = function () 
 					{
 						document.location = "viewUser.html?id=" + id;
 					};

@@ -10,7 +10,7 @@ function OnLoad(event)
 	}
 	else 
 	{
-		var raw = JSON.stringify({ "id": userID});
+		var raw = JSON.stringify({ "id": userID });
 
 		// create a JSON object with parameters for API call and store in a variable
 		var requestOptions = {

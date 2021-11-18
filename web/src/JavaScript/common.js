@@ -134,24 +134,6 @@ function fillItineraries(container, response, isAccount)
 	}
 }
 
-//function JsonOrNull(response)
-//{
-//	response.text().then(text =>
-//	{
-//		console.log("'" + text + "'");
-//		if (text)
-//		{
-//			console.log("parsing");
-//			return JSON.parse(text);
-//		}
-//		else 
-//		{
-//			console.log("null");
-//			return null;
-//		}
-//	});
-//}
-
 function PerformSearch()
 {
 	var selectBox = document.getElementById("dropdown");
