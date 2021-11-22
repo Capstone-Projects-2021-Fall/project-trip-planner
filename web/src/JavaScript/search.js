@@ -2,12 +2,12 @@
 
 function FindUsers()
 {
-	var searchSection = new URLSearchParams(window.location.search);
+	//null if not found. that works here.
+	var query = getParameterByName("query");
 
 	var container = document.getElementById('itinerary-list-holder');
 
-	//null if not found. that works here.
-	var query = searchSection.get("query");
+	
 	/*
 	TODO: maybe add these? allow end user to refine user search? wasn't part of spec, isn't strictly speaking hard, but more work for frontend devs. 
 	var firstName = searchSection.get("firstName");
@@ -47,6 +47,7 @@ function FindUsers()
 function QuickFindItineraries()
 {
 	var searchSection = new URLSearchParams(window.location.search);
+
 
 	var container = document.getElementById('itinerary-list-holder');
 

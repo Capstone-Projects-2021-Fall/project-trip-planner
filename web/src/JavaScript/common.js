@@ -1,16 +1,21 @@
-// Used to toggle the menu on small screens when clicking on the menu button
-function MenuToggle()
-{
-	var x = document.getElementById("navDemo");
-	if (x.className.indexOf("w3-show") == -1)
-	{
-		x.className += " w3-show";
-	} else
-	{
-		x.className = x.className.replace(" w3-show", "");
-	}
-}
+//// Used to toggle the menu on small screens when clicking on the menu button
+//function MenuToggle()
+//{
+//	var x = document.getElementById("navDemo");
+//	if (x.className.indexOf("w3-show") == -1)
+//	{
+//		x.className += " w3-show";
+//	} else
+//	{
+//		x.className = x.className.replace(" w3-show", "");
+//	}
+//}
 
+/**
+ * Get the value of a cookie based on the name provided, in string format.
+ * @param {string} cname name of the cookie to get.
+ * @returns {string} the value of the cookie, or null if no cookie with the given name exists.
+ */
 function GetCookie(cname)
 {
 	let name = cname + "=";
@@ -32,6 +37,13 @@ function GetCookie(cname)
 	return null;
 }
 
+/**
+ * Given a HttpResponse filled with JSON data representing a list of Itineraries, create a bunch of divs with the data in them, and add them to container. 
+ * This function can be for both the account and itinerary search page, even though the itinerary search page also provides the creator information. To handle this, an isAccount flag is used.
+ * @param {Element} container The container element (usually a 'div' tag) to place all the create itinerary items in.
+ * @param {Response} response The HTTP Response to parse and retrieve the information from.
+ * @param {boolean} isAccount true if this is going on the account page, false if it's the itinerary search page.
+ */
 function fillItineraries(container, response, isAccount)
 {
 	if (response.status == 200)
@@ -134,6 +146,9 @@ function fillItineraries(container, response, isAccount)
 	}
 }
 
+/**
+ * Provides the functionality for the search bar we have on each page. redirects the page to the search page with the content the user provided. 
+ */
 function PerformSearch()
 {
 	var selectBox = document.getElementById("dropdown");
@@ -154,9 +169,14 @@ function PerformSearch()
 	}
 }
 
-function JsonOrNull(response, callback)
+/**
+ * Acts like response.JSON(), but properly handles a null object, response.JSON() does not. 
+ * @param {Response} response the http response to parse.
+ * @param {function(JSON): Promise} callback the callback to process the json object.
+ */
+async function JsonOrNull(response, callback)
 {
-	response.text().then(text =>
+	await response.text().then(text =>
 	{
 		var result;
 		if (text)
@@ -169,12 +189,92 @@ function JsonOrNull(response, callback)
 			console.log("null");
 			result = null;
 		}
-		callback(result);
+		return callback(result);
 	});
 }
 
+/**
+ * Gets the 'ID' cookie value, or null if no such cookie exists.
+ */
 function GetIDCookie()
 {
 	var id = GetCookie("id");
 	return id ? parseInt(id) : null;
+}
+
+//Not strictly speaking required, but good practice i guess.
+/**
+ * Parse the given string as a Date object. If the data can be parsed as a date but does not represent a valid date, returns null instead.
+ * @param {string} value the string to parse as a Date object.
+ * @returns {Date} the date the string represents, or null if no such date can be found.
+ */
+function GetDateOrNull(value)
+{
+	console.log("Date Format: " + typeof (value) + ", value = '" + value + "'");
+	var temp = new Date(value);
+	if (!temp || isNaN(temp))
+	{
+		return null;
+	}
+	else
+	{
+		return temp;
+	}
+}
+
+/**
+ * Checks to see if a string is null or whitespace. Returns true if it is, false if not.
+ *
+ * @param {string} str - The text to check
+ * @returns {boolean} - true if null or whitespace, false if valid.
+ */
+function IsNullOrWhitespace(str)
+{
+	return !str || !str.trim();
+}
+
+/**
+ * Checks to see if a string is null or whitespace. If it is, returns null, otherwise returns the string, unaltered.
+ *
+ * @param {string} str - The text to check
+ * @returns {string} - the unaltered string, or null if it is invalid.
+ */
+function GetValidStringOrNull(str)
+{
+	return IsNullOrWhitespace(str) ? null : str;
+}
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate)
+{
+	var timeout;
+	return function ()
+	{
+		var context = this, args = arguments;
+		var later = function ()
+		{
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+/**
+ * retrieves the parameter of the given name from the url, or null if no such parameter exists.
+ * @param {string} name - the name of the query parameter to check.
+ * @returns {string} - the decoded string associated with that query parameter, or null if the query parameter has no value or does not exist.
+ */
+function getParameterByName(name)
+{
+	var searchSection = new URLSearchParams(window.location.search);
+	var result = searchSection.get(name);
+	//truthy conversion is false if null or empty. i'll leave the result unaltered if either case, as the empty string may be valid and using null instead would not be.
+	return result ? decodeURIComponent(result) : result;
 }

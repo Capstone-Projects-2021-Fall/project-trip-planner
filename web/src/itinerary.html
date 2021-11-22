@@ -19,99 +19,90 @@
 	<link href='CSS/navbar.css' rel='stylesheet' />
 	<link rel="stylesheet" href="CSS/itinerary.css">
 
+	<script src="JavaScript/common.js"></script>
 	<script src="JavaScript/itinerary.js"></script>
-
 </head>
 <body>
-	<!-- Navbar on small screens -->
-	<div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
-	</div>
 	<button id="save" type="button">Save Itinerary</button>
 	<!--  <button id="myBtn">Create Itinerary</button>-->
 	<!--  <button type="button">Save Itinerary</button>-->
 
 	<div id='calendar'></div>
 
-
-
-	<!-- modal event edit form -->
-	<div id="eventDetailsModal" class="modal" style="display:none">
-
-		<div class="modal-content">
-			<span class="close">&times;</span>
-
-			<header class="w3-container w3-red w3-center" style="padding:40px 70px">
-				<h1 align="center" style="color: white">Event Details</h1>
-			</header>
-
-			<form action="" method="post">
-				<div style="padding-top: 20px" class="form-group" align="center">
-					<label>Event Name:</label>
-					<label id="eventName"></label>
+	<!--The item modal. This displays when an event is selected so it can be edited, or when an event is created-->
+	<div id="item-modal" class="item-modal-collapsed">
+		<div id="item-modal-container">
+			<!--Top part, aka the modal header: title, timeframe, description.-->
+			<div id="item-modal-top">
+				<div id="item-modal-title-container">
+					<label for="item-modal-title" class="item-modal-label">Activity Name:</label>
+					<input type="text" name="itineraryTitle" id="item-modal-title" />
 				</div>
-				<div class="form-group" align="center">
-					<label>Start Time:</label>
-					<label id="startDateEventDetails"></label>
+				<div id="item-modal-timeframe">
+					<div id="item-modal-start-container">
+						<label for="item-modal-start" class="item-modal-label">Start Time:</label>
+						<input type="datetime" name="itineraryStart" id="item-modal-start" />
+					</div>
+					<div id="item-modal-end-container">
+						<label for="item-modal-end" class="item-modal-label">End Time:</label>
+						<input type="datetime" name="itineraryEnd" id="item-modal-end" />
+					</div>
+					<div id="item-modal-description-container">
+						<label for="item-modal-description" class="item-modal-label">Additional Information:</label>
+						<input type="datetime" name="itineraryDescription" id="item-modal-description" />
+					</div>
 				</div>
-				<div class="form-group" align="center">
-					<label>End Time:</label>
-					<label id="endDateEventDetails"></label>
+			</div>
+			<div id="item-modal-middle">
+				<!--Left half: itinerary location stuff-->
+				<div id="item-modal-left">
+					<div id="item-modal-address-container">
+						<input type="radio" id="item-modal-radio-address" class="item-modal-radio" name="address-mode" onclick="handleRadio(this)" value="Address" checked />
+						<label for="item-modal-radio-address" class="item-modal-label">This activity has a precise address</label>
+						<input type="radio" id="item-modal-radio-latlong" class="item-modal-radio" name="address-mode" onclick="handleRadio(this)" value="LatLong" />
+						<label for="item-modal-radio-latlong" class="item-modal-label">This activity is at a remote location and/or does not have an address</label>
+						<!--This div is mutually exclusive with the latlong div-->
+						<div id="item-modal-address-mode">
+							<label for="item-modal-address" class="item-modal-label">Address:</label>
+							<input type="text" id="item-modal-address" />
+						</div>
+						<div id="item-modal-latlong-mode" class="address-option-collapsed">
+							<p>Provide the Latitude and Longitude coordinates for your activity, or select a point on the map. You can provide a nearby address to provide an initial point for you to work from</p>
+							<label for="item-modal-rough-address" class="item-modal-label">Rough Address (optional):</label>
+							<input type="text" id="item-modal-rough-address" />
+							<div id="item-modal-coordinate-container">
+								<label for="item-modal-latitude" class="item-modal-label">Latitude:</label>
+								<input type="number" id="item-modal-latitude" />
+								<label for="item-modal-longitude" class="item-modal-label">Longitude:</label>
+								<input type="number" id="item-modal-longitude" />
+							</div>
+						</div>
+					</div>
 				</div>
-				<div style="padding-top: 20px" class="form-group" align="center">
-					<label>Notes:</label>
-					<input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
+				<!--Right Half: map-->
+				<div id="item-modal-right">
+					<div id="item-modal-map"></div>
 				</div>
-				<div class="form-group" align="center">
-					<input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
-
-					<label>Uploaded Photos:</label>
+			</div>
+			<!--Footer. Save, cancel changes, delete-->
+			<div id="item-modal-footer">
+				<div id="item-modal-photo-list"></div>
+				<div id="item-modal-footer-buttons">
+					<!--Float the save to the right, cancel to the left, delete in the middle-->
+					<button aria-label="Save Activity" id="save-itinerary-item" class="item-modal-button" type="button">Save</button>
+					<button aria-label="Save Activity" id="cancel-itinerary-item" class="item-modal-button" type="button">Cancel</button>
+					<div id="centerButtonPls">
+						<button aria-label="Save Activity" id="delete-itinerary-item" class="item-modal-button nothing-to-delete" type="button">Delete</button>
+					</div>
 				</div>
-				<!-- Slideshow container -->
-				<div class="slideshow-container">
-
-					<!-- Next and previous buttons -->
-					<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-					<a class="next" onclick="plusSlides(1)">&#10095;</a>
-				</div>
-				<br>
-
-				<!-- The dots/circles -->
-				<div style="text-align:center">
-					<span class="dot" onclick="currentSlide(1)"></span>
-					<span class="dot" onclick="currentSlide(2)"></span>
-					<span class="dot" onclick="currentSlide(3)"></span>
-				</div>
-
-
-
-				<div style="padding-top: 25px" class="form-group" align="center">
-					<input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
-
-	<div id="map" style="display: none"></div>
-
-	<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-
-
-
-	<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-		<h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
-	</div>
-
 	<!-- Footer -->
 	<footer class="w3-container w3-padding-64 w3-center w3-opacity">
 		<div class="w3-xlarge w3-padding-32">
 		</div>
-
 	</footer>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap"
-			async></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>
 </body>
 </html>

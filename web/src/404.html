@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+<!-- This is a hacky way of handling a 404, but doing it all on the page would probably suck, so i'm just creating a new page and jumping to it-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>W3.CSS Template</title>
@@ -20,7 +21,6 @@
 </head>
 
 <body>
-	<!-- TODO: check if id cookie already there, if it is, go to account page. also, add log out option or we're forever stuck (for two hours or until the browser is closed, anyway, whichever is first)-->
 	<!-- Navbar -->
 	<nav class="w3-top">
 		<div class="w3-bar w3-red w3-card w3-left-align w3-large">
@@ -44,7 +44,13 @@
 			</div>
 		</div>
 	</nav>
-	<main>
+
+	<header>
+		<h1 class="w3-margin w3-jumbo">404: That's an error</h1>
+	</header>
+	<main id="main-holder" class="w3-container w3-red w3-center" style="padding:128px 16px">
+		<h3 id="login-header">These aren't the droids you're looking for.</h3>
+		<p>The page you requested does not exist. This may happen if you were fiddling with the url or were following a link to a user or itinerary that no longer exists.</p>
 	</main>
 </body>
 </html>
