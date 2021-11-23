@@ -23,11 +23,29 @@
 	<script src="JavaScript/itinerary.js"></script>
 </head>
 <body>
-	<button id="save" type="button">Save Itinerary</button>
-	<!--  <button id="myBtn">Create Itinerary</button>-->
-	<!--  <button type="button">Save Itinerary</button>-->
+	<header id="main-itinerary-data">
+		<div id="itinerary-title-container">
+			<label for="itinerary-title" id="itinerary-title-label">Itinerary Name:</label>
+			<input type="text" id="itinerary-title" />
+		</div>
+		<div id="itinerary-date-range">
+			<div id="itinerary-startdate-container">
+				<label for="itinerary-startdate" id="itinerary-startdate-label">Start Date:</label>
+				<input type="text" id="itinerary-startdate" />
+			</div>
+			<div id="itinerary-enddate-container">
+				<label for="itinerary-title" id="itinerary-enddate-label">End Date:</label>
+				<input type="text" id="itinerary-enddate" />
+			</div>
+		</div>
+		<div id="itinerary-description-container">
+			<label for="itinerary-title" id="itinerary-description-label">Description <i>(optional)</i>:</label>
+			<input type="text" id="itinerary-description" />
+		</div>
+	</header>
 
-	<div id='calendar'></div>
+
+	<main id='calendar'></main>
 
 	<!--The item modal. This displays when an event is selected so it can be edited, or when an event is created-->
 	<div id="item-modal" class="item-modal-collapsed">
@@ -99,8 +117,11 @@
 		</div>
 	</div>
 	<!-- Footer -->
-	<footer class="w3-container w3-padding-64 w3-center w3-opacity">
-		<div class="w3-xlarge w3-padding-32">
+	<footer class="w3-container w3-center w3-opacity">
+		<div id="stop-copypasta">
+			<!--<button id="save" type="button">Save Itinerary</button>-->
+			<!--  <button id="myBtn">Create Itinerary</button>-->
+			<!--  <button type="button">Save Itinerary</button>-->
 		</div>
 	</footer>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>

@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	let itineraryID = getParameterByName("itinerary_id");
 	if (!itineraryID)
 	{
-		document.location = "404.html";
+		document.location = "404.html?src=itinerary";
 		return;
 	}
 
@@ -54,7 +54,13 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let itemModal = document.getElementById('item-modal'); //need this to toggle visibility.
 		let itemModalTitle = document.getElementById('item-modal-title'); //value
 		//address is a bit more complicated. I'm just going to get the mode for now.
+
+
 		let mode = document.querySelector('input[name="address-mode"]:checked')?.value;
+		//edit: nope, i need it. i'm dumb.
+		let addressDiv = document.getElementById('item-modal-address');
+		let latDiv = document.getElementById('item-modal-latitude');
+		let longDiv = document.getElementById('item-modal-longitude');
 
 		let itemModalStartDate = document.getElementById('item-modal-start'); //value
 		let itemModalEndDate = document.getElementById('item-modal-end'); //value
@@ -74,8 +80,10 @@ document.addEventListener('DOMContentLoaded', async function ()
 		if (event) 
 		{
 			itemModalTitle.value = event.title;
-			itemModalAddress.value = event.extendedProps.Address;
+			addressDiv.value = event.extendedProps.Address;
 			itemModalDescription.value = event.extendedProps.AdditionalInformation;
+			latDiv = event.extendedProps.Latitude;
+			longDiv = event.extendedProps.Longitude;
 
 			//ensure photo collection is clear.
 			while (photoCollection.firstChild)
@@ -83,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				photoCollection.removeChild(photoCollection.lastChild);
 			}
 
-			event.extendedProps.photos.forEach(x =>
+			event.extendedProps.Photos.forEach(x =>
 			{
 				addPhoto(photoCollection, x);
 			});
@@ -114,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					event.setExtendedProp("Latitude", lat);
 					event.setExtendedProp("Longitude", long);
 					event.setExtendedProp("AdditionalInformation", description);
-					event.setExtendedProp("photos", photos);
+					event.setExtendedProp("Photos", photos);
 					event.setExtendedProp("Address", address);
 				}
 				else 
@@ -129,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 							Longitude: long,
 							Address: address,
 							AdditionalInformation: description,
-							photos: photos
+							Photos: photos
 						}
 					});
 				}
@@ -139,7 +147,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			{
 				if (mode == 'Address')
 				{
-					let address = document.getElementById('item-modal-address').value;
+					let address = 
 					latlongReq = { address: address };
 					geocoder.geocode(latlongReq).then(latlong =>
 					{
@@ -151,8 +159,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 				}
 				else //mode == 'LatLong' //we know this is the case by the isModeValid check.
 				{
-					let lat = document.getElementById('item-modal-latitude').value;
-					let long = document.getElementById('item-modal-longitude').value;
 					addOrUpdateItem(lat, long, null);
 					//collapse the item modal.
 					itemModal.classList.add("item-modal-collapsed");
@@ -200,6 +206,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 	function addPhoto(container, url)
 	{
+		console.log("Url:" + url);
 		let div = document.createElement('div');
 		div.classList.add("item-modal-photo");
 		let img = document.createElement("img");
@@ -266,19 +273,27 @@ document.addEventListener('DOMContentLoaded', async function ()
 			dayMaxEvents: true, // allow "more" link when too many events
 			events: []
 		});
+
+		console.log("DbEvent Photos: ");
+		
+
 		var dbEventList = initialDB.items;
-		dbEventList.forEach(dbEvent => calendar.addEvent({
-			title: dbEvent.title,
-			start: dbEvent.start,
-			end: dbEvent.end,
-			extendedProps: {
-				Latitude: dbEvent.extendedProps.Latitude,
-				Longitude: dbEvent.extendedProps.Longitude,
-				Address: dbEvent.extendedProps.Address,
-				AdditionalInformation: dbEvent.extendedProps.AdditionalInformation,
-				Photos: dbEvent.extendedProps.Photos,
-			}
-		}));
+		dbEventList.forEach(dbEvent =>
+		{
+			dbEvent.photos
+			calendar.addEvent({
+				title: dbEvent.activityName,
+				start: dbEvent.startTime,
+				end: dbEvent.endTime,
+				extendedProps: {
+					Latitude: dbEvent.latitude,
+					Longitude: dbEvent.longitude,
+					Address: dbEvent.address,
+					AdditionalInformation: dbEvent.additionalInformation,
+					Photos: dbEvent.photos.map(x=> x["URL"]),
+				}
+			});
+		});
 
 		return calendar;
 	}
@@ -318,19 +333,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 					//first, make sure we got something, we could somehow get a null.
 					if (jsonData)
 					{
-						let value = jsonData["ItineraryItems"];
+						let values = jsonData["ItineraryItems"];
+						console.log(values);
 						let name = jsonData["ItineraryName"];
 						let startDate = GetDateOrNull(jsonData["StartDate"]);
 						let endDate = GetDateOrNull(jsonData["EndDate"]);
 						let desc = jsonData['Description'];
 
-						let count = (Object.keys(value).length);
 						let coll = [];
 						//loops through returned json file to extract every activity from the itinerary
-						for (let index = 0; index < count; index++)
+						values.forEach(value =>
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateOrNull(value["StartTime"]), GetDateOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
-						}
+						});
 						console.log("Batman");
 						dbItems = new DBData(name, startDate, endDate, desc, coll);
 						console.log(dbItems);
@@ -352,11 +367,27 @@ document.addEventListener('DOMContentLoaded', async function ()
 		return dbItems;
 	}
 
+	/**
+	 * 
+	 * @param {DBData} dbData
+	 */
+	function initializeNonCalendarData(dbData)
+	{
+		let title = document.getElementById("itinerary-title");
+		let start = document.getElementById("itinerary-startdate");
+		let end = document.getElementById("itinerary-enddate");
+		let description = document.getElementById("itinerary-description");
+
+		title.value = dbData.itineraryName;
+		start.value = dbData.startDate;
+		end.value = dbData.endDate;
+		description.value = dbData.description;
+	}
+
 	//Load Itinerary
 
 	let temp = await loadItinerary(itineraryID);
-	console.log("here");
-	console.log(temp);
+	initializeNonCalendarData(temp);
 	calendar = createAndLoadCalendar(temp);
 	calendar.render();
 
@@ -423,6 +454,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 	});
 });//end of dom content loaded
+
+document.getElementById("")
 
 class DBData
 {

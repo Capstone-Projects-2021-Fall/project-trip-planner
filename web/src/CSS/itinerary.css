@@ -1,20 +1,73 @@
 body
 {
-	margin: 60px 10px;
+	/* margin: 60px 10px; */
 	padding: 0;
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 14px;
 }
 
+#main-itinerary-data
+{
+	padding-top:10px;
+	padding-left:20px;
+	padding-right:20px;
+}
+#itinerary-title-container
+{
+
+}
+#itinerary-title-label
+{
+
+}
+#itinerary-title
+{
+
+}
+#itinerary-date-range
+{
+
+}
+#itinerary-startdate-container
+{
+
+}
+#itinerary-startdate-label
+{
+
+}
+#itinerary-startdate
+{
+
+}
+#itinerary-enddate-container
+{
+
+}
+#itinerary-enddate-label
+{
+}
+#itinerary-title
+{
+
+}
+#itinerary-description-container
+{
+
+}
+#itinerary-description-label
+{
+
+}
+#itinerary-description
+{
+
+}
+/*Calendar*/
 #calendar
 {
 	max-width: 1100px;
 	margin: 0 auto;
-}
-
-.form-group
-{
-	display: block;
 }
 
 /*MAP CSS*/
@@ -35,23 +88,25 @@ body
 #item-modal
 {
 	position: fixed; /* Stay in place */
-	z-index: 1; /* Sit on top */
+	z-index: 10; /* Sit on top */
 	left: 0;
 	top: 0;
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
-	overflow: auto; /* Enable scroll if needed */
+	
 	background-color: rgb(0,0,0); /* Fallback color */
 	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 #item-modal-container
 {
+	overflow: auto; /* Enable scroll if needed */
 	background-color: #fefefe;
-	margin: 15% auto; /* 15% from the top and centered */
+	margin: 5% auto; /* 15% from the top and centered */
 	padding: 20px;
 	border: 1px solid #888;
 	width: 80%; /* Could be more or less, depending on screen size */
+	height: 80%; /* Full height */
 }
 /*End Copypasta*/
 

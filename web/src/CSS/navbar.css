@@ -1,17 +1,27 @@
+.account-buttons
+{
+	float:right;
+}
+
 .topnav
 {
 	overflow: hidden;
 	background-color: #2C3E50;
-	float: right;
-	padding: 6px 0px;
+	/* padding: 6px 0px; */
 	font-size: 18px;
+	display: flex;
+	justify-content: center;
+	/* margin: 0 auto; */
+	padding-left: 30px;
 }
 
 	.topnav .search-container
 	{
-		float: right;
+		/* float: right; */
+		display: inline-block;
 		padding: 0px 16px;
-		margin-right: 16px;
+		/* margin-right: 16px; */
+		align-self: center;
 	}
 
 	.topnav input[type=text]
@@ -43,6 +53,8 @@
 		vertical-align: middle;
 		display: inline-block;
 		margin-left: 6px;
+		margin-top: 3px;
+		margin-bottom: 3px;
 		font-size: 18px;
 	}
 
@@ -52,25 +64,21 @@
 		padding: 10px 0px;
 	}
 
-@media screen and (max-width: 600px)
+.show-small
 {
-	.topnav .search-container
+	 /* display: none !important; */
+}
+
+@media (max-width: 910px)
+{
+	.w3-hide-small
 	{
-		float: none;
+		display: none !important;
 	}
 
-		.topnav a, .topnav input[type=text], .topnav .search-container button
-		{
-			float: none;
-			display: block;
-			text-align: left;
-			width: 100%;
-			margin: 0;
-			padding: 14px;
-		}
-
-	.topnav input[type=text]
+	.show-small
 	{
-		border: 1px solid #ccc;
+		display: block;
+		/* display:inherit !important; */
 	}
 }

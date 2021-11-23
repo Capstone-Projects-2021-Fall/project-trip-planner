@@ -1,15 +1,4 @@
-//// Used to toggle the menu on small screens when clicking on the menu button
-//function MenuToggle()
-//{
-//	var x = document.getElementById("navDemo");
-//	if (x.className.indexOf("w3-show") == -1)
-//	{
-//		x.className += " w3-show";
-//	} else
-//	{
-//		x.className = x.className.replace(" w3-show", "");
-//	}
-//}
+
 
 /**
  * Get the value of a cookie based on the name provided, in string format.
@@ -146,28 +135,7 @@ function fillItineraries(container, response, isAccount)
 	}
 }
 
-/**
- * Provides the functionality for the search bar we have on each page. redirects the page to the search page with the content the user provided. 
- */
-function PerformSearch()
-{
-	var selectBox = document.getElementById("dropdown");
-	var content = document.getElementById("quick-search").value;
 
-	if (selectBox.value == "Itineraries")
-	{
-		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content);
-	}
-	else if (selectBox.value == "Activities")
-	{
-		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content) + "&mode=ByActivity";
-	}
-	//fallback to users if something breaks. should just be these three but whatever.
-	else //if (selectBox.value == "Users")
-	{
-		document.location = "userSearch.html?query=" + encodeURIComponent(content);
-	}
-}
 
 /**
  * Acts like response.JSON(), but properly handles a null object, response.JSON() does not. 

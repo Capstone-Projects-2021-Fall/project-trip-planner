@@ -17,3 +17,8 @@ body, h1, h2, h3, h4, h5, h6
 {
 	background-color: #2C3E50 !important
 }
+
+.form-group
+{
+	display: block;
+}
