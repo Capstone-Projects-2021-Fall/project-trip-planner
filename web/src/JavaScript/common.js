@@ -163,6 +163,7 @@ async function JsonOrNull(response, callback)
 
 /**
  * Gets the 'ID' cookie value, or null if no such cookie exists.
+ * @returns {number} an integer for the user id, or null. 
  */
 function GetIDCookie()
 {

@@ -1,19 +1,25 @@
-let map;
+let modalMap;
+let modalMarker = null;
+let calendarMap;
 let geocoder;
 
-let mapContainer;
+let userID = null;
 
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 function initMap()
 {
-	mapContainer = document.createElement("div");
-	mapContainer.id = "map";
-
-	map = new google.maps.Map(mapContainer, {
-		zoom: 16,
+	let modalContainer = document.getElementById('item-modal-map');
+	modalMap = new google.maps.Map(modalContainer, {
+		zoom: 12,
 		center: { lat: 37, lng: -95 },
 		mapTypeControl: false,
+		streetViewControl: false,
+		clickableIcons: false,
+		fullscreenControl: false,
+		styles: MAP_STYLING,
+
 	});
+
 	geocoder = new google.maps.Geocoder();
 }
 
@@ -26,6 +32,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 		document.location = "404.html?src=itinerary";
 		return;
 	}
+
+	userID = GetIDCookie();
 
 	/**
 	 * Our save itinerary button should only do something if the data changes. Otherwise, we're just killing our database/lambdas with identical data. 
@@ -55,12 +63,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let itemModalTitle = document.getElementById('item-modal-title'); //value
 		//address is a bit more complicated. I'm just going to get the mode for now.
 
-
-		let mode = document.querySelector('input[name="address-mode"]:checked')?.value;
 		//edit: nope, i need it. i'm dumb.
-		let addressDiv = document.getElementById('item-modal-address');
-		let latDiv = document.getElementById('item-modal-latitude');
-		let longDiv = document.getElementById('item-modal-longitude');
+		let addressMode = document.getElementById('item-modal-radio-address');
+		let latLongMode = document.getElementById('item-modal-radio-latlong');
+
+		let addressField = document.getElementById('item-modal-address');
+
+		let latField = document.getElementById('item-modal-latitude');
+		let longField = document.getElementById('item-modal-longitude');
+
+		let updateCoordBtn = document.getElementById('use-this-address-btn');
+		let autoUpdateCoordBox = document.getElementById('advanced-mode-auto-update');
+		let autoUpdateLabel = document.getElementById("auto-update-label");
+
 
 		let itemModalStartDate = document.getElementById('item-modal-start'); //value
 		let itemModalEndDate = document.getElementById('item-modal-end'); //value
@@ -70,20 +85,41 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let itemModalSave = document.getElementById('save-itinerary-item');
 		let itemModalCancel = document.getElementById('cancel-itinerary-item');
 		let itemModalDelete = document.getElementById('delete-itinerary-item');
-
+		let itemModalRevert = document.getElementById('revert-itinerary-item');
+		
 		itemModal.classList.remove("item-modal-collapsed");
-
+		itemModalSave.disabled = false;
 
 		itemModalStartDate.value = start;
 		itemModalEndDate.value = end;
 
-		if (event) 
+		let isLLMode = false;
+
+		if (event)
 		{
 			itemModalTitle.value = event.title;
-			addressDiv.value = event.extendedProps.Address;
+			addressField.value = event.extendedProps.Address;
 			itemModalDescription.value = event.extendedProps.AdditionalInformation;
-			latDiv = event.extendedProps.Latitude;
-			longDiv = event.extendedProps.Longitude;
+			latField.value = event.extendedProps.Latitude;
+			longField.value = event.extendedProps.Longitude;
+
+			let displayMe;
+			let draggable;
+			if (event.extendedProps.Address)
+			{
+				addressMode.checked = true;
+				displayMe = addressMode;
+				draggable = false;
+			}
+			else
+			{
+				latLongMode.checked = true;
+				displayMe = latLongMode;
+				draggable = true;
+			}
+
+			createOrUpdateMarker({ lat: Number(latField.value), lng: Number(longField.value) }, draggable);
+			handleRadio(displayMe);
 
 			//ensure photo collection is clear.
 			while (photoCollection.firstChild)
@@ -96,9 +132,24 @@ document.addEventListener('DOMContentLoaded', async function ()
 				addPhoto(photoCollection, x);
 			});
 
+			itemModalDelete.classList.remove('nothing-to-change');
+			itemModalRevert.classList.remove('nothing-to-change');
+
 			//google maps api: put the pin on the lat long. 
+			
+		}
+		else
+		{
+			itemModalDelete.classList.add('nothing-to-change');
+			itemModalRevert.classList.add('nothing-to-change');
+
+			if (modalMarker)
+			{
+				modalMarker.setMap(null);
+			}
 		}
 
+		//wire up the save
 		itemModalSave.onclick = function ()
 		{
 			//debounce check
@@ -118,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				if (event)
 				{
 					event.setProp("title", title);
-					event.setProp("allDay", allDay);
+					event.setAllDay(allDay);
 					event.setExtendedProp("Latitude", lat);
 					event.setExtendedProp("Longitude", long);
 					event.setExtendedProp("AdditionalInformation", description);
@@ -143,26 +194,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 				}
 			}
 			
-			if (isModeValid(mode) && isItemValid(title, start, end)) 
+			if (isItemValid(title, start, end) && modalMarker) 
 			{
-				if (mode == 'Address')
-				{
-					let address = 
-					latlongReq = { address: address };
-					geocoder.geocode(latlongReq).then(latlong =>
-					{
-						var pullShit = latlong.results[0].geometry.location;
-						addOrUpdateItem(pullShit.lat(), pullShit.lng(), address);
-						//collapse the item modal.
-						itemModal.classList.add("item-modal-collapsed");
-					});
-				}
-				else //mode == 'LatLong' //we know this is the case by the isModeValid check.
-				{
-					addOrUpdateItem(lat, long, null);
+				addOrUpdateItem(Number(latField.value), Number(longField.value), IsNullOrWhitespace(addressField.value) ? null : addressField.value);
 					//collapse the item modal.
-					itemModal.classList.add("item-modal-collapsed");
-				}
+				clearFieldsAndClose();
 			}
 			else
 			{
@@ -170,6 +206,240 @@ document.addEventListener('DOMContentLoaded', async function ()
 				itemModalSave.disabled = false;
 			}
 		}
+
+		//cancel
+		itemModalCancel.onclick = function ()
+		{
+			clearFieldsAndClose();
+		} 
+
+		function clearFieldsAndClose()
+		{
+			itemModalTitle.value = "";
+			itemModalDescription.value = "";
+
+			addressField.value = "";
+			latField.value = "";
+			longField.value = "";
+			event = null;
+
+			//ensure photo collection is clear.
+			while (photoCollection.firstChild)
+			{
+				photoCollection.removeChild(photoCollection.lastChild);
+			}
+
+			itemModal.classList.add("item-modal-collapsed");
+
+			//clears marker from map.
+			modalMarker.setMap(null);
+		}
+
+		//revert
+		itemModalRevert.onclick = function()
+		{
+			if (event)
+			{
+				itemModalTitle.value = event.title;
+				addressField.value = event.extendedProps.Address;
+				itemModalDescription.value = event.extendedProps.AdditionalInformation;
+				latField.value = event.extendedProps.Latitude;
+				longField.value = event.extendedProps.Longitude;
+
+				//ensure photo collection is clear.
+				while (photoCollection.firstChild)
+				{
+					photoCollection.removeChild(photoCollection.lastChild);
+				}
+				//and reload them.
+				event.extendedProps.Photos.forEach(x =>
+				{
+					addPhoto(photoCollection, x);
+				});
+			}
+			else
+			{
+				itemModalTitle.value = "";
+				itemModalDescription.value = "";
+
+				addressField.value = "";
+				latField.value = "";
+				longField.value = "";
+
+				//ensure photo collection is clear.
+				while (photoCollection.firstChild)
+				{
+					photoCollection.removeChild(photoCollection.lastChild);
+				}
+			}
+		};
+		//and delete
+		itemModalDelete.onclick = function()
+		{
+			if (event)
+			{
+				event.remove();
+			}
+			clearFieldsAndClose();
+		}
+
+		
+
+
+		//wire up the map
+		function createOrUpdateMarker(loc, draggable, center = true)
+		{
+			if (!modalMarker)
+			{
+				modalMarker = new google.maps.Marker({
+					position: loc,
+					map: modalMap,
+					draggable: draggable,
+				});
+
+				modalMarker.addListener("dragend", e =>
+				{
+					let loc = e.latLng;
+					latField.value = Number(loc.lat()).toFixed(4);
+					longField.value = Number(loc.lng()).toFixed(4);
+				});
+
+				modalMarker.addListener("drag", e =>
+				{
+					let loc = e.latLng;
+					latField.value = Number(loc.lat()).toFixed(4);
+					longField.value = Number(loc.lng()).toFixed(4);
+				});
+			}
+			else
+			{
+				modalMarker.setMap(modalMap);
+				modalMarker.setPosition(loc);
+				modalMarker.setDraggable(draggable);
+			}
+
+			if (center)
+			{
+				modalMap.setCenter(loc);
+			}
+		}
+
+		function handleRadio(srcElement)
+		{
+			let latFieldLabel = document.getElementById("lat-label");
+			let longFieldLabel = document.getElementById("long-label");
+			//lat long mode. 
+			if (srcElement.value == "LatLong" && !isLLMode)
+			{
+				latField.readOnly = false;
+				longField.readOnly = false;
+
+				latFieldLabel.classList.remove("label-readonly");
+				longFieldLabel.classList.remove("label-readonly");
+
+				if (modalMarker)
+				{
+					modalMarker.setDraggable(true);
+
+
+				}
+
+				updateCoordBtn.classList.remove("hidden-on-address-mode");
+				autoUpdateCoordBox.classList.remove("hidden-on-address-mode");
+				autoUpdateLabel.classList.remove("hidden-on-address-mode");
+
+				isLLMode = true;
+			}
+			//fallback to address mode. Code will not break if you add a third one that does nothing.
+			else if (srcElement.value != "LatLong" && isLLMode)
+			{
+				latField.readOnly = true;
+				longField.readOnly = true;
+
+				latFieldLabel.classList.add("label-readonly");
+				longFieldLabel.classList.add("label-readonly");
+
+				if (modalMarker)
+				{
+					modalMarker.setDraggable(false);
+				}
+
+				updateCoordBtn.classList.add("hidden-on-address-mode");
+				autoUpdateCoordBox.classList.add("hidden-on-address-mode");
+				autoUpdateLabel.classList.add("hidden-on-address-mode");
+
+				isLLMode = false;
+			}
+		}
+
+		function submitAddressField(force = false)
+		{
+			if (!IsNullOrWhitespace(addressField.value))
+			{
+				geocoder.geocode({ address: addressField.value }).then(x =>
+				{
+					const { results } = x;
+
+					let loc = results[0].geometry.location;
+					if (addressMode.checked || autoUpdateCoordBox.checked || force)
+					{
+						createOrUpdateMarker(loc, latLongMode.checked, true);
+					}
+					else
+					{
+						modalMap.setCenter(loc);
+					}
+					latField.value = Number(loc.lat()).toFixed(4);
+					longField.value = Number(loc.lng()).toFixed(4);
+				}).catch(y =>
+				{ /**/
+					//log something in addressWarning?
+				});
+			}
+		}
+
+		modalMap.addListener("click", function (e)
+		{
+			if (latLongMode.checked)
+			{
+				let loc = e.latLng;
+				createOrUpdateMarker(loc, true, false);
+				latField.value =  Number(loc.lat()).toFixed(4);
+				longField.value = Number(loc.lng()).toFixed(4);
+			}
+		});
+
+		updateCoordBtn.addEventListener("click", _ =>
+		{
+			if (latLongMode.checked)
+			{
+				submitAddressField(true);
+			}
+		});
+
+		//wire up the address to mark the map.
+		addressField.addEventListener("blur", _ => submitAddressField());
+
+		autoUpdateCoordBox.addEventListener("click", _ =>
+		{
+			if (autoUpdateCoordBox.checked) 
+			{
+				updateCoordBtn.disabled = true;
+				if (latLongMode)
+				{
+					submitAddressField();
+				}
+			}
+			else
+			{
+				updateCoordBtn.disabled = false;
+			}
+		});
+
+		latLongMode.addEventListener("click", _ => handleRadio(latLongMode));
+		addressMode.addEventListener("click", _ => handleRadio(addressMode));
+
+		
 	}
 
 	/**
@@ -180,17 +450,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 */
 	function isItemValid(title, start, end)
 	{
-		console.log("Start: " + typeof (start) + ", End: " + typeof (end));
 		if (!title || !title.trim())
 		{
+			console.log("title bad!");
 			return false;
 		}
 		else if (!start || !end || start.getTime() >= end.getTime())
 		{
+			console.log("times bad!");
 			return false;
 		}
 		else
 		{
+			console.log("you good!");
 			return true;
 		}
 	}
@@ -298,7 +570,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 		return calendar;
 	}
 
-
 	/**
 	 * Fill in calendar with activities from database
 	 * @param {number} id the itinerary id to pull from the database with
@@ -324,7 +595,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		//
 		// make API call with parameters and use promises to get response
-		await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary?page=" + Number(id), requestItinerary).then(async response =>
+		await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetOrSetItineraryInformation?page=" + Number(id), requestItinerary).then(async response =>
 		{
 			if (response.status == 200) 
 			{
@@ -399,17 +670,25 @@ document.addEventListener('DOMContentLoaded', async function ()
 	{
 		if (markDirty)
 		{
+			let title = document.getElementById("itinerary-title");
+			let start = document.getElementById("itinerary-startdate");
+			let end = document.getElementById("itinerary-enddate");
+			let description = document.getElementById("itinerary-description");
 
-			let index = 0;
 			let saveEvents = {
 				//change itinerary id when creating new itinerary feature is added
 				"ItineraryID": itineraryID,
+				"UserID": userID,
+				"Title": title.value,
+				"StartDate": start.value,
+				"EndDate": end.value,
+				"Description": description.value,
 				"ItineraryItems": []
 			};
 			calendarArr = calendar.getEvents();
 
 			//loop through events from calendar and prepare them into an array to be sent off to the database
-			for (index; index < calendarArr.length; index++)
+			for (let index = 0; index < calendarArr.length; index++)
 			{
 				let title = calendarArr[index]["_def"]["title"];
 				let additionalInformation = calendarArr[index]["_def"]["extendedProps"]["AdditionalInformation"];
@@ -439,7 +718,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				body: json,
 			};
 			// make API call with parameters and use promises to get response
-			fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetActivitiesForItinerary", requestOptions).then(gucci =>
+			fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetOrSetItineraryInformation", requestOptions).then(gucci =>
 			{
 				//maybe pop up "your shit was saved" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 				markDirty = false; //clear the dirty-ness.
@@ -453,9 +732,31 @@ document.addEventListener('DOMContentLoaded', async function ()
 			//maybe pop up "nothing to save" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 		}
 	});
-});//end of dom content loaded
 
-document.getElementById("")
+	//reload the page when they hit clear. that's the fastest way to reset everything lol.
+	document.getElementById("clear").addEventListener("click", function ()
+	{
+		window.location.reload();
+	});
+
+	document.getElementById("delete").addEventListener("click", function ()
+	{
+		let id_wrapper = { "UserID" : userID, "ItineraryID": itineraryID };
+		let json = JSON.stringify(id_wrapper);
+		let requestOptions = {
+			method: 'POST',
+			body: json,
+		};
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/DeleteItinerary", requestOptions).then(gucci =>
+		{
+			document.location = "account.html";
+		}, notgucci =>
+		{
+			//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+		});
+	});
+	
+});//end of dom content loaded
 
 class DBData
 {
@@ -502,3 +803,98 @@ class DBItem
 		this.photos = photos;
 	}
 }
+
+/**
+ * A complex web of formatting rules to make the google map integration we're using have less shit all over the place. It was interfering with our UI.
+ * See https://mapstyle.withgoogle.com/
+ * @type {JSON} 
+ */
+const MAP_STYLING =
+[
+	{
+		"featureType": "landscape",
+		"stylers": [
+			{
+				"visibility": "simplified"
+			}
+		]
+	},
+	{
+		"featureType": "landscape",
+		"elementType": "labels.icon",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	},
+	{
+		"featureType": "poi",
+		"stylers": [
+			{
+				"visibility": "simplified"
+			}
+		]
+	},
+	{
+		"featureType": "poi",
+		"elementType": "labels.icon",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	},
+	{
+		"featureType": "poi.park",
+		"stylers": [
+			{
+				"visibility": "simplified"
+			}
+		]
+	},
+	{
+		"featureType": "poi.park",
+		"elementType": "geometry.fill",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	},
+	{
+		"featureType": "poi.park",
+		"elementType": "geometry.stroke",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	},
+	{
+		"featureType": "poi.park",
+		"elementType": "labels.icon",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	},
+	{
+		"featureType": "road",
+		"elementType": "labels.icon",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	},
+	{
+		"featureType": "transit",
+		"stylers": [
+			{
+				"visibility": "off"
+			}
+		]
+	}
+]

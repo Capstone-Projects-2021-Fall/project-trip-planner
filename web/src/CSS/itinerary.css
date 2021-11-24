@@ -8,65 +8,67 @@ body
 
 #main-itinerary-data
 {
-	padding-top:10px;
-	padding-left:20px;
-	padding-right:20px;
+	padding-top: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
 }
+
 #itinerary-title-container
 {
-
 }
+
 #itinerary-title-label
 {
-
 }
+
 #itinerary-title
 {
-
 }
+
 #itinerary-date-range
 {
-
 }
+
 #itinerary-startdate-container
 {
-
 }
+
 #itinerary-startdate-label
 {
-
 }
+
 #itinerary-startdate
 {
-
 }
+
 #itinerary-enddate-container
 {
-
 }
+
 #itinerary-enddate-label
 {
 }
+
 #itinerary-title
 {
-
 }
+
 #itinerary-description-container
 {
-
 }
+
 #itinerary-description-label
 {
-
 }
+
 #itinerary-description
 {
-
 }
 /*Calendar*/
 #calendar
 {
 	max-width: 1100px;
+	max-height: 800px;
 	margin: 0 auto;
 }
 
@@ -79,7 +81,7 @@ body
 }
 
 /* Itinerary Modal*/
-.item-modal-collapsed, .address-option-collapsed, .nothing-to-delete
+.item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change
 {
 	display: none;
 }
@@ -93,7 +95,7 @@ body
 	top: 0;
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
-	
+
 	background-color: rgb(0,0,0); /* Fallback color */
 	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
@@ -107,47 +109,48 @@ body
 	border: 1px solid #888;
 	width: 80%; /* Could be more or less, depending on screen size */
 	height: 80%; /* Full height */
+	display: flex;
+	flex-direction: column;
+	align-content: center;
 }
 /*End Copypasta*/
 
 #item-modal-top
 {
-
 }
 
 #item-modal-title-container
 {
-
 }
 
 /*All labels in the itemo modal. not global because that makes difficult to find formatting bugs*/
 .item-modal-label
 {
-
+	/* display: block; */
 }
+
 #item-modal-title
 {
-
 }
+
 #item-modal-timeframe
 {
-
 }
+
 #item-modal-start-container
 {
-
 }
+
 #item-modal-start
 {
 }
 
 #item-modal-end-container
 {
-
 }
+
 #item-modal-end
 {
-
 }
 
 #item-modal-description-container
@@ -160,11 +163,15 @@ body
 
 #item-modal-middle
 {
-
+	display: flex;
+	flex: 1;
 }
 
 #item-modal-left
 {
+	width: 50%;
+	display: inline;
+	flex: 1;
 }
 
 #item-modal-address-container
@@ -172,7 +179,8 @@ body
 }
 
 .item-modal-radio
-{
+{ /* display: block; */
+	vertical-align: middle;
 }
 
 #item-modal-address-mode
@@ -186,78 +194,108 @@ body
 /*I should probably put a class on this, but i can't see us reusing the p tag*/
 p
 {
-
 }
 
 #item-modal-rough-address
 {
-
 }
+
 #item-modal-coordinate-container
 {
-
+	padding-top: 10px;
 }
 
-#item-modal-latitude, #item-modal-longitude
+.item-modal-coordinate
 {
-	display:inline;
-	float:left;
-	width: 50%;
+	display: inline;
+	/* float:left; */
+	width: 25%;
+
+	color:inherit;
+}
+
+	.item-modal-coordinate:read-only
+	{
+		background-color:lightgray;
+		color: gray;
+		border: none;
+		outline: none;
+	}
+
+.label-readonly
+{
+	color: gray;
 }
 
 #item-modal-right
 {
-
+	float: right;
+	display: inline;
+	width: 50%;
+	flex: 1;
+	/* min-height: 370px; */
 }
 
 #item-modal-map
 {
-
+	padding: 10px;
+	height: 100%;
 }
 
 #item-modal-photo-list
 {
-
 }
 
 .item-modal-photo
 {
-	display:inline-block;
+	display: inline-block;
 }
 
 .item-modal-photo-img
 {
-	max-width:400px;
+	max-width: 400px;
 }
 
 #item-modal-footer
 {
-	display:block;
+	display: block;
+	width: 100%;
+	padding-top:20px;
+}
+
+#item-modal-footer-buttons
+{
+	width: 100%;
+	display:flex;
+	justify-content: space-between;
 }
 
 /*For all the buttons in the item modal footer*/
-.item-modal-button
+.itinerary-footer-buttons
+{
+	display: flex;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 40px;
+	padding: 0px 10px;
+	background-color: lightgray;
+	justify-content: space-between;
+	align-content: center;
+	align-items: center;
+}
+#save
 {
 
 }
 
-/*For each individual button in the item modal footer*/
-#save-itinerary-item
+#delete
 {
-	margin-right:30px;
+
 }
 
-/*wraps the delete button in a div so it centers nicely */
-#centerButtonPls
+#revert
 {
-	display:flex;
-	justify-content:center;
-}
 
-#delete-itinerary-item
-{
-}
-#cancel-itinerary-item
-{
-	margin-left:30px;
 }
