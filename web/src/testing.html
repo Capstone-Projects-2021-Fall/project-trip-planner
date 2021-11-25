@@ -24,13 +24,13 @@ body,
 let map;
 let marker;
 var Ireland = "Dublin";
-var locations = ["Philadelphia", "New York City", "Washington DC"];
+var locations = ["Philadelphia Art Museum", "Philadelphia Independence Hall", "Temple University"];
 
 function initialize() {
 geocoder = new google.maps.Geocoder();
 var latlng = new google.maps.LatLng(53.3496, -6.3263);
 var mapOptions = {
-zoom: 8,
+zoom: 13,
 center: latlng
 }
 map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
