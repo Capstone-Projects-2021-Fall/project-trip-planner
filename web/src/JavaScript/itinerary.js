@@ -37,7 +37,12 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 	if (!displayMode && !itineraryID && !userID)
 	{
-		
+		document.location = "itinerarySearch.html";
+	}
+
+	if (itineraryID)
+	{
+		itineraryID = Number(itineraryID);
 	}
 
 
@@ -163,8 +168,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 			itemModalSave.disabled = true;
 
 			let title = itemModalTitle.value;
-			let start = GetDateOrNull(itemModalStartDate.value);
-			let end = GetDateOrNull(itemModalEndDate.value);
+			let start = GetDateTimeOrNull(itemModalStartDate.value);
+			let end = GetDateTimeOrNull(itemModalEndDate.value);
 			let description = itemModalDescription.value;
 			let photoList = document.getElementsByClassName("item-modal-photo-img");
 			//photoList isn't an array, it's a HTMLElementCollection. the spread operator aka "[...args]" converts an iterable to an array. array.map is equivalent to C#'s LINQ Select.
@@ -239,7 +244,10 @@ document.addEventListener('DOMContentLoaded', async function ()
 			itemModal.classList.add("item-modal-collapsed");
 
 			//clears marker from map.
-			modalMarker.setMap(null);
+			if (modalMarker) 
+			{
+				modalMarker.setMap(null);
+			}
 		}
 
 		//revert
@@ -512,6 +520,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		let buzz = initialDB.startDate;
 		let zzub = initialDB.endDate;
+		//full calendar apparently treats range end Date as an exclusive thing, we want inclusive. add 1 to day, then get the nice format back.
+		let zzubTemp = new Date(initialDB.endDate);
+		zzubTemp.setUTCDate(zzubTemp.getUTCDate() + 1);
+		zzub = zzubTemp.toISOString().substring(0, 10);
+
 		let calendarEl = document.getElementById('calendar');
 		calendar = new FullCalendar.Calendar(calendarEl, {
 			initialDate: buzz,
@@ -588,7 +601,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 		var requestItinerary = {
 			method: 'GET',
 			headers: {
-				"Access-Control-Allow-Headers": "*"
+				"Access-Control-Allow-Headers": "*",
+				"Access-Control-Allow-Origin": "*"
 			}
 
 		};
@@ -602,7 +616,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		//
 		// make API call with parameters and use promises to get response
-		await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetOrSetItineraryInformation?page=" + Number(id), requestItinerary).then(async response =>
+		await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateReadUpdateItinerary?page=" + Number(id), requestItinerary).then(async response =>
 		{
 			if (response.status == 200) 
 			{
@@ -622,7 +636,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 						//loops through returned json file to extract every activity from the itinerary
 						values.forEach(value =>
 						{
-							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateOrNull(value["StartTime"]), GetDateOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
+							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
 						});
 						console.log("Batman");
 						dbItems = new DBData(name, startDate, endDate, desc, coll);
@@ -673,7 +687,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	/** 
 	 * Update itinerary everytime the user saves it
 	 **/
-	document.getElementById("save").addEventListener("click", function ()
+	async function handleSaving()
 	{
 		if (markDirty)
 		{
@@ -704,9 +718,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 				let address = calendarArr[index]["_def"]["extendedProps"]["Address"];
 				let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
 				let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
-				let photos = calendarArr[index]["_def"]["extendedProps"]["photos"]
+				let photos = calendarArr[index]["_def"]["extendedProps"]["Photos"]
 
-				saveEvents.ItineraryItems.push({
+				saveEvents["ItineraryItems"].push({
 					"ActivityName": title,
 					"StartTime": start,
 					"EndTime": end,
@@ -725,7 +739,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				body: json,
 			};
 			// make API call with parameters and use promises to get response
-			fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/GetOrSetItineraryInformation", requestOptions).then(gucci =>
+			await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateReadUpdateItinerary", requestOptions).then(gucci =>
 			{
 				//maybe pop up "your shit was saved" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 				markDirty = false; //clear the dirty-ness.
@@ -738,12 +752,28 @@ document.addEventListener('DOMContentLoaded', async function ()
 		{
 			//maybe pop up "nothing to save" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 		}
+	}
+
+	document.getElementById("save-cont").addEventListener("click", function ()
+	{
+		handleSaving();
+	});
+
+	document.getElementById("save-exit").addEventListener("click", async function ()
+	{
+		await handleSaving();
+		document.location = "account.html";
 	});
 
 	//reload the page when they hit clear. that's the fastest way to reset everything lol.
-	document.getElementById("clear").addEventListener("click", function ()
+	document.getElementById("revert-cont").addEventListener("click", function ()
 	{
 		window.location.reload();
+	});
+
+	document.getElementById("revert-exit").addEventListener("click", function ()
+	{
+		document.location = "account.html";
 	});
 
 	document.getElementById("delete").addEventListener("click", function ()
@@ -770,8 +800,8 @@ class DBData
 	/**
 	 * 
 	 * @param {string} itineraryName
-	 * @param {Date} startDate
-	 * @param {Date} endDate
+	 * @param {string} startDate //in the YYYY-MM-DD format. Date makes them all fucky. 
+	 * @param {string} endDate //in the YYYY-MM-DD format. Date makes them all fucky. 
 	 * @param {string} description
 	 * @param {DBItem[]} items
 	 */

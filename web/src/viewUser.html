@@ -1,37 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Sign Up</title>
+	<title>Account</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	<link rel="stylesheet" href="CSS/common.css" />
-	<link rel="stylesheet" href='CSS/navbar.css' />
+	<link href="CSS/common.css" rel="stylesheet" type="text/css" />
+	<link href="CSS/itineraryItem.css" rel="stylesheet" type="text/css" />
+	<link href='CSS/navbar.css' rel='stylesheet' />
 
 	<link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
 	<script src="JavaScript/common.js"></script>
+	<script src="JavaScript/viewUser.js"></script>
 	<script src="JavaScript/navbar.js"></script>
-	<script>
-		document.addEventListener('DOMContentLoaded', OnLoad);
-
-		function OnLoad(event)
-		{
-			var searchSection = new URLSearchParams(window.location.search);
-			var id = searchSection.get("id");
-			if (!id)
-			{
-				document.location = "userSearch.html";
-			}
-		}
-
-	</script>
 </head>
 <body>
 	<!-- Navbar -->
@@ -69,13 +57,18 @@
 	</nav>
 	<!-- Header -->
 	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
-		<h1 class="w3-margin w3-jumbo">Placeholder</h1>
+		<h3 class="w3-margin" id="user"></h3>
+		<p id="fname"></p>
+		<p id="lname"></p>
+		<p id="dob"></p>
 	</header>
+	<!-- Main Content -->
 	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
 		<div class="w3-content">
-			<h3>
-				Do we roll this into account? i'd think it'd be easier to do them separately but idk.
-			</h3>
+			<div>
+				<h1>Created Itineraries</h1>
+				<div id="itinerary-list-holder"></div>
+			</div>
 		</div>
 	</main>
 </body>

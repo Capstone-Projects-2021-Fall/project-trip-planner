@@ -31,11 +31,11 @@
 		<div id="itinerary-date-range">
 			<div id="itinerary-startdate-container">
 				<label for="itinerary-startdate" id="itinerary-startdate-label">Start Date:</label>
-				<input type="text" id="itinerary-startdate" />
+				<input type="date" id="itinerary-startdate" />
 			</div>
 			<div id="itinerary-enddate-container">
 				<label for="itinerary-title" id="itinerary-enddate-label">End Date:</label>
-				<input type="text" id="itinerary-enddate" />
+				<input type="date" id="itinerary-enddate" />
 			</div>
 		</div>
 		<div id="itinerary-description-container">
@@ -83,7 +83,7 @@
 							<button type="button" id="use-this-address-btn" class="hidden-on-address-mode">Update Coordinates</button>
 						</div>
 						<div>
-							<input type="checkbox" id="advanced-mode-auto-update" name="advanced-address-mode-options" class="hidden-on-address-mode"/>
+							<input type="checkbox" id="advanced-mode-auto-update" name="advanced-address-mode-options" class="hidden-on-address-mode" />
 							<label for="advanced-mode-auto-update" id="auto-update-label" class="hidden-on-address-mode">Automatically update the coordinates to the address when i finish typing</label>
 						</div>
 						<div>
@@ -96,9 +96,9 @@
 						</div>
 						<div id="item-modal-coordinate-container">
 							<label for="item-modal-latitude" id="lat-label" class="item-modal-label label-readonly">Latitude:</label>
-							<input type="number" id="item-modal-latitude" class="item-modal-coordinate" min="-90" step=".0001" max="90" readonly/>
+							<input type="number" id="item-modal-latitude" class="item-modal-coordinate" min="-90" step=".0001" max="90" readonly />
 							<label for="item-modal-longitude" id="long-label" class="item-modal-label label-readonly">Longitude:</label>
-							<input type="number" id="item-modal-longitude" class="item-modal-coordinate" step=".0001" min="-180" max="180" readonly/>
+							<input type="number" id="item-modal-longitude" class="item-modal-coordinate" step=".0001" min="-180" max="180" readonly />
 						</div>
 					</div>
 				</div>
@@ -122,9 +122,15 @@
 	</div>
 	<!-- Footer -->
 	<footer class="itinerary-footer-buttons">
-			<button id="save" type="button">Save Itinerary</button>
-			<button id="revert" type="button">Clear Changes</button>
-			<button id="delete" type="button">Delete Itinerary</button>
+		<div>
+			<button id="save-cont" type="button">Save Itinerary And Continue</button>
+			<button id="save-exit" type="button">Save Itinerary And Exit</button>
+		</div>
+		<div>
+			<button id="revert-cont" type="button">Clear Changes And Exit</button>
+			<button id="revert-exit" type="button">Clear Changes</button>
+		</div>
+		<button id="delete" type="button">Delete Itinerary</button>
 	</footer>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>
 </body>

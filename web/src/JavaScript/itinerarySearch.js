@@ -16,11 +16,11 @@ document.addEventListener('DOMContentLoaded', _ =>
 
 	var container = document.getElementById('itinerary-list-holder');
 
-	let itineraryQueryField = document.GetElementById("itineraryQuery");
-	let activityQueryField = document.GetElementById("activityQuery");
-	let latField = document.GetElementById("lat");
-	let lngField = document.GetElementById("lng");
-	let maxDistanceField = document.GetElementById("maxDistance");
+	let itineraryQueryField = document.getElementById("itineraryQuery");
+	let activityQueryField = document.getElementById("activityQuery");
+	let latField = document.getElementById("lat");
+	let lngField = document.getElementById("lng");
+	let maxDistanceField = document.getElementById("maxDistance");
 
 
 
@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', _ =>
 	var longitude = searchSection.get("longitude");
 	var distanceAway = searchSection.get("maxDistance");
 	*/
+
+	itineraryQueryField.value = itineraryQuery;
+	activityQueryField.value = activityQuery;
+	latField.value = lat;
+	lngField.value = lng;
+	maxDistanceField.value = maxDistance;
 
 	if (itineraryQuery || activityQuery || (lat && lng && maxDistance))
 	{
@@ -48,7 +54,11 @@ document.addEventListener('DOMContentLoaded', _ =>
 		};
 		console.log(requestOptions);
 
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/AdvancedItinerarySearch", requestOptions).then(response => fillItineraries(container, response, false));
+		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/AdvancedItinerarySearch", requestOptions).then(response =>
+		{
+			let status = response.status;
+			JsonOrNull(response, x => fillItineraries(container, x, status, false));
+		});
 	}
 	else 
 	{

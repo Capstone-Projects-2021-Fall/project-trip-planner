@@ -25,100 +25,101 @@ function GetCookie(cname)
 }
 
 /**
- * Given a HttpResponse filled with JSON data representing a list of Itineraries, create a bunch of divs with the data in them, and add them to container. 
+ * Given the JSON from an HTTP Response (or hard-code, we're not picky, i guess) and the status code returned from that response, fill the itineraries into the container. 
  * This function can be for both the account and itinerary search page, even though the itinerary search page also provides the creator information. To handle this, an isAccount flag is used.
  * @param {Element} container The container element (usually a 'div' tag) to place all the create itinerary items in.
- * @param {Response} response The HTTP Response to parse and retrieve the information from.
+ * @param {JSON} jsonListOfItems the list of itinerary items in a json format.
+ * @param {number} status the response status from the HTTP Response.
  * @param {boolean} isAccount true if this is going on the account page, false if it's the itinerary search page.
+ * @
  */
-function fillItineraries(container, response, isAccount)
+function fillItineraries(container, jsonListOfItems, status, isAccount)
 {
-	if (response.status == 200)
+	console.log(jsonListOfItems);
+	console.log("status: " + status);
+	if (status == 200)
 	{
-		JsonOrNull(response, res =>
+		let res = jsonListOfItems;
+		//console.log(res);
+		console.log("Type: " + typeof (res));
+		if (!res || res.length == 0)
 		{
 
-			//console.log(res);
-			console.log("Type: " + typeof (res));
-			if (!res || res.length == 0)
+			var elem = document.createElement("div");
+			elem.classList.add("itinerary-empty");
+
+			var niceText;
+			if (isAccount)
+			{
+				niceText = document.createTextNode("You have no itineraries. Create one!");
+			}
+			else 
+			{
+				niceText = document.createTextNode("No results. That's unfortunate! Try expanding your search area or using more general search terms.");
+			}
+			elem.appendChild(niceText);
+
+			container.appendChild(elem);
+		}
+		else
+		{
+			//json elements are formatted as such:
+			for (const element of res)
 			{
 
 				var elem = document.createElement("div");
-				elem.classList.add("itinerary-empty");
+				elem.classList.add("itinerary-item");
 
-				var niceText;
-				if (isAccount)
+				var nameHolder = document.createElement("div");
+				nameHolder.classList.add("item-title");
+				var nameContent = document.createTextNode("Itinerary Name: " + element["ItineraryName"]);
+				nameHolder.appendChild(nameContent);
+				elem.appendChild(nameHolder);
+
+				var startHolder = document.createElement("div");
+				startHolder.classList.add("item-date");
+				var startContent = document.createTextNode("Starts: " + element["StartDate"]);
+				startHolder.appendChild(startContent);
+				elem.appendChild(startHolder);
+
+				var endHolder = document.createElement("div");
+				endHolder.classList.add("item-date");
+				var endContent = document.createTextNode("Ends: " + element["EndDate"]);
+				endHolder.appendChild(endContent);
+				elem.appendChild(endHolder);
+
+				let _id = element["ItineraryID"];
+
+				//User search does not pull the creator id or name because it's the same as the current user. so these wouldn't be valid.
+				if (!isAccount)
 				{
-					niceText = document.createTextNode("You have no itineraries. Create one!");
-				}
-				else 
-				{
-					niceText = document.createTextNode("No results. That's unfortunate! Try expanding your search area or using more general search terms.");
-				}
-				elem.appendChild(niceText);
-
-				container.appendChild(elem);
-			}
-			else
-			{
-				//json elements are formatted as such:
-				for (const element of res)
-				{
-
-					var elem = document.createElement("div");
-					elem.classList.add("itinerary-item");
-
 					var nameHolder = document.createElement("div");
-					nameHolder.classList.add("item-title");
-					var nameContent = document.createTextNode("Itinerary Name: " + element["ItineraryName"]);
+					nameHolder.classList.add("item-author");
+
+					var userID = GetIDCookie();
+
+					var creatorText = "Creator: " + element["CreatorName"];
+					var creatorID = element["CreatorID"];
+
+					//may be null if a user not logged in does a search. 
+					if (userID && creatorID == userID)
+					{
+						creatorText += " (you)";
+					}
+
+					var nameContent = document.createTextNode(creatorText);
 					nameHolder.appendChild(nameContent);
 					elem.appendChild(nameHolder);
-
-					var startHolder = document.createElement("div");
-					startHolder.classList.add("item-date");
-					var startContent = document.createTextNode("Starts: " + element["StartDate"]);
-					startHolder.appendChild(startContent);
-					elem.appendChild(startHolder);
-
-					var endHolder = document.createElement("div");
-					endHolder.classList.add("item-date");
-					var endContent = document.createTextNode("Ends: " + element["EndDate"]);
-					endHolder.appendChild(endContent);
-					elem.appendChild(endHolder);
-
-					let _id = element["ItineraryID"];
-
-					//User search does not pull the creator id or name because it's the same as the current user. so these wouldn't be valid.
-					if (!isAccount)
-					{
-						var nameHolder = document.createElement("div");
-						nameHolder.classList.add("item-author");
-
-						var userID = GetIDCookie();
-
-						var creatorText = "Creator: " + element["CreatorName"];
-						var creatorID = element["CreatorID"];
-
-						//may be null if a user not logged in does a search. 
-						if (userID && creatorID == userID)
-						{
-							creatorText += " (you)";
-						}
-
-						var nameContent = document.createTextNode(creatorText);
-						nameHolder.appendChild(nameContent);
-						elem.appendChild(nameHolder);
-					}
-					elem.onclick = function () 
-					{
-						let k = _id;
-						document.location = "itinerary.html?itinerary_id=" + k;
-					};
-
-					container.appendChild(elem);
+				}
+				elem.onclick = function () 
+				{
+					let k = _id;
+					document.location = "itinerary.html?itinerary_id=" + k;
 				};
-			}
-		});
+
+				container.appendChild(elem);
+			};
+		}
 	}
 	else 
 	{
@@ -132,8 +133,6 @@ function fillItineraries(container, response, isAccount)
 		container.appendChild(elem);
 	}
 }
-
-
 
 /**
  * Acts like response.JSON(), but properly handles a null object, response.JSON() does not. 
@@ -175,7 +174,7 @@ function GetIDCookie()
  * @param {string} value the string to parse as a Date object.
  * @returns {Date} the date the string represents, or null if no such date can be found.
  */
-function GetDateOrNull(value)
+function GetDateTimeOrNull(value)
 {
 	console.log("Date Format: " + typeof (value) + ", value = '" + value + "'");
 	var temp = new Date(value);
@@ -187,6 +186,21 @@ function GetDateOrNull(value)
 	{
 		return temp;
 	}
+}
+
+/**
+ * JS doesn't have a pure "date" format (Yet. Temporal looks promising), and making it a date adds a bunch of shit. This checks to see if we are in "YYYY-MM-DD" format, returns the string unaltered if it is, or null if it isn't.
+ * @param {string} value the current representation of the string
+ * @returns {string} the original string if it represents a Date (and not a DateTime), or null if it does not
+ */
+function GetDateOrNull(value)
+{
+	var regEx = /^\d{4}-\d{2}-\d{2}$/;
+	if (!value.match(regEx)) return false;  // Invalid format
+	var d = new Date(value);
+	var dNum = d.getTime();
+	if (!dNum && dNum !== 0) return false; // NaN value, Invalid date
+	return d.toISOString().slice(0, 10) === value ? value : null;
 }
 
 /**
