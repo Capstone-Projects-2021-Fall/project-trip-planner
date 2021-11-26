@@ -1,5 +1,3 @@
-
-
 /**
  * Get the value of a cookie based on the name provided, in string format.
  * @param {string} cname name of the cookie to get.

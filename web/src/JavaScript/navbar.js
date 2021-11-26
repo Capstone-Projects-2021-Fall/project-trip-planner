@@ -64,11 +64,11 @@ function PerformSearch()
 
 	if (selectBox.value == "Itineraries")
 	{
-		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content);
+		document.location = "itinerarySearch.html?itineraryQuery=" + encodeURIComponent(content);
 	}
 	else if (selectBox.value == "Activities")
 	{
-		document.location = "itinerarySearch.html?query=" + encodeURIComponent(content) + "&mode=ByActivity";
+		document.location = "itinerarySearch.html?activityQuery=" + encodeURIComponent(content);
 	}
 	//fallback to users if something breaks. should just be these three but whatever.
 	else //if (selectBox.value == "Users")

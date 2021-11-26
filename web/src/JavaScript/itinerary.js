@@ -17,23 +17,30 @@ function initMap()
 		clickableIcons: false,
 		fullscreenControl: false,
 		styles: MAP_STYLING,
-
 	});
 
 	geocoder = new google.maps.Geocoder();
 }
 
+//NOTE TO SELF: WE CAN TOGGLE SELECTIONS ON BY going calendar.setOption('selectable', true);
+//this means we can default to view mode, and give the user an "enable editing" button. 
+
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	//most important: get the itinerary id. if it's missing, we can't do anything here and should display a 404 and immediately stop doing whatever we're doing.
+	//most important: determine what's going on here. This page is basically responsible for our entire application, and has a lot of functionality, but as a result is a pain to work with.
+	//First, we need two things: the state of the If this page does not have any url parameters, it means we are creating a new itinerary from scratch. However, this requires a user be logged in. If there are no parameters and no one is logged in, redirect them to the login page.
+	//
+	//
 	let itineraryID = getParameterByName("itinerary_id");
-	if (!itineraryID)
+	let displayMode = getParameterByName("mode");
+	userID = GetIDCookie();
+
+	if (!displayMode && !itineraryID && !userID)
 	{
-		document.location = "404.html?src=itinerary";
-		return;
+		
 	}
 
-	userID = GetIDCookie();
+
 
 	/**
 	 * Our save itinerary button should only do something if the data changes. Otherwise, we're just killing our database/lambdas with identical data. 
