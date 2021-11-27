@@ -57,14 +57,19 @@
 					<input type="text" name="itineraryTitle" id="item-modal-title" />
 				</div>
 				<div id="item-modal-timeframe">
-					<div id="item-modal-start-container">
-						<label for="item-modal-start" class="item-modal-label">Start Time:</label>
-						<input type="datetime" name="itineraryStart" id="item-modal-start" />
+					<p class="hide-in-view-mode">Set or Update the start and end dates. Events that fall out of range will be kept until the itinerary is saved.</p>
+					<div id="item-modal-start-end-container">
+						<div id="item-modal-start-container">
+							<label for="item-modal-start" class="item-modal-label">Start Time:</label>
+							<input type="datetime" name="itineraryStart" id="item-modal-start" />
+						</div>
+						<div id="item-modal-end-container">
+							<label for="item-modal-end" class="item-modal-label">End Time:</label>
+							<input type="datetime" name="itineraryEnd" id="item-modal-end" />
+						</div>
 					</div>
-					<div id="item-modal-end-container">
-						<label for="item-modal-end" class="item-modal-label">End Time:</label>
-						<input type="datetime" name="itineraryEnd" id="item-modal-end" />
-					</div>
+				</div>
+				<div>
 					<div id="item-modal-description-container">
 						<label for="item-modal-description" class="item-modal-label">Additional Information:</label>
 						<input type="datetime" name="itineraryDescription" id="item-modal-description" />
@@ -127,8 +132,8 @@
 			<button id="save-exit" type="button">Save Itinerary And Exit</button>
 		</div>
 		<div>
-			<button id="revert-cont" type="button">Clear Changes And Exit</button>
-			<button id="revert-exit" type="button">Clear Changes</button>
+			<button id="revert-cont" type="button">Clear Changes</button>
+			<button id="revert-exit" type="button">Clear Changes And Exit</button>
 		</div>
 		<button id="delete" type="button">Delete Itinerary</button>
 	</footer>

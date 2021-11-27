@@ -15,6 +15,7 @@ body
 
 #itinerary-title-container
 {
+	
 }
 
 #itinerary-title-label
@@ -284,6 +285,7 @@ p
 	justify-content: space-between;
 	align-content: center;
 	align-items: center;
+	z-index: 10;
 }
 #save
 {
@@ -298,4 +300,9 @@ p
 #revert
 {
 
+}
+
+.hide-in-view-mode
+{
+	display:none;
 }

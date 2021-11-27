@@ -44,13 +44,13 @@ document.addEventListener("DOMContentLoaded", function ()
 function MenuToggle()
 {
 	var x = document.getElementById("navDemo");
-	if (x.classList.contains("w3-show"))
+	if (x.classList.contains("show-small"))
 	{
-		x.classList.remove("w3-show");
+		x.classList.remove("show-small");
 	}
 	else
 	{
-		x.classList.add("w3-show");
+		x.classList.add("show-small");
 	}
 }
 

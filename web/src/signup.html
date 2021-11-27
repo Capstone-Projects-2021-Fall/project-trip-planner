@@ -28,7 +28,7 @@
 			<!--Common to both mini and regular -->
 			<a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
 			<!--Mini navbar dropdown toggle. This now works -->
-			<a class="w3-bar-item w3-button show-small w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
 			<!--Regular navbar content-->
 			<div class="w3-hide-small account-buttons">
 				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="login-your-account">placeholder</a>
@@ -39,6 +39,7 @@
 				<select id="dropdown">
 					<option value="Users">Users</option>
 					<option value="Itineraries">Itineraries</option>
+					<option value="Activities">Activities</option>
 				</select>
 				<div class="search-container">
 					<input type="text" id="quick-search" placeholder="Search..." name="search">
@@ -48,7 +49,7 @@
 		</div>
 
 		<!-- Navbar on small screens. This now works -->
-		<div id="navDemo" class="w3-bar-block w3-white w3-hide w3-large">
+		<div id="navDemo" class="w3-bar-block w3-white hide-default w3-large">
 			<a href="userSearch.html" class="w3-bar-item w3-button w3-padding-large">User Search</a>
 			<a href="itinerarySearch.html" class="w3-bar-item w3-button w3-padding-large">Itinerary Search</a>
 			<a href="#" class="w3-bar-item w3-button w3-padding-large" id="login-your-account-small">placeholder</a>
@@ -64,7 +65,7 @@
 	<main class="container">
 		<h1>Sign Up</h1>
 		<p>Please fill out the form to create an account.</p>
-		<form action="../php/register.php" method="post">
+		<form>
 			<div class="form-group">
 				<label>Email Address*</label>
 				<input type="email" class="form-control" name="email" id="email" required>
@@ -103,7 +104,7 @@
 			</div>
 
 			<div class="form-group">
-				<input type="button" onclick="CallAPI()" name="submit" class="btn btn-primary" value="Submit">
+				<button type="button" onclick="CallAPI()" name="submit" class="btn btn-primary">Submit</button>
 			</div>
 		</form>
 

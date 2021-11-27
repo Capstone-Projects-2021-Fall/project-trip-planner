@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', _ =>
 			let status = response.status;
 			JsonOrNull(response, data => 
 			{
-				console.log(data);
 				if (status == 200) 
 				{
 					let editMode = false;
@@ -105,7 +104,6 @@ document.addEventListener('DOMContentLoaded', _ =>
 							}
 
 							var json = JSON.stringify(userData);
-							console.log(json);
 
 							let requestOptions = {
 								method: 'POST',
@@ -124,7 +122,7 @@ document.addEventListener('DOMContentLoaded', _ =>
 								fnameField.defaultValue = fnameField.value;
 								lnameField.defaultValue = lnameField.value;
 								dobField.defaultValue = dobField.value;
-							}).catch(notgucci =>
+							})/*.catch(notgucci =>
 							{
 								//Maybe have an error div say "something went wrong".
 								saveBtn.disabled = false;
@@ -133,7 +131,7 @@ document.addEventListener('DOMContentLoaded', _ =>
 								fnameField.readOnly = false;
 								lnameField.readOnly = false;
 								dobField.readOnly = false;
-							});
+							})*/;
 						}
 					});
 				}

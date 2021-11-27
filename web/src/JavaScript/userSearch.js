@@ -28,8 +28,6 @@ document.addEventListener('DOMContentLoaded', _ =>
 			body: raw,
 		};
 
-		console.log(requestOptions);
-
 		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/SearchForUser", requestOptions).then(response =>
 		{
 			if (response.status == 200)
@@ -38,7 +36,6 @@ document.addEventListener('DOMContentLoaded', _ =>
 
 				JsonOrNull(response, results =>
 				{
-					console.log(results);
 					if (!results || results.length == 0)
 					{
 

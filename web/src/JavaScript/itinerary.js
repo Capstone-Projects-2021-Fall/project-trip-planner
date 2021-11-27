@@ -5,6 +5,8 @@ let geocoder;
 
 let userID = null;
 
+let inEditMode = false;
+
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 function initMap()
 {
@@ -16,7 +18,7 @@ function initMap()
 		streetViewControl: false,
 		clickableIcons: false,
 		fullscreenControl: false,
-		styles: MAP_STYLING,
+		styles: GetMapStyling(),
 	});
 
 	geocoder = new google.maps.Geocoder();
@@ -44,8 +46,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 	{
 		itineraryID = Number(itineraryID);
 	}
-
-
+	//if the user somehow forces us to default to edit mode. cool. 
+	if (displayMode == "edit")
+	{
+		inEditMode = true;
+	}
 
 	/**
 	 * Our save itinerary button should only do something if the data changes. Otherwise, we're just killing our database/lambdas with identical data. 
@@ -122,13 +127,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 				addressMode.checked = true;
 				displayMe = addressMode;
 				draggable = false;
+				//this should be false, but handle radio only updates stuff if it's toggled. the initial case, therefore, needs to be the opposite so handle radio actually does what it should
+				isLLMode = true;
 			}
 			else
 			{
 				latLongMode.checked = true;
 				displayMe = latLongMode;
 				draggable = true;
+				//this should be true, but handle radio only updates stuff if it's toggled. the initial case, therefore, needs to be the opposite so handle radio actually does what it should
+				isLLMode = false;
 			}
+			//console.lo
 
 			createOrUpdateMarker({ lat: Number(latField.value), lng: Number(longField.value) }, draggable);
 			handleRadio(displayMe);
@@ -298,9 +308,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 			clearFieldsAndClose();
 		}
 
-		
-
-
 		//wire up the map
 		function createOrUpdateMarker(loc, draggable, center = true)
 		{
@@ -355,8 +362,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 				if (modalMarker)
 				{
 					modalMarker.setDraggable(true);
-
-
 				}
 
 				updateCoordBtn.classList.remove("hidden-on-address-mode");
@@ -467,17 +472,14 @@ document.addEventListener('DOMContentLoaded', async function ()
 	{
 		if (!title || !title.trim())
 		{
-			console.log("title bad!");
 			return false;
 		}
 		else if (!start || !end || start.getTime() >= end.getTime())
 		{
-			console.log("times bad!");
 			return false;
 		}
 		else
 		{
-			console.log("you good!");
 			return true;
 		}
 	}
@@ -518,23 +520,38 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		console.log('There');
 
-		let buzz = initialDB.startDate;
-		let zzub = initialDB.endDate;
-		//full calendar apparently treats range end Date as an exclusive thing, we want inclusive. add 1 to day, then get the nice format back.
-		let zzubTemp = new Date(initialDB.endDate);
-		zzubTemp.setUTCDate(zzubTemp.getUTCDate() + 1);
-		zzub = zzubTemp.toISOString().substring(0, 10);
+		console.log(new Date().toLocaleString().substring(0, 10));
+		//if the initial DB is null, use the current date. that's actually harder than it sounds. 
+		//workaround for the JS Date being terrible. new Date() returns UTC now. getting the date from that is wrong if your local offset is not 0. 
+		//	(for us, that means EST, so anything > 7PM is treated as the next day)
+		//so, get the utc now, convert it to local format, strip off the time, then convert that to a date (which sets hour, minute, second set to UTC 0:00:00), and then strip off the time from that.
+		//it's ugly as all hell but it's what we've got.
+		let buzz = GetDateOrNull(initialDB?.startDate) ?? new Date(new Date().toLocaleString().substring(0, 10)).toISOString().substring(0,10);
+		
+		let start = document.getElementById("itinerary-startdate");
+		let end = document.getElementById("itinerary-enddate");
 
 		let calendarEl = document.getElementById('calendar');
 		calendar = new FullCalendar.Calendar(calendarEl, {
 			initialDate: buzz,
-			validRange: { start: buzz, end: zzub },
+			validRange: _ =>
+			{
+				let zzub = GetDateOrNull(end.value);
+				if (zzub) 
+				{
+					let zzubTemp = new Date(zzub);
+					zzubTemp.setUTCDate(zzubTemp.getUTCDate() + 1);
+					zzub = zzubTemp.toISOString().substring(0, 10);
+				}
+
+				return { start: GetDateOrNull(start.value) ?? start.defaultValue, end: GetDateOrNull(zzub) ?? end.defaultValue }
+			},
 			initialView: 'timeGridAnyDay',
 			nowIndicator: true,
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'timeGridAnyDay,listWeek' // buttons for switching between views
+				right: 'timeGridAnyDay,listViewDaily,listViewYearly' // buttons for switching between views
 			},
 			views: {
 				timeGridAnyDay: {
@@ -543,6 +560,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 						days: 4
 					},
 					buttonText: 'Whole Trip'
+				},
+
+				listViewDaily:
+				{
+					type: 'listWeek',
+					buttonText: 'Daily View'
+				},
+
+				listViewYearly:
+				{
+					type: 'listYear',
+					buttonText: 'Yearly View'
 				}
 			},
 			navLinks: true, // can click day/week names to navigate views
@@ -569,7 +598,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		console.log("DbEvent Photos: ");
 		
 
-		var dbEventList = initialDB.items;
+		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
 		{
 			dbEvent.photos
@@ -597,6 +626,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 */
 	async function loadItinerary(id)
 	{
+		if (!id)
+		{
+			return null;
+		}
+
 		//HTTP request parameters to get the itinerary with its ID
 		var requestItinerary = {
 			method: 'GET',
@@ -612,8 +646,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 		 */
 		var dbItems = null;
 
-		console.log("Hello");
-
 		//
 		// make API call with parameters and use promises to get response
 		await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateReadUpdateItinerary?page=" + Number(id), requestItinerary).then(async response =>
@@ -626,7 +658,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 					if (jsonData)
 					{
 						let values = jsonData["ItineraryItems"];
-						console.log(values);
 						let name = jsonData["ItineraryName"];
 						let startDate = GetDateOrNull(jsonData["StartDate"]);
 						let endDate = GetDateOrNull(jsonData["EndDate"]);
@@ -638,9 +669,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
 						});
-						console.log("Batman");
 						dbItems = new DBData(name, startDate, endDate, desc, coll);
-						console.log(dbItems);
 					}//end json null check
 				}//end json data function
 				);//end fetch.then
@@ -670,10 +699,57 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let end = document.getElementById("itinerary-enddate");
 		let description = document.getElementById("itinerary-description");
 
-		title.value = dbData.itineraryName;
-		start.value = dbData.startDate;
-		end.value = dbData.endDate;
-		description.value = dbData.description;
+		title.value = dbData?.itineraryName ?? null;
+		start.value = dbData?.startDate ?? "";
+		end.value = dbData?.endDate ?? "";
+		description.value = dbData?.description ?? null;
+
+		start.defaultValue = start.value ?? "1970-01-01";
+		end.defaultValue = end.value ?? "9999-12-31";
+
+		title.defaultValue = title.value;
+		description.defaultValue = description.value;
+
+		//workaround to refresh the display. Go to the currently selected date, refresh.
+		start.addEventListener("blur", _ =>
+		{
+			let temp = GetDateOrNull(start.value);
+			if (temp) 
+			{
+				markDirty |= start.defaultValue != temp;
+				start.defaultValue = temp;
+			}
+			calendar.gotoDate(calendar.getDate());
+		});
+
+		end.addEventListener("blur", _ =>
+		{
+			let temp = GetDateOrNull(end.value);
+			if (temp) 
+			{
+				markDirty |= end.defaultValue != temp;
+				end.defaultValue = temp;
+			}
+			calendar.gotoDate(calendar.getDate());
+		});
+
+		title.addEventListener("blur", _ =>
+		{
+			if (title.value != title.defaultValue)
+			{
+				markDirty = true;
+				title.defaultValue = title.value;
+			}
+		});
+
+		description.addEventListener("blur", _ =>
+		{
+			if (description.value != description.defaultValue)
+			{
+				markDirty = true;
+				description.defaultValue = description.value;
+			}
+		});
 	}
 
 	//Load Itinerary
@@ -792,7 +868,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 		});
 	});
-	
+
 });//end of dom content loaded
 
 class DBData
@@ -800,8 +876,8 @@ class DBData
 	/**
 	 * 
 	 * @param {string} itineraryName
-	 * @param {string} startDate //in the YYYY-MM-DD format. Date makes them all fucky. 
-	 * @param {string} endDate //in the YYYY-MM-DD format. Date makes them all fucky. 
+	 * @param {string} startDate //in the YYYY-MM-DD format. Date makes them all screwy. 
+	 * @param {string} endDate //in the YYYY-MM-DD format. Date makes them all screwy. 
 	 * @param {string} description
 	 * @param {DBItem[]} items
 	 */
@@ -840,98 +916,3 @@ class DBItem
 		this.photos = photos;
 	}
 }
-
-/**
- * A complex web of formatting rules to make the google map integration we're using have less shit all over the place. It was interfering with our UI.
- * See https://mapstyle.withgoogle.com/
- * @type {JSON} 
- */
-const MAP_STYLING =
-[
-	{
-		"featureType": "landscape",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "landscape",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "poi",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "geometry.fill",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "geometry.stroke",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "road",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "transit",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	}
-]

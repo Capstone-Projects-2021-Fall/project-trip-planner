@@ -66,10 +66,16 @@
 
 .show-small
 {
-	 /* display: none !important; */
+	  display: none !important; 
 }
 
-@media (max-width: 910px)
+.hide-default
+{
+	display: none;
+}
+
+
+@media (max-width: 1000px)
 {
 	.w3-hide-small
 	{
@@ -78,7 +84,7 @@
 
 	.show-small
 	{
-		display: block;
+		display: block !important;
 		/* display:inherit !important; */
 	}
 }

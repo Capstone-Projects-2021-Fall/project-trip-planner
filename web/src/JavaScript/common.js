@@ -33,15 +33,11 @@ function GetCookie(cname)
  * @param {boolean} isAccount true if this is going on the account page, false if it's the itinerary search page.
  * @
  */
-function fillItineraries(container, jsonListOfItems, status, isAccount)
+function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
 {
-	console.log(jsonListOfItems);
-	console.log("status: " + status);
 	if (status == 200)
 	{
 		let res = jsonListOfItems;
-		//console.log(res);
-		console.log("Type: " + typeof (res));
 		if (!res || res.length == 0)
 		{
 
@@ -49,9 +45,13 @@ function fillItineraries(container, jsonListOfItems, status, isAccount)
 			elem.classList.add("itinerary-empty");
 
 			var niceText;
-			if (isAccount)
+			if (isAccount && ownPage)
 			{
 				niceText = document.createTextNode("You have no itineraries. Create one!");
+			}
+			else if (isAccount)
+			{
+				niceText = document.createTextNode("This user has no itineraries.");
 			}
 			else 
 			{
@@ -146,12 +146,10 @@ async function JsonOrNull(response, callback)
 		var result;
 		if (text)
 		{
-			console.log("parsing");
 			result = JSON.parse(text);
 		}
 		else 
 		{
-			console.log("null");
 			result = null;
 		}
 		return callback(result);
@@ -176,7 +174,6 @@ function GetIDCookie()
  */
 function GetDateTimeOrNull(value)
 {
-	console.log("Date Format: " + typeof (value) + ", value = '" + value + "'");
 	var temp = new Date(value);
 	if (!temp || isNaN(temp))
 	{
@@ -195,6 +192,10 @@ function GetDateTimeOrNull(value)
  */
 function GetDateOrNull(value)
 {
+	if (!value)
+	{
+		return null;
+	}
 	var regEx = /^\d{4}-\d{2}-\d{2}$/;
 	if (!value.match(regEx)) return false;  // Invalid format
 	var d = new Date(value);
@@ -259,3 +260,104 @@ function getParameterByName(name)
 	//truthy conversion is false if null or empty. i'll leave the result unaltered if either case, as the empty string may be valid and using null instead would not be.
 	return result ? decodeURIComponent(result) : result;
 }
+
+
+function GetMapStyling()
+{
+	return MAP_STYLING;
+}
+
+/**
+ * A complex web of formatting rules to make the google map integration we're using have less shit all over the place. It was interfering with our UI.
+ * See https://mapstyle.withgoogle.com/
+ * @type {JSON} 
+ */
+const MAP_STYLING =
+	[
+		{
+			"featureType": "landscape",
+			"stylers": [
+				{
+					"visibility": "simplified"
+				}
+			]
+		},
+		{
+			"featureType": "landscape",
+			"elementType": "labels.icon",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		},
+		{
+			"featureType": "poi",
+			"stylers": [
+				{
+					"visibility": "simplified"
+				}
+			]
+		},
+		{
+			"featureType": "poi",
+			"elementType": "labels.icon",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		},
+		{
+			"featureType": "poi.park",
+			"stylers": [
+				{
+					"visibility": "simplified"
+				}
+			]
+		},
+		{
+			"featureType": "poi.park",
+			"elementType": "geometry.fill",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		},
+		{
+			"featureType": "poi.park",
+			"elementType": "geometry.stroke",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		},
+		{
+			"featureType": "poi.park",
+			"elementType": "labels.icon",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		},
+		{
+			"featureType": "road",
+			"elementType": "labels.icon",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		},
+		{
+			"featureType": "transit",
+			"stylers": [
+				{
+					"visibility": "off"
+				}
+			]
+		}
+	]
