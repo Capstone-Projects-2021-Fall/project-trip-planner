@@ -21,6 +21,23 @@ function initMap()
 		styles: GetMapStyling(),
 	});
 
+	let latLongMode = document.getElementById('item-modal-radio-latlong');
+	let latField = document.getElementById('item-modal-latitude');
+	let longField = document.getElementById('item-modal-longitude');
+	let itemModal = document.getElementById('item-modal');
+
+	modalMap.addListener("click", function (e)
+	{
+		//ignore clicks if the item modal is somehow collapsed and this map can still be clicked. use
+		if (latLongMode.checked && !itemModal.classList.contains("item-modal-collapsed"))
+		{
+			let loc = e.latLng;
+			createOrUpdateMarker(loc, true, false);
+			latField.value = Number(loc.lat()).toFixed(4);
+			longField.value = Number(loc.lng()).toFixed(4);
+		}
+	});
+
 	geocoder = new google.maps.Geocoder();
 }
 
@@ -34,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	//
 	//
 	let itineraryID = getParameterByName("itinerary_id");
-	let displayMode = getParameterByName("mode");
+	let displayMode = getParameterByName("mode"); //we'll ignore this for now.
 	userID = GetIDCookie();
 
 	if (!displayMode && !itineraryID && !userID)
@@ -45,11 +62,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 	if (itineraryID)
 	{
 		itineraryID = Number(itineraryID);
-	}
-	//if the user somehow forces us to default to edit mode. cool. 
-	if (displayMode == "edit")
-	{
-		inEditMode = true;
 	}
 
 	/**
@@ -73,8 +85,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 * @param {Date} start the time the event starts
 	 * @param {Date} end the time the event ends. 
 	 * @param {boolean} allDay a fullCalendar argument that deals with all day events, idk what it actually does lol.
+	 * @param {boolean} readonly if true, disabled all interaction, if false, allows normal editing. 
 	 */
-	function displayItemModal(event, start, end, allDay)
+	function displayItemModal(event, start, end, allDay, readonly)
 	{
 		let itemModal = document.getElementById('item-modal'); //need this to toggle visibility.
 		let itemModalTitle = document.getElementById('item-modal-title'); //value
@@ -88,6 +101,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		let latField = document.getElementById('item-modal-latitude');
 		let longField = document.getElementById('item-modal-longitude');
+
+		let updateAddressBtn = document.getElementById("fill-address-btn");
 
 		let updateCoordBtn = document.getElementById('use-this-address-btn');
 		let autoUpdateCoordBox = document.getElementById('advanced-mode-auto-update');
@@ -103,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let itemModalCancel = document.getElementById('cancel-itinerary-item');
 		let itemModalDelete = document.getElementById('delete-itinerary-item');
 		let itemModalRevert = document.getElementById('revert-itinerary-item');
-		
+
 		itemModal.classList.remove("item-modal-collapsed");
 		itemModalSave.disabled = false;
 
@@ -158,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			itemModalRevert.classList.remove('nothing-to-change');
 
 			//google maps api: put the pin on the lat long. 
-			
+
 		}
 		else
 		{
@@ -171,69 +186,81 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
+		itemModalTitle.readOnly = readonly;
+		addressField.readOnly = readonly;
+		updateCoordBtn.readOnly = readonly;
+
+		itemModalStartDate.readOnly = readonly;
+		itemModalEndDate.readOnly = readonly;
+		itemModalDescription.readOnly = readonly;
+
+
 		//wire up the save
 		itemModalSave.onclick = function ()
 		{
-			//debounce check
-			itemModalSave.disabled = true;
-
-			let title = itemModalTitle.value;
-			let start = GetDateTimeOrNull(itemModalStartDate.value);
-			let end = GetDateTimeOrNull(itemModalEndDate.value);
-			let description = itemModalDescription.value;
-			let photoList = document.getElementsByClassName("item-modal-photo-img");
-			//photoList isn't an array, it's a HTMLElementCollection. the spread operator aka "[...args]" converts an iterable to an array. array.map is equivalent to C#'s LINQ Select.
-			//In simple terms: take the photoList, create a new list with just the url attribute from them.
-			let photos = [...photoList].map(x => x.url);
-
-			function addOrUpdateItem(lat, long, address)
+			if (!readonly)
 			{
-				if (event)
+				//debounce check
+				itemModalSave.disabled = true;
+
+				let title = itemModalTitle.value;
+				let start = GetDateTimeOrNull(itemModalStartDate.value);
+				let end = GetDateTimeOrNull(itemModalEndDate.value);
+				let description = itemModalDescription.value;
+				let photoList = document.getElementsByClassName("item-modal-photo-img");
+				//photoList isn't an array, it's a HTMLElementCollection. the spread operator aka "[...args]" converts an iterable to an array. array.map is equivalent to C#'s LINQ Select.
+				//In simple terms: take the photoList, create a new list with just the url attribute from them.
+				let photos = [...photoList].map(x => x.url);
+
+				function addOrUpdateItem(lat, long, address)
 				{
-					event.setProp("title", title);
-					event.setAllDay(allDay);
-					event.setExtendedProp("Latitude", lat);
-					event.setExtendedProp("Longitude", long);
-					event.setExtendedProp("AdditionalInformation", description);
-					event.setExtendedProp("Photos", photos);
-					event.setExtendedProp("Address", address);
+					if (event)
+					{
+						event.setProp("title", title);
+						event.setAllDay(allDay);
+						event.setExtendedProp("Latitude", lat);
+						event.setExtendedProp("Longitude", long);
+						event.setExtendedProp("AdditionalInformation", description);
+						event.setExtendedProp("Photos", photos);
+						event.setExtendedProp("Address", address);
+					}
+					else 
+					{
+						calendar.addEvent({
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay,
+							extendedProps: {
+								Latitude: lat,
+								Longitude: long,
+								Address: address,
+								AdditionalInformation: description,
+								Photos: photos
+							}
+						});
+					}
 				}
-				else 
+
+				if (isItemValid(title, start, end) && modalMarker) 
 				{
-					calendar.addEvent({
-						title: title,
-						start: start,
-						end: end,
-						allDay: allDay,
-						extendedProps: {
-							Latitude: lat,
-							Longitude: long,
-							Address: address,
-							AdditionalInformation: description,
-							Photos: photos
-						}
-					});
-				}
-			}
-			
-			if (isItemValid(title, start, end) && modalMarker) 
-			{
-				addOrUpdateItem(Number(latField.value), Number(longField.value), IsNullOrWhitespace(addressField.value) ? null : addressField.value);
+					addOrUpdateItem(Number(latField.value), Number(longField.value), IsNullOrWhitespace(addressField.value) ? null : addressField.value);
 					//collapse the item modal.
-				clearFieldsAndClose();
+					clearFieldsAndClose();
+				}
+				else
+				{
+					//clear debounce
+					itemModalSave.disabled = false;
+				}
 			}
-			else
-			{
-				//clear debounce
-				itemModalSave.disabled = false;
-			}
-		}
+		};
 
 		//cancel
 		itemModalCancel.onclick = function ()
 		{
 			clearFieldsAndClose();
-		} 
+		};
 
 		function clearFieldsAndClose()
 		{
@@ -261,51 +288,89 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 
 		//revert
-		itemModalRevert.onclick = function()
+		itemModalRevert.onclick = function ()
 		{
-			if (event)
+			if (!readonly) 
 			{
-				itemModalTitle.value = event.title;
-				addressField.value = event.extendedProps.Address;
-				itemModalDescription.value = event.extendedProps.AdditionalInformation;
-				latField.value = event.extendedProps.Latitude;
-				longField.value = event.extendedProps.Longitude;
-
-				//ensure photo collection is clear.
-				while (photoCollection.firstChild)
+				if (event)
 				{
-					photoCollection.removeChild(photoCollection.lastChild);
+					itemModalTitle.value = event.title;
+					addressField.value = event.extendedProps.Address;
+					itemModalDescription.value = event.extendedProps.AdditionalInformation;
+					latField.value = event.extendedProps.Latitude;
+					longField.value = event.extendedProps.Longitude;
+
+					//ensure photo collection is clear.
+					while (photoCollection.firstChild)
+					{
+						photoCollection.removeChild(photoCollection.lastChild);
+					}
+					//and reload them.
+					event.extendedProps.Photos.forEach(x =>
+					{
+						addPhoto(photoCollection, x);
+					});
 				}
-				//and reload them.
-				event.extendedProps.Photos.forEach(x =>
+				else
 				{
-					addPhoto(photoCollection, x);
-				});
-			}
-			else
-			{
-				itemModalTitle.value = "";
-				itemModalDescription.value = "";
+					itemModalTitle.value = "";
+					itemModalDescription.value = "";
 
-				addressField.value = "";
-				latField.value = "";
-				longField.value = "";
+					addressField.value = "";
+					latField.value = "";
+					longField.value = "";
 
-				//ensure photo collection is clear.
-				while (photoCollection.firstChild)
-				{
-					photoCollection.removeChild(photoCollection.lastChild);
+					//ensure photo collection is clear.
+					while (photoCollection.firstChild)
+					{
+						photoCollection.removeChild(photoCollection.lastChild);
+					}
 				}
 			}
 		};
 		//and delete
-		itemModalDelete.onclick = function()
+		itemModalDelete.onclick = function ()
 		{
-			if (event)
+			if (!readonly)
 			{
-				event.remove();
+				if (event)
+				{
+					event.remove();
+				}
+				clearFieldsAndClose();
 			}
-			clearFieldsAndClose();
+		};
+		if (readonly) 
+		{
+			itemModalSave.classList.add("readonly-item-hide-button");
+			itemModalRevert.classList.add("readonly-item-hide-button");
+			itemModalDelete.classList.add("readonly-item-hide-button");
+
+			itemModalCancel.textContent = "Close";
+
+			let readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				x.classList.add("readonly-content");
+			});
+
+
+			//window.onclick = function ()
+			//{
+			//	clearFieldsAndClose();
+			//}
+		}
+		else
+		{
+			itemModalCancel.textContent = "Cancel";
+
+			let readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				x.classList.remove("readonly-content");
+			});
+
+			//window.onclick = null;
 		}
 
 		//wire up the map
@@ -367,6 +432,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				updateCoordBtn.classList.remove("hidden-on-address-mode");
 				autoUpdateCoordBox.classList.remove("hidden-on-address-mode");
 				autoUpdateLabel.classList.remove("hidden-on-address-mode");
+				updateAddressBtn.classList.remove("hidden-on-address-mode");
 
 				isLLMode = true;
 			}
@@ -387,6 +453,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				updateCoordBtn.classList.add("hidden-on-address-mode");
 				autoUpdateCoordBox.classList.add("hidden-on-address-mode");
 				autoUpdateLabel.classList.add("hidden-on-address-mode");
+				updateAddressBtn.classList.add("hidden-on-address-mode");
 
 				isLLMode = false;
 			}
@@ -404,13 +471,15 @@ document.addEventListener('DOMContentLoaded', async function ()
 					if (addressMode.checked || autoUpdateCoordBox.checked || force)
 					{
 						createOrUpdateMarker(loc, latLongMode.checked, true);
+
+						latField.value = Number(loc.lat()).toFixed(4);
+						longField.value = Number(loc.lng()).toFixed(4);
 					}
 					else
 					{
 						modalMap.setCenter(loc);
 					}
-					latField.value = Number(loc.lat()).toFixed(4);
-					longField.value = Number(loc.lng()).toFixed(4);
+
 				}).catch(y =>
 				{ /**/
 					//log something in addressWarning?
@@ -418,29 +487,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
-		modalMap.addListener("click", function (e)
-		{
-			if (latLongMode.checked)
-			{
-				let loc = e.latLng;
-				createOrUpdateMarker(loc, true, false);
-				latField.value =  Number(loc.lat()).toFixed(4);
-				longField.value = Number(loc.lng()).toFixed(4);
-			}
-		});
-
-		updateCoordBtn.addEventListener("click", _ =>
+		updateCoordBtn.onclick = _ =>
 		{
 			if (latLongMode.checked)
 			{
 				submitAddressField(true);
 			}
-		});
+		};
 
 		//wire up the address to mark the map.
-		addressField.addEventListener("blur", _ => submitAddressField());
+		addressField.onblur = _ => submitAddressField();
 
-		autoUpdateCoordBox.addEventListener("click", _ =>
+		autoUpdateCoordBox.onclick = _ =>
 		{
 			if (autoUpdateCoordBox.checked) 
 			{
@@ -454,12 +512,48 @@ document.addEventListener('DOMContentLoaded', async function ()
 			{
 				updateCoordBtn.disabled = false;
 			}
-		});
+		};
 
-		latLongMode.addEventListener("click", _ => handleRadio(latLongMode));
-		addressMode.addEventListener("click", _ => handleRadio(addressMode));
+		latLongMode.onclick = _ => handleRadio(latLongMode);
+		addressMode.onclick = _ => handleRadio(addressMode);
 
-		
+		function updateMapFromCoordinate()
+		{
+			if (latLongMode.checked && isFinite(latField.value) && isFinite(longField.value))
+			{
+				let latNum = Number(latField.value);
+				let longNum = Number(longField.value);
+				if (latNum <= 90 && latNum >= -90 && longNum <= 180 && longNum >= -180)
+				{
+					createOrUpdateMarker({ lat: latNum, lng: longNum }, true, true);
+				}
+			}
+		};
+
+		latField.onblur = updateMapFromCoordinate;
+		longField.onblur = updateMapFromCoordinate;
+
+		updateAddressBtn.onclick = _ =>
+		{
+			if (latLongMode.checked && isFinite(latField.value) && isFinite(longField.value))
+			{
+				let latNum = Number(latField.value);
+				let longNum = Number(longField.value);
+				if (latNum <= 90 && latNum >= -90 && longNum <= 180 && longNum >= -180) 
+				{
+					geocoder.geocode({ location: { lat: latNum, lng: longNum } }).then(response =>
+					{
+						if (response.results[0])
+						{
+							addressField.value = response.results[0].formatted_address;
+						}
+					}, failure =>
+					{
+						addressField.value = "";
+					});
+				}
+			}
+		};
 	}
 
 	/**
@@ -507,7 +601,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 	/**
 	 * Creates a calendar and loads any database data into it.
-	 * @param {DBData} initialDB the initial data from the database.
+	 * @param {DBData} initialDB the initial data from the database. if null, we're in create mode.
 	 */
 	function createAndLoadCalendar(initialDB)
 	{
@@ -523,11 +617,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 		console.log(new Date().toLocaleString().substring(0, 10));
 		//if the initial DB is null, use the current date. that's actually harder than it sounds. 
 		//workaround for the JS Date being terrible. new Date() returns UTC now. getting the date from that is wrong if your local offset is not 0. 
-		//	(for us, that means EST, so anything > 7PM is treated as the next day)
+		//(for us, that means EST, so anything > 7PM is treated as the next day)
 		//so, get the utc now, convert it to local format, strip off the time, then convert that to a date (which sets hour, minute, second set to UTC 0:00:00), and then strip off the time from that.
 		//it's ugly as all hell but it's what we've got.
-		let buzz = GetDateOrNull(initialDB?.startDate) ?? new Date(new Date().toLocaleString().substring(0, 10)).toISOString().substring(0,10);
-		
+		let buzz = GetDateOrNull(initialDB?.startDate) ?? new Date(new Date().toLocaleString().substring(0, 10)).toISOString().substring(0, 10);
+
 		let start = document.getElementById("itinerary-startdate");
 		let end = document.getElementById("itinerary-enddate");
 
@@ -574,18 +668,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 					buttonText: 'Yearly View'
 				}
 			},
-			navLinks: true, // can click day/week names to navigate views
-			editable: true,
-			selectable: true,
-			selectMirror: true,
+			navLinks: false, // can click day/week names to navigate views
+			editable: false,
+			selectable: false,
+			selectMirror: false,
 			select: function (arg)
 			{
-				displayItemModal(null, arg.start, arg.end, arg.allDay);
+				displayItemModal(null, arg.start, arg.end, arg.allDay, false);
 			},
 			eventClick: function (arg)
 			{
 				let event = arg.event;
-				displayItemModal(event, event.start, event.end, event.allDay);
+				displayItemModal(event, event.start, event.end, event.allDay, !inEditMode);
 			},
 			eventAdd: eventsAltered,
 			eventChange: eventsAltered,
@@ -596,7 +690,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		});
 
 		console.log("DbEvent Photos: ");
-		
+
 
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
@@ -611,7 +705,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					Longitude: dbEvent.longitude,
 					Address: dbEvent.address,
 					AdditionalInformation: dbEvent.additionalInformation,
-					Photos: dbEvent.photos.map(x=> x["URL"]),
+					Photos: dbEvent.photos.map(x => x["URL"]),
 				}
 			});
 		});
@@ -622,7 +716,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	/**
 	 * Fill in calendar with activities from database
 	 * @param {number} id the itinerary id to pull from the database with
-	 * @returns {DBData} the data from the database. this should not be null but the items may be empty.
+	 * @returns {DBData} the data from the database. this will be null if creating a new itinerary; when reading, it will not be null but the itinerary item list may be empty.
 	 */
 	async function loadItinerary(id)
 	{
@@ -657,6 +751,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					//first, make sure we got something, we could somehow get a null.
 					if (jsonData)
 					{
+						let creator = Number(jsonData["CreatorID"]);
 						let values = jsonData["ItineraryItems"];
 						let name = jsonData["ItineraryName"];
 						let startDate = GetDateOrNull(jsonData["StartDate"]);
@@ -669,7 +764,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
 						});
-						dbItems = new DBData(name, startDate, endDate, desc, coll);
+						dbItems = new DBData(creator, name, startDate, endDate, desc, coll);
 					}//end json null check
 				}//end json data function
 				);//end fetch.then
@@ -677,7 +772,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			//indicates the code was successful, but the database had no itinerary with that index. this needs to be handled. 
 			else if (response.status == 404)
 			{
-				console.log("we should redirect to 404 page here.");
+				document.location = "404.html";
 			}
 		}, failure => //only occurs if the server failed. this means our lambdas are broken. this lets us a put a "something went wrong page"
 		{
@@ -699,6 +794,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let end = document.getElementById("itinerary-enddate");
 		let description = document.getElementById("itinerary-description");
 
+		//and the rest of the data
 		title.value = dbData?.itineraryName ?? null;
 		start.value = dbData?.startDate ?? "";
 		end.value = dbData?.endDate ?? "";
@@ -709,180 +805,681 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		title.defaultValue = title.value;
 		description.defaultValue = description.value;
-
-		//workaround to refresh the display. Go to the currently selected date, refresh.
-		start.addEventListener("blur", _ =>
-		{
-			let temp = GetDateOrNull(start.value);
-			if (temp) 
-			{
-				markDirty |= start.defaultValue != temp;
-				start.defaultValue = temp;
-			}
-			calendar.gotoDate(calendar.getDate());
-		});
-
-		end.addEventListener("blur", _ =>
-		{
-			let temp = GetDateOrNull(end.value);
-			if (temp) 
-			{
-				markDirty |= end.defaultValue != temp;
-				end.defaultValue = temp;
-			}
-			calendar.gotoDate(calendar.getDate());
-		});
-
-		title.addEventListener("blur", _ =>
-		{
-			if (title.value != title.defaultValue)
-			{
-				markDirty = true;
-				title.defaultValue = title.value;
-			}
-		});
-
-		description.addEventListener("blur", _ =>
-		{
-			if (description.value != description.defaultValue)
-			{
-				markDirty = true;
-				description.defaultValue = description.value;
-			}
-		});
 	}
 
-	//Load Itinerary
-
-	let temp = await loadItinerary(itineraryID);
-	initializeNonCalendarData(temp);
-	calendar = createAndLoadCalendar(temp);
-	calendar.render();
-
-
-	/** 
-	 * Update itinerary everytime the user saves it
-	 **/
-	async function handleSaving()
+	function initializeRemainingData(dbData)
 	{
-		if (markDirty)
+		let title = document.getElementById("itinerary-title");
+		let start = document.getElementById("itinerary-startdate");
+		let end = document.getElementById("itinerary-enddate");
+		let description = document.getElementById("itinerary-description");
+
+		let create_mode = document.getElementById("create-mode");
+		let create_save_cont = document.getElementById("create-save-cont");
+		let create_save_exit = document.getElementById("create-save-exit");
+		let create_clear = document.getElementById("create-clear");
+		let create_cancel = document.getElementById("create-cancel");
+
+		let logged_out_wrapper = document.getElementById("logged-out-wrapper");
+		let logged_out_note = document.getElementById("logged-out-note");
+
+		let view_mode_other = document.getElementById("view-mode-other");
+		let other_create_copy = document.getElementById("other-create-copy");
+		let other_cancel = document.getElementById("other-cancel");
+
+		let view_mode_self = document.getElementById("view-mode-self");
+		let self_enable_edit = document.getElementById("self-enable-edit");
+		let self_go_back = document.getElementById("self-go-back");
+		let self_view_delete = document.getElementById("self-view-delete");
+
+		let copy_edit_mode = document.getElementById("copy-edit-mode");
+		let save_copy_cont = document.getElementById("save-copy-cont");
+		let save_copy_exit = document.getElementById("save-copy-exit");
+		let copy_revert = document.getElementById("copy-revert");
+		let copy_cancel = document.getElementById("copy-cancel");
+
+		let normal_edit_mode = document.getElementById("normal-edit-mode");
+		let save_cont = document.getElementById("save-cont");
+		let save_exit = document.getElementById("save-exit");
+		let revert_cont = document.getElementById("revert-cont");
+		let revert_exit = document.getElementById("revert-exit");
+		let edit_delete = document.getElementById("edit-delete");
+
+		/**
+		 * Saves the current itinerary information stored on the page and in the calendar to the database with the itinerary id set to null. If successfully saved, either reloads this saved itinerary or goes to the account page, based on the stayOnPage flag.
+		 * @param {boolean} stayOnPage if true, the redirect comes back to itinerary (with the new itinerary id appended), if false, directs to account.html
+		 */
+		async function SaveNewItineraryToDatabase(stayOnPage)
+		{
+			let x = await handleSaving(null);
+			if (x)
+			{
+				if (stayOnPage)
+				{
+					document.location = "itinerary.html?itinerary_id=" + x + "&mode=edit";
+				}
+				else
+				{
+					document.location = "account.html";
+				}
+			}
+		}
+
+		/** 
+		 * Update itinerary everytime the user saves it. If there is nothing to save, this does nothing and the itinerary id is returned.
+		 * @param {number} itineraryID the itinerary id to save this entry to. for create and create copy, this value is null.
+		 * @returns {number} the id of the itinerary saved. If no changes were made, but it is otherwise valid, this is the itineraryID passed in. If it fails to save, this value is null.
+		 **/
+		async function handleSaving(itineraryID)
 		{
 			let title = document.getElementById("itinerary-title");
 			let start = document.getElementById("itinerary-startdate");
 			let end = document.getElementById("itinerary-enddate");
 			let description = document.getElementById("itinerary-description");
 
-			let saveEvents = {
+			//first, make sure we can save.
+			let valid = isItemValid(title.value, GetDateTimeOrNull(start.value), GetDateTimeOrNull(end.value));
+			if (valid && markDirty)
+			{
+
+
 				//change itinerary id when creating new itinerary feature is added
-				"ItineraryID": itineraryID,
-				"UserID": userID,
-				"Title": title.value,
-				"StartDate": start.value,
-				"EndDate": end.value,
-				"Description": description.value,
-				"ItineraryItems": []
-			};
-			calendarArr = calendar.getEvents();
+				let saveEvents = {
+					"ItineraryID": itineraryID,
+					"UserID": userID,
+					"Title": title.value,
+					"StartDate": start.value,
+					"EndDate": end.value,
+					"Description": description.value,
+					"ItineraryItems": []
+				};
+				calendarArr = calendar.getEvents();
 
-			//loop through events from calendar and prepare them into an array to be sent off to the database
-			for (let index = 0; index < calendarArr.length; index++)
-			{
-				let title = calendarArr[index]["_def"]["title"];
-				let additionalInformation = calendarArr[index]["_def"]["extendedProps"]["AdditionalInformation"];
-				let latitude = calendarArr[index]["_def"]["extendedProps"]["Latitude"];
-				let longitude = calendarArr[index]["_def"]["extendedProps"]["Longitude"];
-				let address = calendarArr[index]["_def"]["extendedProps"]["Address"];
-				let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
-				let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
-				let photos = calendarArr[index]["_def"]["extendedProps"]["Photos"]
+				//loop through events from calendar and prepare them into an array to be sent off to the database
+				for (let index = 0; index < calendarArr.length; index++)
+				{
+					let title = calendarArr[index]["_def"]["title"];
+					let additionalInformation = calendarArr[index]["_def"]["extendedProps"]["AdditionalInformation"];
+					let latitude = calendarArr[index]["_def"]["extendedProps"]["Latitude"];
+					let longitude = calendarArr[index]["_def"]["extendedProps"]["Longitude"];
+					let address = calendarArr[index]["_def"]["extendedProps"]["Address"];
+					let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
+					let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
+					let photos = calendarArr[index]["_def"]["extendedProps"]["Photos"]
 
-				saveEvents["ItineraryItems"].push({
-					"ActivityName": title,
-					"StartTime": start,
-					"EndTime": end,
-					"Address": address,
-					"AdditionalInformation": additionalInformation,
-					"Latitude": latitude,
-					"Longitude": longitude,
-					"Photos": photos
+					saveEvents["ItineraryItems"].push({
+						"ActivityName": title,
+						"StartTime": start,
+						"EndTime": end,
+						"Address": address,
+						"AdditionalInformation": additionalInformation,
+						"Latitude": latitude,
+						"Longitude": longitude,
+						"Photos": photos
+					});
+				}
+				console.log(saveEvents);
+				var json = JSON.stringify(saveEvents);
+				console.log(json);
+				// create a JSON object with parameters for API call and store in a variable
+				var requestOptions = {
+					method: 'POST',
+					body: json,
+				};
+				// make API call with parameters and use promises to get response
+				let g = await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateReadUpdateItinerary", requestOptions).then(async gucci =>
+				{
+					console.log("hello");
+					//maybe pop up "your shit was saved" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+					if (gucci.status == 200) 
+					{
+						markDirty = false; //clear the dirty-ness.
+						let q = await gucci.text().then(data =>
+						{
+							console.log("data: " + data)
+							return Number(data);
+						});
+						return q;
+					}
+					else if (gucci.status == 404)
+					{
+						document.location = "404.html";
+						return null;
+					}
+					else
+					{
+						console.log("status code: " + gucci.status);
+						//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+						return null;
+					}
+				}, notgucci =>
+				{
+					//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+					return null;
 				});
+				console.log("G: " + g);
+
+				return g;
 			}
-			var json = JSON.stringify(saveEvents);
-			console.log(json);
-			// create a JSON object with parameters for API call and store in a variable
-			var requestOptions = {
-				method: 'POST',
-				body: json,
-			};
-			// make API call with parameters and use promises to get response
-			await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateReadUpdateItinerary", requestOptions).then(gucci =>
+			else if (valid)
 			{
-				//maybe pop up "your shit was saved" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
-				markDirty = false; //clear the dirty-ness.
-			}, notgucci =>
+				console.log("no changes");
+				//maybe pop up "nothing to save" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+				return itineraryID;
+			}
+			else
 			{
-				//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+				return null;
+			}
+		}
+
+		/**
+		 * Calendar is disabled in view mode. This re-enables it. 
+		 */
+		function enableCalendar()
+		{
+			calendar.setOption("navLinks", true);
+			calendar.setOption("editable", true);
+			calendar.setOption("selectable", true);
+			calendar.setOption("selectMirror", true);
+
+			let calendarEl = document.getElementById('calendar');
+			calendarEl.classList.remove("calendar-disabled");
+		}
+
+		/**
+		 * Disabled the calendar. useful when the start and end are invalid (create mode, clear changes).
+		 */
+		function disableCalendar()
+		{
+			calendar.setOption("navLinks", false);
+			calendar.setOption("editable", false);
+			calendar.setOption("selectable", false);
+			calendar.setOption("selectMirror", false);
+
+			calendar.classList.add("calendar-disabled");
+		}
+
+		/**
+		 * Makes the content editable. removes all the readonly stuff and sets in edit mode to true so item modals will work properly. If calendar too is set, enables the calendar too.
+		 * @param {boolean} calendarToo
+		 */
+		function makeEditable(calendarToo)
+		{
+			inEditMode = true;
+
+			title.readOnly = false;
+			start.readOnly = false;
+			end.readOnly = false;
+			description.readOnly = false;
+
+			document.getElementById("explain-dates").classList.remove("hide-in-view-mode");
+			let header = document.getElementById("main-itinerary-data");
+
+			let readonlyAwareLabels = header.getElementsByClassName("readonly-aware-content");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				x.classList.remove("readonly-content");
+			});
+			if (calendarToo)
+			{
+				enableCalendar();
+			}
+		}
+
+		function resetToInitialDB()
+		{
+			calendarArr = calendar.getEvents();
+			calendarArr.forEach(x => x.remove());
+
+			start.value = dbData?.startDate ?? "";
+			end.value = dbData?.endDate ?? "";
+			title.value = dbData?.itineraryName ?? null;
+			description.value = dbData?.description ?? null;
+
+
+
+			var dbEventList = dbData?.items ?? [];
+			dbEventList.forEach(dbEvent =>
+			{
+				dbEvent.photos
+				calendar.addEvent({
+					title: dbEvent.activityName,
+					start: dbEvent.startTime,
+					end: dbEvent.endTime,
+					extendedProps: {
+						Latitude: dbEvent.latitude,
+						Longitude: dbEvent.longitude,
+						Address: dbEvent.address,
+						AdditionalInformation: dbEvent.additionalInformation,
+						Photos: dbEvent.photos.map(x => x["URL"]),
+					}
+				});
+			});
+
+			if (!start.value || !end.value)
+			{
+				disableCalendar();
+			}
+
+			markDirty = false;
+		}
+
+		//create mode.
+		if (!dbData)
+		{
+
+			//make this visible
+			create_mode.classList.remove("not-create-mode");
+
+			makeEditable(false);
+
+			create_save_cont.addEventListener("click", _ =>
+			{
+				create_save_cont.disabled = true;
+				create_save_exit.disabled = true;
+				create_clear.disabled = true;
+				create_cancel.disabled = true;
+
+				SaveNewItineraryToDatabase(true);
+
+				create_clear.disabled = false;
+				create_cancel.disabled = false;
+				create_save_exit.disabled = false;
+				create_save_cont.disabled = false;
+			});
+
+			create_save_exit.addEventListener("click", _ =>
+			{
+				create_save_cont.disabled = true;
+				create_save_exit.disabled = true;
+				create_clear.disabled = true;
+				create_cancel.disabled = true;
+
+				SaveNewItineraryToDatabase(false);
+
+				create_clear.disabled = false;
+				create_cancel.disabled = false;
+				create_save_exit.disabled = false;
+				create_save_cont.disabled = false;
+			});
+
+			create_clear.addEventListener("click", _ =>
+			{
+				create_save_cont.disabled = true;
+				create_save_exit.disabled = true;
+				create_clear.disabled = true;
+				create_cancel.disabled = true;
+
+				resetToInitialDB();
+				//since empty was our initial state, we should mark dirty to false. 
+				markDirty = false;
+
+				create_clear.disabled = false;
+				create_cancel.disabled = false;
+				create_save_exit.disabled = false;
+				create_save_cont.disabled = false;
+			});
+
+			create_cancel.addEventListener("click", _ =>
+			{
+				document.location = "account.html";
 			});
 		}
+		//view mode. the options here differ based on who's logged in.
+		//no one logged in.
+		else if (!userID)
+		{
+			logged_out_wrapper.classList.remove("not-logged-out");
+		}
+		//logged in, not the creator
+		else if (userID != dbData.creatorID)
+		{
+			view_mode_other.classList.remove("not-view-mode-other");
+			other_create_copy.addEventListener("click", _ =>
+			{
+				//disable view other mode.
+				other_create_copy.disabled = true;
+				other_cancel.disabled = true;
+				other_cancel.onclick = null;
+				other_create_copy.onclick = null;
+
+				copy_edit_mode.classList.remove("not-copy-edit-mode");
+				//enable to edit copy mode.
+				view_mode_other.classList.add("not-view-mode-other");
+
+				makeEditable(true);
+
+				markDirty = true;
+				save_copy_cont.addEventListener("click", _ =>
+				{
+					save_copy_cont.disabled = true;
+					save_copy_exit.disabled = true;
+					copy_revert.disabled = true;
+					copy_cancel.disabled = true;
+
+					SaveNewItineraryToDatabase(true);
+
+					save_copy_cont.disabled = false;
+					save_copy_exit.disabled = false;
+					copy_revert.disabled = false;
+					copy_cancel.disabled = false;
+				});
+
+				save_copy_exit.addEventListener("click", _ =>
+				{
+					save_copy_cont.disabled = true;
+					save_copy_exit.disabled = true;
+					copy_revert.disabled = true;
+					copy_cancel.disabled = true;
+
+					SaveNewItineraryToDatabase(false);
+
+					save_copy_cont.disabled = false;
+					save_copy_exit.disabled = false;
+					copy_revert.disabled = false;
+					copy_cancel.disabled = false;
+				});
+
+				copy_revert.addEventListener("click", _ =>
+				{
+					resetToInitialDB();
+					markDirty = true;
+				});
+
+				//i could go back to view mode but it's easier to just redirect to account or go back. right now it goes back.
+				copy_cancel.addEventListener("click", _ =>
+				{
+					history.back();
+					//document.location = "account.html";
+				});
+			});
+			other_cancel.addEventListener("click", _ =>
+			{
+				other_create_copy.disabled = true;
+				other_cancel.disabled = true;
+
+				history.back();
+			});
+		}
+		//logged in and creator.
 		else
 		{
-			//maybe pop up "nothing to save" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+			/**
+			 * Attempts to delete the current itinerary. if the user does not have permission, this will fail. 
+			 * @returns {boolean} true if the data was removed from the database, false otherwise.
+			 */
+			async function handleDeleting()
+			{
+				let id_wrapper = { "UserID": userID, "ItineraryID": itineraryID };
+				let json = JSON.stringify(id_wrapper);
+				let requestOptions = {
+					method: 'POST',
+					body: json,
+				};
+				let ret = await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/DeleteItinerary", requestOptions).then(gucci =>
+				{
+					if (gucci.status == 200) 
+					{
+						return true;
+					}
+					else
+					{
+						gucci.text().then(data => console.log(data));
+						//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+						return false;
+					}
+				}, notgucci =>
+				{
+					//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+					return false;
+				});
+
+				return ret;
+			}
+
+			view_mode_self.classList.remove("not-view-mode-self");
+			self_enable_edit.addEventListener("click", _ =>
+			{
+				self_enable_edit.disabled = true;
+				self_go_back.disabled = true;
+				self_view_delete.disabled = true;
+
+				self_enable_edit.onclick = null;
+				self_go_back.onclick = null;
+				self_view_delete.onclick = null;
+
+				view_mode_self.classList.add("not-view-mode-self");
+				normal_edit_mode.classList.remove("not-normal-edit-mode");
+
+				makeEditable(true);
+
+				save_cont.addEventListener("click", function ()
+				{
+					save_cont.disabled = true;
+					save_exit.disabled = true;
+					revert_cont.disabled = true;
+					revert_exit.disabled = true;
+					edit_delete.disabled = true;
+
+					handleSaving(itineraryID);
+
+					save_cont.disabled = false;
+					save_exit.disabled = false;
+					revert_cont.disabled = false;
+					revert_exit.disabled = false;
+					edit_delete.disabled = false;
+				});
+				save_exit.addEventListener("click", async function ()
+				{
+					save_cont.disabled = true;
+					save_exit.disabled = true;
+					revert_cont.disabled = true;
+					revert_exit.disabled = true;
+					edit_delete.disabled = true;
+
+					let k = await handleSaving(itineraryID);
+					console.log(k);
+					if (k) 
+					{
+						document.location = "account.html";
+					}
+					else
+					{
+						save_cont.disabled = false;
+						save_exit.disabled = false;
+						revert_cont.disabled = false;
+						revert_exit.disabled = false;
+						edit_delete.disabled = false;
+					}
+				});
+				revert_cont.addEventListener("click", function ()
+				{
+					save_cont.disabled = true;
+					save_exit.disabled = true;
+					revert_cont.disabled = true;
+					revert_exit.disabled = true;
+					edit_delete.disabled = true;
+
+					resetToInitialDB();
+
+					save_cont.disabled = false;
+					save_exit.disabled = false;
+					revert_cont.disabled = false;
+					revert_exit.disabled = false;
+					edit_delete.disabled = false;
+				});
+				revert_exit.addEventListener("click", function ()
+				{
+					save_cont.disabled = true;
+					save_exit.disabled = true;
+					revert_cont.disabled = true;
+					revert_exit.disabled = true;
+					edit_delete.disabled = true;
+
+					document.location = "account.html";
+				});
+
+				edit_delete.addEventListener("click", _ =>
+				{
+					save_cont.disabled = true;
+					save_exit.disabled = true;
+					revert_cont.disabled = true;
+					revert_exit.disabled = true;
+					edit_delete.disabled = true;
+
+					handleDeleting().then(x =>
+					{
+						//this only happens if x is false.
+						if (x)
+						{
+							document.location = "account.html";
+						}
+						else 
+						{
+							save_cont.disabled = false;
+							save_exit.disabled = false;
+							revert_cont.disabled = false;
+							revert_exit.disabled = false;
+							edit_delete.disabled = false;
+						}
+					});
+				});
+			});
+			self_go_back.addEventListener("click", _ =>
+			{
+				self_enable_edit.disabled = true;
+				self_go_back.disabled = true;
+				self_view_delete.disabled = true;
+
+				history.back();
+			});
+			self_view_delete.addEventListener("click", _ =>
+			{
+				self_enable_edit.disabled = true;
+				self_go_back.disabled = true;
+				self_view_delete.disabled = true;
+
+				handleDeleting().then(x =>
+				{
+					//this only happens if x is false.
+					if (x)
+					{
+						document.location = "account.html";
+					}
+					else 
+					{
+						self_enable_edit.disabled = false;
+						self_go_back.disabled = false;
+						self_view_delete.disabled = false;
+					}
+				});
+			});
 		}
-	}
 
-	document.getElementById("save-cont").addEventListener("click", function ()
-	{
-		handleSaving();
-	});
 
-	document.getElementById("save-exit").addEventListener("click", async function ()
-	{
-		await handleSaving();
-		document.location = "account.html";
-	});
 
-	//reload the page when they hit clear. that's the fastest way to reset everything lol.
-	document.getElementById("revert-cont").addEventListener("click", function ()
-	{
-		window.location.reload();
-	});
-
-	document.getElementById("revert-exit").addEventListener("click", function ()
-	{
-		document.location = "account.html";
-	});
-
-	document.getElementById("delete").addEventListener("click", function ()
-	{
-		let id_wrapper = { "UserID" : userID, "ItineraryID": itineraryID };
-		let json = JSON.stringify(id_wrapper);
-		let requestOptions = {
-			method: 'POST',
-			body: json,
-		};
-		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/DeleteItinerary", requestOptions).then(gucci =>
+		//workaround to refresh the display. Go to the currently selected date, refresh.
+		start.addEventListener("blur", _ =>
 		{
-			document.location = "account.html";
-		}, notgucci =>
-		{
-			//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
+			if (inEditMode)
+			{
+				let temp = GetDateOrNull(start.value);
+				if (temp) 
+				{
+					markDirty |= start.defaultValue != temp;
+					start.defaultValue = temp;
+				}
+
+				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value))
+				{
+					enableCalendar();
+					console.log(calendar.getDate());
+					calendar.gotoDate(start.value);
+				}
+				else
+				{
+					calendar.gotoDate(calendar.getDate());
+				}
+
+			}
 		});
-	});
 
+		end.addEventListener("blur", _ =>
+		{
+			if (inEditMode)
+			{
+				let temp = GetDateOrNull(end.value);
+				if (temp) 
+				{
+					markDirty |= end.defaultValue != temp;
+					end.defaultValue = temp;
+				}
+				else
+				{
+					end.value = end.defaultValue;
+				}
+
+				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value))
+				{
+					enableCalendar();
+					console.log(calendar.getDate());
+					calendar.gotoDate(start.value);
+				}
+				else
+				{
+					calendar.gotoDate(calendar.getDate());
+				}
+			}
+		});
+
+		title.addEventListener("blur", _ =>
+		{
+			if (inEditMode)
+			{
+				if (title.value != title.defaultValue)
+				{
+					markDirty = true;
+					title.defaultValue = title.value;
+				}
+			}
+		});
+
+		description.addEventListener("blur", _ =>
+		{
+			if (inEditMode)
+			{
+				if (description.value != description.defaultValue)
+				{
+					markDirty = true;
+					description.defaultValue = description.value;
+				}
+			}
+		});
+	}
+	//Load Itinerary
+
+	let temp = await loadItinerary(itineraryID);
+	initializeNonCalendarData(temp);
+	calendar = createAndLoadCalendar(temp);
+	initializeRemainingData(temp);
+	calendar.render();
+	//display
 });//end of dom content loaded
 
 class DBData
 {
 	/**
-	 * 
-	 * @param {string} itineraryName
+	 * @param {number} creatorID //creator
+	 * @param {string} itineraryName //name
 	 * @param {string} startDate //in the YYYY-MM-DD format. Date makes them all screwy. 
 	 * @param {string} endDate //in the YYYY-MM-DD format. Date makes them all screwy. 
-	 * @param {string} description
-	 * @param {DBItem[]} items
+	 * @param {string} description //description
+	 * @param {DBItem[]} items // all items currently on itinerary.
 	 */
-	constructor(itineraryName, startDate, endDate, description, items)
+	constructor(creatorID, itineraryName, startDate, endDate, description, items)
 	{
+		this.creatorID = creatorID;
 		this.itineraryName = itineraryName;
 		this.startDate = startDate;
 		this.endDate = endDate;

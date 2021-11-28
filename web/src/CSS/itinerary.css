@@ -1,3 +1,13 @@
+/*
+	Itinerary is the most complex beast here, and almost everything needs an id because we use it in the JS. So, you can format each and every element individually. I have done very little formatting.
+	The easiest way to format the code is to do so "on the fly". This is done by linking your VS Code Instance to Microsoft Edge (or Chrome if it supports it) via the option in Developer Tools.
+	You may also use Visual Studio, but my instance of VS 2022 has some issues noted below. 
+	This lets you visually see your changes as you make them in VS Code or Edge (changing the value in Edge will alter the CSS File and CSS file changes will show up in Edge). 
+	My recommendation is to do the changes in Edge; i've been using Visual Studio (not VS Code), and occasionally changes in Visual Studio require me to refresh the page to show up, but doing it the other way seems to always work. Alternatively, just use VS Code. Apparently, changes to HTML and JS will also work from Edge into VS Code (not the other way), but i cannot verify this. 
+
+	Also, the easiest way to format things is to use "flexbox" aka display: flex; as it has a center option built-in, among many other things. margin: 0 auto; may also work if you just need to center something (this is what w3-center does), but not always; it may require having a fixed size. flexbox also has an option for wrapping, it's really nice for dynamic content (like our list of itinerary items), because it will automatically put all child elements one after another and shifts them to match the window size. You can see a working example with the way the item modal handles the map and the address content, the way the navbar works, and so on.
+*/
+
 body
 {
 	/* margin: 60px 10px; */
@@ -6,13 +16,54 @@ body
 	font-size: 14px;
 }
 
+/* Global or Reoccuring Elements*/
+/*Applied to any content that should appear to be "read only" when in "view mode". This is typically done with labels when their associated field is "read only" (JS: readOnly, HTML: readonly, CSS: read-only) */
+.readonly-content, .label-readonly
+{
+	color: gray;
+}
+
+/*Applied to all non-labels that need to appear read-only when in "view mode". We use this with "getElementsByClassName" to get them, then append the "readonly-content" class. */
+.readonly-aware-content
+{
+}
+
+/*Automatically applied to all input fields that have the "readonly-aware-input-field" class the moment they become "read only" */
+.readonly-aware-input-field:read-only
+{
+	background-color: lightgray;
+	color: gray;
+	border: none;
+	outline: none;
+}
+
+/*Hidden Content*/
+.hide-in-view-mode, .item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change, .not-create-mode, .not-logged-out,
+.not-view-mode-other, .not-view-mode-self, .not-copy-edit-mode, .not-normal-edit-mode, .readonly-item-hide-button
+{
+	display: none !important;
+}
+
+/*All labels in the itemo modal. not global because that makes difficult to find formatting bugs*/
+.item-modal-label
+{
+	/* display: block; */
+}
+
+
+/*End Global or Reoccuring Elements*/
+
+/*Individual Elements*/
+
+
+/*********************Main Itinerary Information (HEADER)****************************/
 #main-itinerary-data
 {
 	padding-top: 10px;
 	padding-left: 20px;
 	padding-right: 20px;
 }
-
+/*Itinerary Title*/
 #itinerary-title-container
 {
 	
@@ -25,13 +76,16 @@ body
 #itinerary-title
 {
 }
-
-#itinerary-date-range
+/*END Itinerary Title*/
+/*Itinerary Start and End Date*/
+#itinerary-date-range-container
 {
-}
 
+}
+/*Itinerary Start Date*/
 #itinerary-startdate-container
 {
+
 }
 
 #itinerary-startdate-label
@@ -41,7 +95,8 @@ body
 #itinerary-startdate
 {
 }
-
+/*END Itinerary Start Date*/
+/*Itinerary End Date*/
 #itinerary-enddate-container
 {
 }
@@ -49,11 +104,12 @@ body
 #itinerary-enddate-label
 {
 }
-
-#itinerary-title
+#itinerary-enddate
 {
 }
-
+/*END Itinerary End Date*/
+/*END Itinerary Start and End Date*/
+/*Itinerary Description*/
 #itinerary-description-container
 {
 }
@@ -65,28 +121,25 @@ body
 #itinerary-description
 {
 }
-/*Calendar*/
+/*END Itinerary Description*/
+/*********************END ITINERARY HEADER********************/
+/**********************START Calendar*************************/
 #calendar
 {
 	max-width: 1100px;
-	max-height: 800px;
+	max-height: 750px;
 	margin: 0 auto;
+	margin-bottom: 50px;
 }
 
-/*MAP CSS*/
-/* Always set the map height explicitly to define the size of the div
-* element that contains the map. */
-#map
+.calendar-disabled
 {
-	height: 100%;
+	background-color: lightgray;
 }
 
-/* Itinerary Modal*/
-.item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change
-{
-	display: none;
-}
-
+/***********************END Calendar*************************/
+/****************START ITINERARY ITEM MODAL******************/
+/*General Modal Formatting*/
 /*Copypasta from W3C*/
 #item-modal
 {
@@ -115,29 +168,26 @@ body
 	align-content: center;
 }
 /*End Copypasta*/
+/*End General Modal Formatting*/
 
+/*Top Modal Section (Activity Name, Start Date/Time, End Date/Time, Additional Info.*/
 #item-modal-top
 {
 }
-
+/*Item Modal Title*/
 #item-modal-title-container
 {
-}
-
-/*All labels in the itemo modal. not global because that makes difficult to find formatting bugs*/
-.item-modal-label
-{
-	/* display: block; */
 }
 
 #item-modal-title
 {
 }
-
+/*END Item Modal Title*/
+/*Item Modal Time Frame*/
 #item-modal-timeframe
 {
 }
-
+/*Item modal start time*/
 #item-modal-start-container
 {
 }
@@ -145,7 +195,8 @@ body
 #item-modal-start
 {
 }
-
+/*End Item modal Start time*/
+/*Start Item modal End Time*/
 #item-modal-end-container
 {
 }
@@ -153,7 +204,8 @@ body
 #item-modal-end
 {
 }
-
+/*End Item modal End Time*/
+/*Start Item Modal Description*/
 #item-modal-description-container
 {
 }
@@ -161,13 +213,16 @@ body
 #item-modal-description
 {
 }
-
+/*End item modal description*/
+/************END ITEM MODAL HEADER***************/
+/************START ITEM MODAL ADDRESS************/
+/*wrapper*/
 #item-modal-middle
 {
 	display: flex;
 	flex: 1;
 }
-
+/*LEFT HALF: Address mode input*/
 #item-modal-left
 {
 	width: 50%;
@@ -192,10 +247,6 @@ body
 {
 }
 
-/*I should probably put a class on this, but i can't see us reusing the p tag*/
-p
-{
-}
 
 #item-modal-rough-address
 {
@@ -222,11 +273,6 @@ p
 		border: none;
 		outline: none;
 	}
-
-.label-readonly
-{
-	color: gray;
-}
 
 #item-modal-right
 {
@@ -271,10 +317,9 @@ p
 	justify-content: space-between;
 }
 
-/*For all the buttons in the item modal footer*/
-.itinerary-footer-buttons
+/*The footer*/
+#itinerary-footer
 {
-	display: flex;
 	position: fixed;
 	left: 0;
 	bottom: 0;
@@ -282,27 +327,92 @@ p
 	height: 40px;
 	padding: 0px 10px;
 	background-color: lightgray;
+	z-index: 10;
+}
+
+/****COMMON FOOTER***/
+#create-mode, #view-mode-other, #view-mode-self, #copy-edit-mode, #normal-edit-mode
+{
+	display: flex;
 	justify-content: space-between;
 	align-content: center;
 	align-items: center;
-	z-index: 10;
+	width:100%;
+	padding:0px;
+	margin:0px;
 }
-#save
+/****LOGGED OUT VIEW MODE******/
+#logged-out-wrapper
 {
-
+	display:flex;
+	align-content: center;
+	align-items: center;
+	height:100%;
+	width: 100%;
 }
-
-#delete
+#logged-out-note
 {
-
+	/* width: 100%; */
+	padding: 0px;
+	/* margin: auto 0; */
+	/* vertical-align: middle; */
 }
-
-#revert
+/***********CREATE MODE*************/
+#create-save-cont
 {
-
 }
-
-.hide-in-view-mode
+#create-save-exit
 {
-	display:none;
+}
+#create-clear
+{
+}
+#create-cancel
+{
+}
+/**************LOGGED IN BUT NOT CREATOR VIEW MODE************/
+#other-create-copy
+{
+}
+#other-cancel
+{
+}
+/**************LOGGED IN AND CREATOR VIEW MODE************/
+#self-enable-edit
+{
+}
+#self-go-back
+{
+}
+#self-view-delete
+{
+}
+/**************CREATE A COPY MODE (UNSAVED)************/
+#save-copy-cont
+{
+}
+#save-copy-exit
+{
+}
+#copy-revert
+{
+}
+#copy-cancel
+{
+}
+/**************EDIT A VERSION YOU OWN************/
+#save-cont
+{
+}
+#save-exit
+{
+}
+#revert-cont
+{
+}
+#revert-exit
+{
+}
+#edit-delete
+{
 }
