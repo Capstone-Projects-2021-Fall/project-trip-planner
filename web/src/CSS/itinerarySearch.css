@@ -1,0 +1,22 @@
+.hidden-by-default
+{
+	display:none;
+}
+
+.proximity-content
+{
+	display:flex;
+}
+
+.location-left, .location-right
+{
+	width:50%;
+	flex: 1;
+}
+
+#map
+{
+	width:100%;
+	min-height:400px;
+	min-width:400px;
+}

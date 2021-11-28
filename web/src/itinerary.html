@@ -1,6 +1,6 @@
-﻿<!DOCTYPE html>
+﻿<!-- Full on change here. Itinerary is now doing practically everything. Since we have the ability to edit our itinerary including the title and all that, we might as well make this handle creating that stuff too. this makes our project cleaner design-wise, but it makes the js for this page even more god-awful. -->
+<!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset='utf-8' />
 	<link href='../lib/main.css' rel='stylesheet' />
@@ -19,99 +19,177 @@
 	<link href='CSS/navbar.css' rel='stylesheet' />
 	<link rel="stylesheet" href="CSS/itinerary.css">
 
+	<script src="JavaScript/common.js"></script>
 	<script src="JavaScript/itinerary.js"></script>
-
 </head>
 <body>
-	<!-- Navbar on small screens -->
-	<div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
-		<a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
-	</div>
-	<button id="save" type="button">Save Itinerary</button>
-	<!--  <button id="myBtn">Create Itinerary</button>-->
-	<!--  <button type="button">Save Itinerary</button>-->
-
-	<div id='calendar'></div>
-
-
-
-	<!-- modal event edit form -->
-	<div id="eventDetailsModal" class="modal" style="display:none">
-
-		<div class="modal-content">
-			<span class="close">&times;</span>
-
-			<header class="w3-container w3-red w3-center" style="padding:40px 70px">
-				<h1 align="center" style="color: white">Event Details</h1>
-			</header>
-
-			<form action="" method="post">
-				<div style="padding-top: 20px" class="form-group" align="center">
-					<label>Event Name:</label>
-					<label id="eventName"></label>
+	<header id="main-itinerary-data">
+		<div id="itinerary-title-container">
+			<label for="itinerary-title" id="itinerary-title-label" class="readonly-aware-content readonly-content">Itinerary Name:</label>
+			<input type="text" id="itinerary-title" class="readonly-aware-input-field" readonly/>
+		</div>
+		<div id="itinerary-date-range-container">
+			<!--<p class="hide-in-view-mode">-->
+			<p id="explain-dates" class="hide-in-view-mode readonly-aware-content readonly-content">
+				Set or Update the start and end dates. Events that fall out of range will be kept until the itinerary is saved. Invalid dates will go back to their previous value, if applicable.
+			</p>
+			<div id="item-start-end-container">
+				<div id="itinerary-startdate-container">
+					<label for="itinerary-startdate" id="itinerary-startdate-label" class="readonly-aware-content readonly-content">Start Date:</label>
+					<input type="date" id="itinerary-startdate" class="readonly-aware-input-field" readonly/>
 				</div>
-				<div class="form-group" align="center">
-					<label>Start Time:</label>
-					<label id="startDateEventDetails"></label>
+				<div id="itinerary-enddate-container">
+					<label for="itinerary-title" id="itinerary-enddate-label" class="readonly-aware-content readonly-content">End Date:</label>
+					<input type="date" id="itinerary-enddate" class="readonly-aware-input-field" readonly/>
 				</div>
-				<div class="form-group" align="center">
-					<label>End Time:</label>
-					<label id="endDateEventDetails"></label>
+			</div>
+			<div id="itinerary-description-container">
+				<label for="itinerary-title" id="itinerary-description-label" class="readonly-aware-content readonly-content">Description <i>(optional)</i>:</label>
+				<input type="text" id="itinerary-description" class="readonly-aware-input-field" readonly/>
+			</div>
+		</div>
+	</header>
+	<main id='calendar' class="calendar-disabled"></main>
+	<!--The item modal. This displays when an event is selected so it can be edited, or when an event is created-->
+	<div id="item-modal" class="item-modal-collapsed">
+		<div id="item-modal-container">
+			<!--Top part, aka the modal header: title, timeframe, description.-->
+			<div id="item-modal-top">
+				<div id="item-modal-title-container">
+					<label for="item-modal-title" class="item-modal-label readonly-aware-content readonly-content">Activity Name:</label>
+					<input type="text" name="itineraryTitle" id="item-modal-title" class="readonly-aware-input-field" readonly/>
 				</div>
-				<div style="padding-top: 20px" class="form-group" align="center">
-					<label>Notes:</label>
-					<input style="text-align: center" type="text" class="form-control" name="tripnotes" id="tripNotes" required>
+				<div id="item-modal-timeframe">
+					<div id="item-modal-start-container">
+						<label for="item-modal-start" class="item-modal-label readonly-aware-content readonly-content">Start Time:</label>
+						<input type="datetime" name="itineraryStart" id="item-modal-start" class="readonly-aware-input-field" readonly/>
+					</div>
+					<div id="item-modal-end-container">
+						<label for="item-modal-end" class="item-modal-label readonly-aware-content readonly-content">End Time:</label>
+						<input type="datetime" name="itineraryEnd" id="item-modal-end" class="readonly-aware-input-field" readonly/>
+					</div>
 				</div>
-				<div class="form-group" align="center">
-					<input style="padding: 10px" type="button" name="uploadPhotosEventDetails" id="uploadPhotosEventDetails" class="btn btn-primary" value="Upload Photos">
-
-					<label>Uploaded Photos:</label>
+				<div>
+					<div id="item-modal-description-container">
+						<label for="item-modal-description" class="item-modal-label readonly-aware-content readonly-content">Additional Information:</label>
+						<input type="datetime" name="itineraryDescription" id="item-modal-description" class="readonly-aware-input-field" readonly/>
+					</div>
 				</div>
-				<!-- Slideshow container -->
-				<div class="slideshow-container">
-
-					<!-- Next and previous buttons -->
-					<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-					<a class="next" onclick="plusSlides(1)">&#10095;</a>
+			</div>
+			<div id="item-modal-middle">
+				<!--Left half: itinerary location stuff-->
+				<div id="item-modal-left">
+					<div id="item-modal-address-container">
+						<!-- Anyone want to make this more concise?-->
+						<p class="readonly-aware-content readonly-content">Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address, though you should provide an address that is specific enough that everyone going there can reliably find it. If you cannot properly show the location of the event with just an address, as is the case with remote areas or large properties, you can enable the advanced location option, which allows you to set a location by geographical coordinates instead. This also unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.</p>
+						<div>
+							<label for="item-modal-address" class="item-modal-label readonly-aware-content readonly-content">Address:</label>
+							<input type="text" id="item-modal-address" class="readonly-aware-input-field" />
+							<button type="button" id="use-this-address-btn" class="hidden-on-address-mode">Update Coordinates</button>
+						</div>
+						<div>
+							<input type="checkbox" id="advanced-mode-auto-update" name="advanced-address-mode-options" class="hidden-on-address-mode" />
+							<label for="advanced-mode-auto-update" id="auto-update-label" class="hidden-on-address-mode">Automatically update the coordinates to the address when i finish typing</label>
+						</div>
+						<div>
+							<input type="radio" id="item-modal-radio-address" class="item-modal-radio" name="address-mode" value="Address" checked />
+							<label for="item-modal-radio-address" class="item-modal-label readonly-aware-content readonly-content">Use the provided address.</label>
+						</div>
+						<div>
+							<input type="radio" id="item-modal-radio-latlong" class="item-modal-radio" name="address-mode" value="LatLong" />
+							<label for="item-modal-radio-latlong" class="item-modal-label readonly-aware-content readonly-content">Allow me to adjust the coordinates directly.</label>
+						</div>
+						<div id="item-modal-coordinate-container">
+							<label for="item-modal-latitude" id="lat-label" class="item-modal-label label-readonly">Latitude:</label>
+							<input type="number" id="item-modal-latitude" class="item-modal-coordinate" min="-90" step=".0001" max="90" readonly />
+							<label for="item-modal-longitude" id="long-label" class="item-modal-label label-readonly">Longitude:</label>
+							<input type="number" id="item-modal-longitude" class="item-modal-coordinate" step=".0001" min="-180" max="180" readonly />
+							<button type="button" id="fill-address-btn" class="hidden-on-address-mode">Update Address</button>
+						</div>
+					</div>
 				</div>
-				<br>
-
-				<!-- The dots/circles -->
-				<div style="text-align:center">
-					<span class="dot" onclick="currentSlide(1)"></span>
-					<span class="dot" onclick="currentSlide(2)"></span>
-					<span class="dot" onclick="currentSlide(3)"></span>
+				<!--Right Half: map-->
+				<div id="item-modal-right">
+					<div id="item-modal-map"></div>
 				</div>
-
-
-
-				<div style="padding-top: 25px" class="form-group" align="center">
-					<input style="padding: 10px" type="button" name="save" id="saveBtnEventDetails" class="btn btn-primary" value="OK">
+			</div>
+			<!--Footer. Save, cancel changes, delete-->
+			<div id="item-modal-footer">
+				<div id="item-modal-photo-list"></div>
+				<div id="item-modal-footer-buttons">
+					<!--Float the save to the right, cancel to the left, delete in the middle-->
+					<button id="save-itinerary-item" class="item-modal-button" type="button">Save</button>
+					<button id="delete-itinerary-item" class="item-modal-button nothing-to-change" type="button">Delete</button>
+					<button id="revert-itinerary-item" class="item-modal-button nothing-to-change" type="button">Revert</button>
+					<button id="cancel-itinerary-item" class="item-modal-button" type="button">Cancel</button>
 				</div>
-			</form>
+			</div>
 		</div>
 	</div>
-
-	<div id="map" style="display: none"></div>
-
-	<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-
-
-
-	<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-		<h1 class="w3-margin w3-xlarge">Quote of the Day: Live Collaboratively</h1>
-	</div>
-
 	<!-- Footer -->
-	<footer class="w3-container w3-padding-64 w3-center w3-opacity">
-		<div class="w3-xlarge w3-padding-32">
+	<footer id="itinerary-footer">
+		<!--This is the create mode for the current logged in user. It only displays then. If it is made to display anyway, the buttons will simply do nothing.-->
+		<!-- If the user saves their data to the database and continues, they will be redirected to the page with the newly created itinerary id provided in the url, so we don't need to dynamically collapse this. This is done to prevent a bug if they refresh the page (it'd act like a brand new create).-->
+		<div id="create-mode" class="not-create-mode">
+			<div>
+				<button id="create-save-cont" type="button">Save Itinerary And Continue</button>
+				<button id="create-save-exit" type="button">Save Itinerary And Exit</button>
+			</div>
+			<div>
+				<button id="create-clear" type="button">Clear</button>
+			</div>
+			<button id="create-cancel" type="button">Cancel</button>
+		</div>
+		<!--This is the view mode display for a user who reaches this page while logged out. This will not collapse into any other modes-->
+		<!--If made to display, the hrefs will do nothing-->
+		<div id="logged-out-wrapper" class="not-logged-out">
+			<p id="logged-out-note">You aren't logged in. <a href="signup.html">Sign Up</a> or <a href="login.html">Log In</a> to edit this itinerary or a copy of it. Or, go <a href="javascript:history.back()">back to the previous page</a>.</p>
+		</div>
+		<!--This is the view mode display for a user who is logged in, but is not the person who created this page. This will collapse into "edit a copy" mode if they choose to create a copy.-->
+		<!--If made to display, the buttons will do nothing-->
+		<div id="view-mode-other" class="not-view-mode-other">
+			<p>You don't have Permission to edit this itinerary, but you can create a copy and edit that instead. </p>
+			<div>
+				<button id="other-create-copy" type="button">Create an editable Copy</button>
+			</div>
+			<div>
+				<button id="other-cancel" type="button">Go Back</button>
+			</div>
+		</div>
+		<!--This is the copy edit mode display. This appears if the user logged in does not own the itinerary, but has decided to create a copy. This is used before the copy is added to the database, as a sort of "preview" - they can decide to not copy it and it won't go to the database. This acts just like create mode, but the data is intialized from the current db data. Therefore, saving and continuing will redirect the user to itinerary.html with the new created itinerary id appended. -->
+		<!--If made to display, the buttons will do nothing-->
+		<div id="copy-edit-mode" class="not-copy-edit-mode">
+			<div>
+				<button id="save-copy-cont" type="button">Save Itinerary And Continue</button>
+				<button id="save-copy-exit" type="button">Save Itinerary And Exit</button>
+			</div>
+			<button id="copy-revert" type="button">Clear Changes</button>
+
+			<button id="copy-cancel" type="button">Cancel</button>
+		</div>
+		<!--This is the view mode display for a user who is logged in and created this page. This will collapse into "normal edit" mode should they enable editing-->
+		<!--If made to display, the buttons will do nothing-->
+		<div id="view-mode-self" class="not-view-mode-self">
+			<p>You are in view mode.</p>
+			<button id="self-enable-edit" type="button">Enable Editing</button>
+			<button id="self-go-back" type="button">Go Back</button>
+			<button id="self-view-delete" type="button">Delete Itinerary</button>
 		</div>
 
+		<!--This is the normal edit mode display. This appears if the user logged in is editing one of their own itineraries. This may also be reached indirectly, if the user creates a copy and then saves it, or creates a new itinerary and saves it, as they will be redirected to to this page with the itinerary id. It will default to edit mode.-->
+		<!--If made to display, the buttons will do nothing-->
+		<div id="normal-edit-mode" class="not-normal-edit-mode">
+			<div>
+				<button id="save-cont" type="button">Save Itinerary And Continue</button>
+				<button id="save-exit" type="button">Save Itinerary And Exit</button>
+			</div>
+			<div>
+				<button id="revert-cont" type="button">Clear Changes</button>
+				<button id="revert-exit" type="button">Clear Changes And Exit</button>
+			</div>
+			<button id="edit-delete" type="button">Delete Itinerary</button>
+		</div>
 	</footer>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap"
-			async></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>
 </body>
 </html>
