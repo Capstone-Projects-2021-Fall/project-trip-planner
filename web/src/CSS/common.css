@@ -1,24 +1,16 @@
-body, h1, h2, h3, h4, h5, h6
+body,h1,h2,h3,h4,h5,h6 
 {
 	font-family: "Lato", sans-serif
 }
-
-.w3-bar, h1, button
+.w3-bar,h1,button 
 {
 	font-family: "Montserrat", sans-serif
 }
-
-.fa-anchor, .fa-coffee
+.fa-anchor,.fa-coffee 
 {
-	font-size: 200px
+	font-size:200px
 }
-
-.w3-red
+.w3-red 
 {
-	background-color: #2C3E50 !important
-}
-
-.form-group
-{
-	display: block;
+	background-color:#2C3E50 !important
 }

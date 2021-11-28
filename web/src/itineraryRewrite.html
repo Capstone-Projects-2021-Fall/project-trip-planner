@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<!-- Temporary Landing spot for me to test account and search with-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Account</title>
@@ -13,12 +14,12 @@
 
 	<link href="CSS/common.css" rel="stylesheet" type="text/css" />
 	<link href='CSS/navbar.css' rel='stylesheet' />
-	<link href="CSS/itineraryItem.css" rel="stylesheet" type="text/css" />
 
 	<link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
 	<script src="JavaScript/common.js"></script>
-	<script src="JavaScript/account.js"></script>
+	<script src="JavaScript/test.js"></script>
+
 </head>
 <body>
 	<!-- TODO: check if id cookie already there, if it is, go to account page. also, add log out option or we're forever stuck (for two hours or until the browser is closed, anyway, whichever is first)-->
@@ -37,7 +38,7 @@
 				<select id="dropdown">
 					<option value="Users">Users</option>
 					<option value="Itineraries">Itineraries</option>
-					<option value ="Activities">Activities</option>
+					<option value="Activities">Activities</option>
 				</select>
 				<div class="search-container">
 					<input type="text" id="quick-search" placeholder="Search.." name="search">
@@ -57,24 +58,13 @@
 	</nav>
 	<!-- Header -->
 	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
-		<h1 class="w3-margin w3-jumbo">Welcome!</h1>
-		<button onclick="document.location='createItinerary.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create New Itinerary</button>
-		<!-- <button onclick="document.location='itineraryFromDatabase.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Open Saved Itinerary</button> -->
+		<h1>This is a placeholder.</h1>
+		<h3>This puts all the information retrieved from the database in crappy boxes. This data should instead be parsed and put in the calender UI</h3>
+		<p>This is much easier for me to test though, lol</p>
 	</header>
-	<!-- Main Content -->
-	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-		<div class="w3-content">
-			<div class="w3-third w3-center">
-				<i class="fa w3-padding-64 w3-text-red w3-margin-right"></i>
-			</div>
-
-			<div class="w3-twothird">
-				<h1>Your Itineraries</h1>
-				<div id="itinerary-list-holder"></div>
-			</div>
-		</div>
+	<main>
+		<div class="w3-content" id="activity-list-holder"></div>
 	</main>
-
 	<!-- Footer -->
 	<footer class="w3-container w3-padding-64 w3-center w3-opacity">
 		<div class="w3-xlarge w3-padding-32">

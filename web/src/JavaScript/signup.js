@@ -44,6 +44,7 @@ function CallAPI()
 	var errMsg = document.getElementById('error-msg');
 
 	var match = ValidatePassword();
+	console.log(match);
 	if (match)
 	{
 		// instantiate a headers object
@@ -59,15 +60,17 @@ function CallAPI()
 			body: raw,
 		};
 
+		console.log(raw);
+
 		// make API call with parameters and use promises to get response
 		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateNewUserNormalLogin", requestOptions).then(response =>
 		{
-			/* ERROR CODES
-			 * 1: Email already taken.
-			 * 2: Screen name already taken.
-			 * 3: Password invalid (too short, needs to be 8+ characters, maxed at 64)
-			 * 4: Email invalid format NOT IMPLEMENTED YET!
-			 */
+		    /* ERROR CODES
+		     * 1: Email already taken.
+		     * 2: Screen name already taken.
+		     * 3: Password invalid (too short, needs to be 8+ characters, maxed at 64)
+		     * 4: Email invalid format NOT IMPLEMENTED YET!
+		     */
 
 
 
@@ -113,4 +116,4 @@ function CallAPI()
 	{
 
 	}
-};
+}; 
