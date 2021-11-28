@@ -297,8 +297,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 					itemModalTitle.value = event.title;
 					addressField.value = event.extendedProps.Address;
 					itemModalDescription.value = event.extendedProps.AdditionalInformation;
-					latField.value = event.extendedProps.Latitude;
-					longField.value = event.extendedProps.Longitude;
+					latField.value = Number(event.extendedProps.Latitude);
+					longField.value = Number(event.extendedProps.Longitude);
 
 					//ensure photo collection is clear.
 					while (photoCollection.firstChild)
@@ -310,6 +310,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 					{
 						addPhoto(photoCollection, x);
 					});
+
+					createOrUpdateMarker({ lat: Number(latField.value), lng: Number(longField.value) }, latLongMode.checked, true);
 				}
 				else
 				{
@@ -324,6 +326,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 					while (photoCollection.firstChild)
 					{
 						photoCollection.removeChild(photoCollection.lastChild);
+					}
+
+					if (modalMarker)
+					{
+						modalMarker.setMap(null);
 					}
 				}
 			}
@@ -342,10 +349,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 		};
 		if (readonly) 
 		{
-			itemModalSave.classList.add("readonly-item-hide-button");
-			itemModalRevert.classList.add("readonly-item-hide-button");
-			itemModalDelete.classList.add("readonly-item-hide-button");
-
+			if (!itemModalSave.classList.contains("readonly-item-hide-button"))
+			{
+				itemModalSave.classList.add("readonly-item-hide-button");
+			}
+			if (!itemModalRevert.classList.contains("readonly-item-hide-button"))
+			{
+				itemModalRevert.classList.add("readonly-item-hide-button");
+			}
+			if (!itemModalDelete.classList.contains("readonly-item-hide-button"))
+			{
+				itemModalDelete.classList.add("readonly-item-hide-button");
+			}
 			itemModalCancel.textContent = "Close";
 
 			let readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content");
@@ -362,6 +377,10 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 		else
 		{
+			itemModalSave.classList.remove("readonly-item-hide-button");
+			itemModalRevert.classList.remove("readonly-item-hide-button");
+			itemModalDelete.classList.remove("readonly-item-hide-button");
+
 			itemModalCancel.textContent = "Cancel";
 
 			let readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content");
