@@ -2,7 +2,7 @@
 
 .user-list-holder
 {
-	display: flex;
+	display:flex;
 	flex-wrap: wrap;
 	flex-direction: row;
 	align-content: center;
@@ -10,7 +10,7 @@
 
 .user-item
 {
-	font-size: 24px;
+	font-size:24px;
 	border: 2px solid black;
 	padding: 10px;
 }
