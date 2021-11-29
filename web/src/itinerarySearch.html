@@ -1,93 +1,113 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Search Results</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Search Results</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link href="CSS/common.css" rel="stylesheet" type="text/css" />
-    <link href='CSS/navbar.css' rel='stylesheet' />
-    <link href="CSS/itineraryItem.css" rel="stylesheet" type="text/css" />
+	<link href="CSS/common.css" rel="stylesheet" type="text/css" />
+	<link href='CSS/navbar.css' rel='stylesheet' />
+	<link href="CSS/itineraryItem.css" rel="stylesheet" type="text/css" />
+	<link href="CSS/itinerarySearch.css" rel="stylesheet" type="text/css" />
 
-    <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+	<link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
-    <script src="JavaScript/common.js"></script>
-    <script src="JavaScript/search.js"></script>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', OnLoad);
-
-        function OnLoad(event)
-        {
-            QuickFindItineraries();
-        }
-
-    </script>
-
+	<script src="JavaScript/common.js"></script>
+	<script src="JavaScript/itinerarySearch.js"></script>
+	<script src="JavaScript/navbar.js"></script>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="w3-top">
-        <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-            <!-- This menu toggle likely needs fixing. I think it's for bootstraps on mobile or small screens -->
-            <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-            <a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-            <a href="signup.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Sign Up</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-            <div class="w3-hide-small topnav">
-				<label for="dropdown">Search For</label>	
+	<!-- Navbar -->
+	<nav class="w3-top">
+		<div class="w3-bar w3-red w3-card w3-left-align w3-large">
+			<!--Common to both mini and regular -->
+			<a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+			<!--Mini navbar dropdown toggle. This now works -->
+			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+			<!--Regular navbar content-->
+			<div class="w3-hide-small account-buttons">
+				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="login-your-account">placeholder</a>
+				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="signup-logout">placeholder</a>
+			</div>
+			<div class="w3-hide-small topnav">
+				<label for="dropdown">Search For</label>
 				<select id="dropdown">
 					<option value="Users">Users</option>
 					<option value="Itineraries">Itineraries</option>
 					<option value="Activities">Activities</option>
 				</select>
 				<div class="search-container">
-					<input type="text" id="quick-search" placeholder="Search.." name="search">
-					<button onclick="PerformSearch()" type="submit"><i class="fa fa-search"></i></button>
+					<input type="text" id="quick-search" placeholder="Search..." name="search">
+					<button aria-label="Search" onclick="PerformSearch()" type="button"><i class="fa fa-search"></i></button>
 				</div>
 			</div>
-        </div>
+		</div>
 
-        <!-- Navbar on small screens -->
-        <!-- See above comment about bootstrap mobile.
-        <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
-        </div>-->
-    </nav>
+		<!-- Navbar on small screens. This now works -->
+		<div id="navDemo" class="w3-bar-block w3-white hide-default w3-large">
+			<a href="userSearch.html" class="w3-bar-item w3-button w3-padding-large">User Search</a>
+			<a href="itinerarySearch.html" class="w3-bar-item w3-button w3-padding-large">Itinerary Search</a>
+			<a href="#" class="w3-bar-item w3-button w3-padding-large" id="login-your-account-small">placeholder</a>
+			<a href="#" class="w3-bar-item w3-button w3-padding-large" id="signup-logout-small">placeholder</a>
+		</div>
+	</nav>
+	<!-- Header -->
+	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
+		<h4>Use the following to refine your search. You may provide as many or as few specifications as you wish, but you must provide at least one to make a valid search.</h4>
+		<form action="itinerarySearch.html" method="get" class="">
+			<!-- These divs and formatting are just to group like things. you can give these classes or ids and format them in itinerarySearch.css. -->
+			<div>
+				<h2>Limit by Itinerary Name</h2>
+				<label for="itineraryQuery" class="search-for-label">Itinerary Names Like: </label>
+				<input type="text" id="itineraryQuery" name="itineraryQuery" />
+			</div>
+			<div>
+				<h2>Limit by Activity Name</h2>
+				<label for="activityQuery" class="search-for-label">With one or more activities with names like:</label>
+				<input type="text" id="activityQuery" name="activityQuery" />
+			</div>
+			<div class="proximity-wrapper">
+				<h2>Limit by Proximity</h2>
+				<div class="proximity-content">
+					<div class="location-left">
+						<label for="address" class="search-for-label">With One Or More activities near:</label>
+						<input type="text" id="address" />
+						<div id="coordinate-container" class="hidden-by-default">
+							<label for="lat" class="search-for-label">lat</label>
+							<input type="number" id="lat" name="lat" step="0.0001" min="-90" max="90" readonly />
+							<label for="lng" class="search-for-label">lng</label>
+							<input type="number" id="lng" name="lng" step="0.0001" min="-180" max="180" readonly />
+						</div>
+						<div>
+							<label for="maxDistance" class="search-for-label">Up To</label>
+							<input type="text" id="maxDistance" name="maxDistance" />
+							<label class="search-for-label">miles away</label>
+						</div>
+						<div>
+							<input type="checkbox" id="enableLatLong" />
+							<label for="enableLatLong" class="search-for-label">Enable Manual Coordinates Search</label>
+						</div>
+					</div>
+					<div class="location-right">
+						<div id="map"></div>
+					</div>
+				</div>
+			</div>
+			<button type="submit">Search Again</button>
+		</form>
+	</header>
 
-    <!-- Header -->
-    <header class="w3-container w3-red w3-center" style="padding:128px 16px">
-        <h1 class="w3-margin w3-jumbo">Search Results..</h1>
-        <!-- <button onclick="document.location='itineraryFromDatabase.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Open Saved Itinerary</button> -->
-    </header>
-
-    <!-- Second Grid -->
-    <main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-      
-        <!--<div class="w3-content">
-            <h3>Refine Your search</h3>
-            <h4>&lt;Not Implemented Yet&gt;</h4>
-        </div>-->
-        <div class="w3-content" id="itinerary-list-holder"></div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="w3-container w3-padding-64 w3-center w3-opacity">
-        <div class="w3-xlarge w3-padding-32">
-        </div>
-        <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
-    </footer>
+	<!-- Second Grid -->
+	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+		<h1 class="w3-margin w3-jumbo">Search Results...</h1>
+		<div class="w3-content" id="itinerary-list-holder"></div>
+	</main>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>
 </body>
 </html>

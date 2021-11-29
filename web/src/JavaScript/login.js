@@ -29,7 +29,6 @@ function CallAPI(email, password)
 			//eval();
 			response.text().then(output =>
 			{
-				console.log(output);
 				//document.cookie = "id=" + output + "; max-age=7200";
 				document.cookie = "id=" + output;
 				document.location = "account.html";
