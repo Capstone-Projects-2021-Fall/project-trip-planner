@@ -53,6 +53,7 @@
 	<!--The item modal. This displays when an event is selected so it can be edited, or when an event is created-->
 	<div id="item-modal" class="item-modal-collapsed">
 		<div id="item-modal-container">
+
 			<!--Top part, aka the modal header: title, timeframe, description.-->
 			<div id="item-modal-top">
 				<div id="item-modal-title-container">
@@ -81,7 +82,7 @@
 				<div id="item-modal-left">
 					<div id="item-modal-address-container">
 						<!-- Anyone want to make this more concise?-->
-						<p class="readonly-aware-content readonly-content">Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address, though you should provide an address that is specific enough that everyone going there can reliably find it. If you cannot properly show the location of the event with just an address, as is the case with remote areas or large properties, you can enable the advanced location option, which allows you to set a location by geographical coordinates instead. This also unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.</p>
+						<p id="address-description" class="hide-in-view-mode">Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address, though you should provide an address that is specific enough that everyone going there can reliably find it. If you cannot properly show the location of the event with just an address, as is the case with remote areas or large properties, you can enable the advanced location option, which allows you to set a location by geographical coordinates instead. This also unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.</p>
 						<div>
 							<label for="item-modal-address" class="item-modal-label readonly-aware-content readonly-content">Address:</label>
 							<input type="text" id="item-modal-address" class="readonly-aware-input-field" />
@@ -107,6 +108,10 @@
 							<button type="button" id="fill-address-btn" class="hidden-on-address-mode">Update Address</button>
 						</div>
 					</div>
+					<div id="photo-label-button">
+						<h3 id="your-photo-text">Attached Photos</h3>
+						<button type="button" id="uploadPhotosEventDetails" class="readonly-item-hide-button">Upload Photos</button>
+					</div>
 				</div>
 				<!--Right Half: map-->
 				<div id="item-modal-right">
@@ -115,7 +120,7 @@
 			</div>
 			<!--Footer. Save, cancel changes, delete-->
 			<div id="item-modal-footer">
-				<div id="item-modal-photo-list"></div>
+				<div id="item-modal-photo-list" class="no-photos-attached"></div>
 				<div id="item-modal-footer-buttons">
 					<!--Float the save to the right, cancel to the left, delete in the middle-->
 					<button id="save-itinerary-item" class="item-modal-button" type="button">Save</button>
@@ -123,6 +128,12 @@
 					<button id="revert-itinerary-item" class="item-modal-button nothing-to-change" type="button">Revert</button>
 					<button id="cancel-itinerary-item" class="item-modal-button" type="button">Cancel</button>
 				</div>
+			</div>
+			<div id="photo-modal" class="photo-modal-hidden">
+				<!-- The Close Button -->
+				<span aria-label="close image" id="photo-close">&times;</span>
+				<!-- Modal Content (The Image) -->
+				<img class="photo-modal-content" id="modal-img">
 			</div>
 		</div>
 	</div>

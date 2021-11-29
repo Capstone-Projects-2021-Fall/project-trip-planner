@@ -6,7 +6,6 @@ let geocoder;
 let userID = null;
 
 let inEditMode = false;
-
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 function initMap()
 {
@@ -77,6 +76,31 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 */
 	var calendar;
 
+	function initializeItemModal()
+	{
+		function initializePhotoModal()
+		{
+			// Get the modal
+			var modal = document.getElementById("photo-modal");
+			// Get the image and insert it inside the modal - use its "alt" text as a caption
+			var modalImg = document.getElementById("modal-img");
+			// Get the <span> element that closes the modal
+			let span = document.getElementById("photo-close");
+
+			// When the user clicks on <span> (x), close the modal
+			span.onclick = function ()
+			{
+				modal.classList.add("photo-modal-hidden");
+				modalImg.src = null;
+				modalImg.alt = "<no photo loaded>";
+			}
+		}
+
+		//should clean up the display photo modal and move all the onclick and blur stuff here. but for now it's staying where it is.
+
+		initializePhotoModal();
+	}
+
 	/**
 	 * Displays an event on the calendar as a modal, saving the data to the provided event if the user show chooses. If event is null, this is a "create", otherwise, this is an "update". 
 	 * This is essentially a helper function; if the event is not null it will already have all this data, if not, the data will mostly be empty. 
@@ -118,6 +142,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let itemModalCancel = document.getElementById('cancel-itinerary-item');
 		let itemModalDelete = document.getElementById('delete-itinerary-item');
 		let itemModalRevert = document.getElementById('revert-itinerary-item');
+		let addressDescription = document.getElementById('address-description');
+		let uploadPhotoBtn = document.getElementById("uploadPhotosEventDetails");
 
 		itemModal.classList.remove("item-modal-collapsed");
 		itemModalSave.disabled = false;
@@ -164,10 +190,21 @@ document.addEventListener('DOMContentLoaded', async function ()
 				photoCollection.removeChild(photoCollection.lastChild);
 			}
 
-			event.extendedProps.Photos.forEach(x =>
+			let hasPhotos = false;
+			event.extendedProps.Photos.forEach(function(x, index)
 			{
-				addPhoto(photoCollection, x);
+				addPhoto(photoCollection, x, index);
+				hasPhotos = true;
 			});
+
+			if (hasPhotos)
+			{
+				photoCollection.classList.remove("no-photos-attached");
+			}
+			else if (!photoCollection.classList.contains("no-photos-attached"))
+			{
+				photoCollection.classList.add("no-photos-attached");
+			}
 
 			itemModalDelete.classList.remove('nothing-to-change');
 			itemModalRevert.classList.remove('nothing-to-change');
@@ -177,9 +214,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 		else
 		{
-			itemModalDelete.classList.add('nothing-to-change');
-			itemModalRevert.classList.add('nothing-to-change');
-
+			if (!itemModalDelete.classList.contains('nothing-to-change'))
+			{
+				itemModalDelete.classList.add('nothing-to-change');
+			}
+			if (!itemModalRevert.classList.contains('nothing-to-change'))
+			{
+				itemModalRevert.classList.add('nothing-to-change');
+			}
+			if (!photoCollection.classList.contains("no-photos-attached"))
+			{
+				photoCollection.classList.add("no-photos-attached");
+			}
 			if (modalMarker)
 			{
 				modalMarker.setMap(null);
@@ -210,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				let photoList = document.getElementsByClassName("item-modal-photo-img");
 				//photoList isn't an array, it's a HTMLElementCollection. the spread operator aka "[...args]" converts an iterable to an array. array.map is equivalent to C#'s LINQ Select.
 				//In simple terms: take the photoList, create a new list with just the url attribute from them.
-				let photos = [...photoList].map(x => x.url);
+				let photos = [...photoList].map(x => x.src);
 
 				function addOrUpdateItem(lat, long, address)
 				{
@@ -306,10 +352,20 @@ document.addEventListener('DOMContentLoaded', async function ()
 						photoCollection.removeChild(photoCollection.lastChild);
 					}
 					//and reload them.
-					event.extendedProps.Photos.forEach(x =>
+					let hasPhotos = false;
+					event.extendedProps.Photos.forEach(function (x, index)
 					{
-						addPhoto(photoCollection, x);
+						addPhoto(photoCollection, x, index);
+						hasPhotos = true;
 					});
+					if (hasPhotos)
+					{
+						photoCollection.classList.remove("no-photos-attached");
+					}
+					else if (!photoCollection.classList.contains("no-photos-attached"))
+					{
+						photoCollection.classList.add("no-photos-attached");
+					}
 
 					createOrUpdateMarker({ lat: Number(latField.value), lng: Number(longField.value) }, latLongMode.checked, true);
 				}
@@ -326,6 +382,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 					while (photoCollection.firstChild)
 					{
 						photoCollection.removeChild(photoCollection.lastChild);
+					}
+
+					if (!photoCollection.classList.contains("no-photos-attached"))
+					{
+						photoCollection.classList.add("no-photos-attached");
 					}
 
 					if (modalMarker)
@@ -347,6 +408,29 @@ document.addEventListener('DOMContentLoaded', async function ()
 				clearFieldsAndClose();
 			}
 		};
+
+		uploadPhotoBtn.onclick = function ()
+		{
+			if (!readonly) 
+			{
+				const client = filestack.init("AzDBLWEvORZajUBUZlIdgz");
+				const options = {
+					accept: ["image/*"],
+					onUploadDone: file =>
+					{
+						var url = file["filesUploaded"]["0"]["url"];
+						//not added yet, so it is length.
+						let index = document.getElementsByClassName("item-modal-photo-img").length;
+
+						addPhoto(photoCollection, url, index);
+
+						photoCollection.classList.remove("no-photos-attached");
+					}//end on upload done
+				};//end options
+				client.picker(options).open();
+			}
+		}//end on click upload photos button
+
 		if (readonly) 
 		{
 			if (!itemModalSave.classList.contains("readonly-item-hide-button"))
@@ -360,6 +444,14 @@ document.addEventListener('DOMContentLoaded', async function ()
 			if (!itemModalDelete.classList.contains("readonly-item-hide-button"))
 			{
 				itemModalDelete.classList.add("readonly-item-hide-button");
+			}
+			if (!uploadPhotoBtn.classList.contains("readonly-item-hide-button"))
+			{
+				uploadPhotoBtn.classList.add("readonly-item-hide-button");
+			}
+			if (!addressDescription.classList.contains("hide-in-view-mode"))
+			{
+				addressDescription.classList.add("hide-in-view-mode");
 			}
 			itemModalCancel.textContent = "Close";
 
@@ -380,6 +472,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 			itemModalSave.classList.remove("readonly-item-hide-button");
 			itemModalRevert.classList.remove("readonly-item-hide-button");
 			itemModalDelete.classList.remove("readonly-item-hide-button");
+			uploadPhotoBtn.classList.remove("readonly-item-hide-button");
+			addressDescription.classList.remove("hide-in-view-mode");
 
 			itemModalCancel.textContent = "Cancel";
 
@@ -606,7 +700,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		return mode == 'Address' || mode == 'LatLong';
 	}
 
-	function addPhoto(container, url)
+	function addPhoto(container, url, index)
 	{
 		console.log("Url:" + url);
 		let div = document.createElement('div');
@@ -614,8 +708,21 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let img = document.createElement("img");
 		img.src = url;
 		img.classList.add("item-modal-photo-img");
+		img.alt = "itinerary photo #" + index;
 		div.appendChild(img);
 		container.appendChild(div);
+
+		// Get the modal
+		var modal = document.getElementById("photo-modal");
+
+		// Get the image and insert it inside the modal - use its "alt" text as a caption
+		var modalImg = document.getElementById("modal-img");
+		img.onclick = function ()
+		{
+			modal.classList.remove("photo-modal-hidden");
+			modalImg.src = img.src;
+			modalImg.alt = img.alt;
+		}
 	}
 
 	/**
@@ -710,11 +817,12 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		console.log("DbEvent Photos: ");
 
+		console.log(initialDB.items);
 
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
 		{
-			dbEvent.photos
+			console.log("Hello!");
 			calendar.addEvent({
 				title: dbEvent.activityName,
 				start: dbEvent.startTime,
@@ -767,6 +875,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			{
 				await JsonOrNull(response, jsonData => 
 				{
+					console.log(jsonData);
 					//first, make sure we got something, we could somehow get a null.
 					if (jsonData)
 					{
@@ -914,29 +1023,51 @@ document.addEventListener('DOMContentLoaded', async function ()
 				};
 				calendarArr = calendar.getEvents();
 
+				let removeList = [];
 				//loop through events from calendar and prepare them into an array to be sent off to the database
-				for (let index = 0; index < calendarArr.length; index++)
+				calendarArr.forEach(entry => 
 				{
-					let title = calendarArr[index]["_def"]["title"];
-					let additionalInformation = calendarArr[index]["_def"]["extendedProps"]["AdditionalInformation"];
-					let latitude = calendarArr[index]["_def"]["extendedProps"]["Latitude"];
-					let longitude = calendarArr[index]["_def"]["extendedProps"]["Longitude"];
-					let address = calendarArr[index]["_def"]["extendedProps"]["Address"];
-					let start = calendarArr[index]["_instance"]["range"]["start"].toJSON();
-					let end = calendarArr[index]["_instance"]["range"]["end"].toJSON();
-					let photos = calendarArr[index]["_def"]["extendedProps"]["Photos"]
+					let itemTitle = entry["_def"]["title"];
+					let itemAdditionalInformation = entry["_def"]["extendedProps"]["AdditionalInformation"];
+					let itemLatitude = entry["_def"]["extendedProps"]["Latitude"];
+					let itemLongitude = entry["_def"]["extendedProps"]["Longitude"];
+					let itemAddress = entry["_def"]["extendedProps"]["Address"];
+					let itemStart = entry["_instance"]["range"]["start"].toJSON();
+					let itemEnd = entry["_instance"]["range"]["end"].toJSON();
+					let itemPhotos = entry["_def"]["extendedProps"]["Photos"]
 
-					saveEvents["ItineraryItems"].push({
-						"ActivityName": title,
-						"StartTime": start,
-						"EndTime": end,
-						"Address": address,
-						"AdditionalInformation": additionalInformation,
-						"Latitude": latitude,
-						"Longitude": longitude,
-						"Photos": photos
-					});
-				}
+					let itineraryStart = GetDateTimeOrNull(start.value);
+					let itineraryEnd = GetDateTimeOrNull(end.value);
+
+					let itemStartObj = GetDateTimeOrNull(itemStart);
+					let itemEndObj = GetDateTimeOrNull(itemEnd);
+					//if they are invalid, set them aside to be deleted.
+					if (itemStartObj < itineraryStart || itemEndObj <= itineraryStart || itemStartObj >= itineraryEnd || itemEndObj > itineraryEnd)
+					{
+						removeList.push(entry);
+					}
+					//else, add to the save list.
+					else 
+					{
+
+						saveEvents["ItineraryItems"].push({
+							"ActivityName": itemTitle,
+							"StartTime": itemStart,
+							"EndTime": itemEnd,
+							"Address": itemAddress,
+							"AdditionalInformation": itemAdditionalInformation,
+							"Latitude": itemLatitude,
+							"Longitude": itemLongitude,
+							"Photos": itemPhotos
+						});
+					}
+				});
+				//delete all the invalid items we marked earlier
+				removeList.forEach(x =>
+				{
+					x.remove();
+				});
+
 				console.log(saveEvents);
 				var json = JSON.stringify(saveEvents);
 				console.log(json);
@@ -1482,6 +1613,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	initializeNonCalendarData(temp);
 	calendar = createAndLoadCalendar(temp);
 	initializeRemainingData(temp);
+	initializeItemModal();
 	calendar.render();
 	//display
 });//end of dom content loaded

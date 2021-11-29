@@ -38,8 +38,8 @@ body
 }
 
 /*Hidden Content*/
-.hide-in-view-mode, .item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change, .not-create-mode, .not-logged-out,
-.not-view-mode-other, .not-view-mode-self, .not-copy-edit-mode, .not-normal-edit-mode, .readonly-item-hide-button
+.hide-in-view-mode, .item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change, .not-create-mode, .not-logged-out, .not-view-mode-other, 
+.not-view-mode-self, .not-copy-edit-mode, .not-normal-edit-mode, .readonly-item-hide-button, .photo-modal-hidden, .no-photos-attached
 {
 	display: none !important;
 }
@@ -144,12 +144,11 @@ body
 #item-modal
 {
 	position: fixed; /* Stay in place */
-	z-index: 10; /* Sit on top */
+	z-index: 15; /* Sit on top */
 	left: 0;
 	top: 0;
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
-
 	background-color: rgb(0,0,0); /* Fallback color */
 	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
@@ -159,7 +158,7 @@ body
 	overflow: auto; /* Enable scroll if needed */
 	background-color: #fefefe;
 	margin: 5% auto; /* 15% from the top and centered */
-	padding: 20px;
+	padding: 10px;
 	border: 1px solid #888;
 	width: 80%; /* Could be more or less, depending on screen size */
 	height: 80%; /* Full height */
@@ -226,8 +225,10 @@ body
 #item-modal-left
 {
 	width: 50%;
-	display: inline;
+	display: flex;
 	flex: 1;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 #item-modal-address-container
@@ -244,11 +245,6 @@ body
 }
 
 #item-modal-latlong-mode
-{
-}
-
-
-#item-modal-rough-address
 {
 }
 
@@ -274,6 +270,25 @@ body
 		outline: none;
 	}
 
+#photo-label-button
+{
+	display: inline;
+	width:100%;
+	height: auto;
+	padding: 10px;
+}
+
+#your-photo-text
+{
+	float:left;
+	margin: 0;
+}
+
+#uploadPhotosEventDetails
+{
+	float: right;
+}
+
 #item-modal-right
 {
 	float: right;
@@ -281,33 +296,76 @@ body
 	width: 50%;
 	flex: 1;
 	/* min-height: 370px; */
+	margin-bottom: 10px;
 }
 
 #item-modal-map
 {
-	padding: 10px;
+	/* padding: 10px; */
 	height: 100%;
+	/* margin-bottom: 10px; */
 }
 
 #item-modal-photo-list
 {
+	width:100%;
+	height: 230px; /*200px + 4 for scroll bar*/
+	background-color: lightgray;
+	border: 2px solid black;
+	display: inline-flex;
+	overflow-y: hidden;
+	overflow-x: auto;
+	align-items: flex-start;
 }
 
 .item-modal-photo
 {
-	display: inline-block;
+	/* height: 100%; */
+	display: inline;
+	/* height: 200px; */
+	/* width: 200px; */
+	max-height: 200px;
+	/* margin: auto 10px; */
+	/* vertical-align: middle; */
+	/* border: 1px solid white; */
+	outline: 1px solid white;
+	/* padding: 10px 0px; */
+	margin: auto 10px;
 }
+
+.item-modal-photo-img:hover
+{
+	opacity:0.7;
+}
+
+item-modal-no-photo
+{
+	color:white;
+	font-size:18px;
+	text-align:center;
+	width:100%;
+	height: 100%;
+}
+
 
 .item-modal-photo-img
 {
-	max-width: 400px;
+	max-width: 200px;
+	max-height: 200px;
+	width: auto;
+	height: auto;
+	/* vertical-align: middle; */
+	/* margin: auto; */
+	/* display: block; */
+	/* display: none; */
+	box-shadow: 0 10px 16px 0 rgba(0,0,0,0.5),0 6px 20px 0 rgba(0,0,0,0.5);
 }
 
 #item-modal-footer
 {
 	display: block;
 	width: 100%;
-	padding-top:20px;
+	/* padding-top:20px; */
 }
 
 #item-modal-footer-buttons
@@ -315,6 +373,7 @@ body
 	width: 100%;
 	display:flex;
 	justify-content: space-between;
+	padding-top: 10px;
 }
 
 /*The footer*/
@@ -325,9 +384,10 @@ body
 	bottom: 0;
 	width: 100%;
 	height: 40px;
-	padding: 0px 10px;
+	/* padding: 10px 0px; */
 	background-color: lightgray;
 	z-index: 10;
+	/* margin-top: 10px; */
 }
 
 /****COMMON FOOTER***/
@@ -415,4 +475,52 @@ body
 }
 #edit-delete
 {
+}
+
+/* The Modal (background) */
+#photo-modal
+{
+	display: grid; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 30; /* Sit on top */
+	/* padding-top: 100px; */ /* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+.photo-modal-content
+{
+	margin: auto;
+	display: block;
+	/* max-width:80%; */
+	max-height: 95vh;
+	margin: auto;
+	object-fit: cover;
+}
+
+/* The Close Button */
+#photo-close
+{
+	position: absolute;
+	top: 15px;
+	right: 35px;
+	color: #f1f1f1;
+	font-size: 40px;
+	font-weight: bold;
+	color: white;
+	z-index: 50;
+}
+
+.photo-close:hover,
+.photo-close:focus
+{
+	color: #bbb;
+	text-decoration: none;
+	cursor: pointer;
 }
