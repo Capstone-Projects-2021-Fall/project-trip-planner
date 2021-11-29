@@ -1,77 +1,76 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>W3.CSS Template</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!--<link rel="stylesheet" href="login-page.css">-->
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>W3.CSS Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="login-page.css">-->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	<link rel="stylesheet" href="CSS/common.css" />
-	<link rel="stylesheet" href='CSS/navbar.css' />
+    <link rel="stylesheet" href="CSS/common.css" />
+    <link rel="stylesheet" href='CSS/navbar.css' />
 
-	<link rel="icon" type="image/ico" href="../resources/favicon.ico" />
+    <link rel="icon" type="image/ico" href="../resources/favicon.ico" />
 
-	<script src="JavaScript/login.js"></script>
-	<script src="JavaScript/common.js"></script>
-	<script src="JavaScript/navbar.js"></script>
+    <script src="JavaScript/login.js"></script>
+    <script src="JavaScript/common.js"></script>
 </head>
 
 <body>
-	<!-- Navbar -->
-	<nav class="w3-top">
-		<div class="w3-bar w3-red w3-card w3-left-align w3-large">
-			<!--Common to both mini and regular -->
-			<a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-			<!--Mini navbar dropdown toggle. This now works -->
-			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-			<!--Regular navbar content-->
-			<div class="w3-hide-small account-buttons">
-				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="login-your-account">placeholder</a>
-				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="signup-logout">placeholder</a>
-			</div>
-			<div class="w3-hide-small topnav">
-				<label for="dropdown">Search For</label>
+    <!-- TODO: check if id cookie already there, if it is, go to account page. also, add log out option or we're forever stuck (for two hours or until the browser is closed, anyway, whichever is first)-->
+    <!-- Navbar -->
+    <nav class="w3-top">
+        <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+            <!-- This menu toggle likely needs fixing. I think it's for bootstraps on mobile or small screens -->
+            <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+            <a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+            <a href="signup.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Sign Up</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
+            <div class="w3-hide-small topnav">
+				<label for="dropdown">Search For</label>	
 				<select id="dropdown">
 					<option value="Users">Users</option>
 					<option value="Itineraries">Itineraries</option>
-					<option value="Activities">Activities</option>
 				</select>
 				<div class="search-container">
-					<input type="text" id="quick-search" placeholder="Search..." name="search">
-					<button aria-label="Search" onclick="PerformSearch()" type="button"><i class="fa fa-search"></i></button>
+					<input type="text" id="quick-search" placeholder="Search.." name="search">
+					<button onclick="PerformSearch()" type="submit"><i class="fa fa-search"></i></button>
 				</div>
 			</div>
-		</div>
+        </div>
 
-		<!-- Navbar on small screens. This now works -->
-		<div id="navDemo" class="w3-bar-block w3-white hide-default w3-large">
-			<a href="userSearch.html" class="w3-bar-item w3-button w3-padding-large">User Search</a>
-			<a href="itinerarySearch.html" class="w3-bar-item w3-button w3-padding-large">Itinerary Search</a>
-			<a href="#" class="w3-bar-item w3-button w3-padding-large" id="login-your-account-small">placeholder</a>
-			<a href="#" class="w3-bar-item w3-button w3-padding-large" id="signup-logout-small">placeholder</a>
-		</div>
-	</nav>
-	<!-- Header. We have no header so this is pointless. -->
-	<!--<header>
-		<h1 class="w3-margin w3-jumbo">Login Page under construction...</h1>
-		<button onclick="document.location='login.html'" class="w3-button w3-green w3-padding-large w3-large w3-margin-top">Log In Here!</button>
-	</header>-->
-	<main id="main-holder" class="w3-container w3-red w3-center" style="padding:128px 16px">
-		<h1 id="login-header">Login</h1>
+        <!-- Navbar on small screens -->
+        <!-- See above comment about bootstrap mobile.
+        <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
+        </div>-->
+    </nav>
 
-		<div id="login-error-msg-holder" style="visibility:hidden">
-			<p id="login-error-msg"></p>
-		</div>
+    <!-- Header. We have no header so this is pointless. -->
+    <!--<header>
+        <h1 class="w3-margin w3-jumbo">Login Page under construction...</h1>
+        <button onclick="document.location='login.html'" class="w3-button w3-green w3-padding-large w3-large w3-margin-top">Log In Here!</button>
+    </header>-->
+    <main id="main-holder" class="w3-container w3-red w3-center" style="padding:128px 16px">
+        <h1 id="login-header">Login</h1>
 
-		<form autocomplete="off" id="login-form">
-			<input type="text" name="email" id="email" class="login-form-field" placeholder="Email Address">
-			<input type="password" name="password" id="password" class="login-form-field" placeholder="Password">
-			<button value="Login" id="login-form-submit" onclick="CallAPI()" type="button">Login</button>
-		</form>
-	</main>
+        <div id="login-error-msg-holder" style="visibility:hidden">
+            <p id="login-error-msg"></p>
+        </div>
+
+        <form autocomplete="off" id="login-form">
+            <input type="text" name="email" id="email" class="login-form-field" placeholder="Email Address">
+            <input type="password" name="password" id="password" class="login-form-field" placeholder="Password">
+            <input type="button" value="Login" id="login-form-submit" onclick="CallAPI()">
+        </form>
+    </main>
 </body>
 </html>
