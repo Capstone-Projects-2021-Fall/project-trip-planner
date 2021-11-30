@@ -5,11 +5,6 @@ let geocoder;
 let mapWithPins;
 let userID = null;
 let inEditMode = false;
-
-
-var locations = ["Philadelphia Art Museum", "Philadelphia Independence Hall", "Temple University"];
-var counter = 0;
-
 var places = [];
 
 
@@ -360,8 +355,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 					itemModalDescription.value = event.extendedProps.AdditionalInformation;
 					latField.value = Number(event.extendedProps.Latitude);
 					longField.value = Number(event.extendedProps.Longitude);
-
-					places.push(addressField.value);
 
 					//ensure photo collection is clear.
 					while (photoCollection.firstChild)
