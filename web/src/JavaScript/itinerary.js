@@ -3,6 +3,8 @@ let modalMarker = null;
 let calendarMap;
 let geocoder;
 let mapWithPins;
+let directionsService;
+let directionsRenderer;
 let userID = null;
 let inEditMode = false;
 var places = [];
@@ -28,6 +30,10 @@ function initMap()
       center: { lat: 40, lng: -75},
       mapTypeControl: false,
     });
+	
+	directionsService = new google.maps.DirectionsService();
+	directionsRenderer = new google.maps.DirectionsRenderer();
+	directionsRenderer.setMap(mapWithPins);
 
 	let latLongMode = document.getElementById('item-modal-radio-latlong');
 	let latField = document.getElementById('item-modal-latitude');
@@ -903,9 +909,17 @@ document.addEventListener('DOMContentLoaded', async function ()
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
 						    places.push(value["Address"]);
+
+							var startSelect = document.getElementById('start');
+							var endSelect = document.getElementById('end');
+							var opt = document.createElement('option');
+							opt.value = value["Address"];
+							opt.innerHTML = value["Address"];
+							var optClone = opt.cloneNode(true);
+							startSelect.appendChild(opt);
+							endSelect.appendChild(optClone);
 						});
 						dbItems = new DBData(creator, name, startDate, endDate, desc, coll);
-						console.log(places[4]);
 					}//end json null check
 				}//end json data function
 				);//end fetch.then
@@ -1629,6 +1643,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 	initializeItemModal();
 	calendar.render();
 	codeAddress(places); //call the function that sets multiple pins on map
+	const onChangeHandler = function () {
+		calculateAndDisplayRoute(directionsService, directionsRenderer);
+	  };
+	document.getElementById("start").addEventListener("change", onChangeHandler);
+  	document.getElementById("end").addEventListener("change", onChangeHandler);
 	//display
 });//end of dom content loaded
 
@@ -1652,6 +1671,28 @@ function codeAddress(address) {
         });
     }
 }
+function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+	start = places[0];
+	end = places[1];
+	console.log(start, end);
+
+
+	directionsService
+	  .route({
+		origin: {
+			query: document.getElementById("start").value,
+		},
+		destination: {
+			query: document.getElementById("end").value,
+		},
+		travelMode: google.maps.TravelMode.DRIVING,
+	  })
+	  .then((response) => {
+		directionsRenderer.setDirections(response);
+	  })
+	  .catch((e) => window.alert("Directions request failed due to " + status));
+  }
+  
 class DBData
 {
 	/**
