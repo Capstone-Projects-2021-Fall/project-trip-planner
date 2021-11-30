@@ -2,6 +2,7 @@ let modalMap;
 let modalMarker = null;
 let calendarMap;
 let geocoder;
+let mapWithPins;
 
 let userID = null;
 
@@ -10,15 +11,22 @@ let inEditMode = false;
 function initMap()
 {
 	let modalContainer = document.getElementById('item-modal-map');
+	let mapContainer = document.getElementById('map-with-multiple-pins');
 	modalMap = new google.maps.Map(modalContainer, {
 		zoom: 12,
 		center: { lat: 37, lng: -95 },
 		mapTypeControl: false,
-		streetViewControl: false,
-		clickableIcons: false,
+		streetViewControl: true,
+		clickableIcons: true,
 		fullscreenControl: false,
 		styles: GetMapStyling(),
 	});
+
+	  mapWithPins = new google.maps.Map(mapContainer, {
+	  zoom: 16,
+      center: { lat: 37, lng: -95},
+      mapTypeControl: false,
+    });
 
 	let latLongMode = document.getElementById('item-modal-radio-latlong');
 	let latField = document.getElementById('item-modal-latitude');
