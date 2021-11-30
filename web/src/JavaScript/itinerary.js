@@ -6,6 +6,7 @@ let mapWithPins;
 let userID = null;
 let inEditMode = false;
 
+
 var locations = ["Philadelphia Art Museum", "Philadelphia Independence Hall", "Temple University"];
 var counter = 0;
 
@@ -1642,18 +1643,18 @@ function codeAddress(address) {
     for(var i = 0; i < address.length; i++)
     {
     geocoder.geocode({
-    address: address[i]
-    }, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-        mapWithPins.setCenter(results[0].geometry.location); //center the map over the result
-        //place a marker at the location
-        var marker = new google.maps.Marker({
-        map: mapWithPins,
-        position: results[0].geometry.location
-        });
-        marker.setMap(marker);
+    address: address[i]}, function(results, status)
+    {
+        if (status == google.maps.GeocoderStatus.OK) {
+            mapWithPins.setCenter(results[0].geometry.location); //center the map over the result
+            //place a marker at the location
+            var marker = new google.maps.Marker({
+            map: mapWithPins,
+            position: results[0].geometry.location
+            });
+            //marker.setMap(marker);
         } else {
-            alert('Geocode was not successful for the following reason: ' + status);
+                alert('Geocode was not successful for the following reason: ' + status);
             }
         });
     }
