@@ -3,10 +3,15 @@ let modalMarker = null;
 let calendarMap;
 let geocoder;
 let mapWithPins;
-
 let userID = null;
-
 let inEditMode = false;
+
+var locations = ["Philadelphia Art Museum", "Philadelphia Independence Hall", "Temple University"];
+var counter = 0;
+
+var places = [];
+
+
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 function initMap()
 {
@@ -23,8 +28,8 @@ function initMap()
 	});
 
 	  mapWithPins = new google.maps.Map(mapContainer, {
-	  zoom: 16,
-      center: { lat: 37, lng: -95},
+	  zoom: 12,
+      center: { lat: 40, lng: -75},
       mapTypeControl: false,
     });
 
@@ -46,8 +51,9 @@ function initMap()
 	});
 
 	geocoder = new google.maps.Geocoder();
-}
+	//codeAddress(places); //call the function that sets multiple pins on map
 
+}
 //NOTE TO SELF: WE CAN TOGGLE SELECTIONS ON BY going calendar.setOption('selectable', true);
 //this means we can default to view mode, and give the user an "enable editing" button. 
 
@@ -354,6 +360,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 					latField.value = Number(event.extendedProps.Latitude);
 					longField.value = Number(event.extendedProps.Longitude);
 
+					places.push(addressField.value);
+
 					//ensure photo collection is clear.
 					while (photoCollection.firstChild)
 					{
@@ -584,6 +592,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		{
 			if (!IsNullOrWhitespace(addressField.value))
 			{
+
 				geocoder.geocode({ address: addressField.value }).then(x =>
 				{
 					const { results } = x;
@@ -825,7 +834,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 		console.log("DbEvent Photos: ");
 
-		console.log(initialDB.items);
+		//console.log(initialDB.items);
 
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
@@ -899,8 +908,10 @@ document.addEventListener('DOMContentLoaded', async function ()
 						values.forEach(value =>
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
+						    places.push(value["Address"]);
 						});
 						dbItems = new DBData(creator, name, startDate, endDate, desc, coll);
+						console.log(places[4]);
 					}//end json null check
 				}//end json data function
 				);//end fetch.then
@@ -1623,9 +1634,30 @@ document.addEventListener('DOMContentLoaded', async function ()
 	initializeRemainingData(temp);
 	initializeItemModal();
 	calendar.render();
+	codeAddress(places); //call the function that sets multiple pins on map
 	//display
 });//end of dom content loaded
 
+function codeAddress(address) {
+    for(var i = 0; i < address.length; i++)
+    {
+    geocoder.geocode({
+    address: address[i]
+    }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+        mapWithPins.setCenter(results[0].geometry.location); //center the map over the result
+        //place a marker at the location
+        var marker = new google.maps.Marker({
+        map: mapWithPins,
+        position: results[0].geometry.location
+        });
+        marker.setMap(marker);
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+}
 class DBData
 {
 	/**
