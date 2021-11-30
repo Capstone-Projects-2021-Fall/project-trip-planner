@@ -1648,6 +1648,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 	  };
 	document.getElementById("start").addEventListener("change", onChangeHandler);
   	document.getElementById("end").addEventListener("change", onChangeHandler);
+	document.getElementById("mode").addEventListener("change", onChangeHandler);
+	
 	//display
 });//end of dom content loaded
 
@@ -1672,11 +1674,7 @@ function codeAddress(address) {
     }
 }
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-	start = places[0];
-	end = places[1];
-	console.log(start, end);
-
-
+	const selectedMode = document.getElementById("mode").value;
 	directionsService
 	  .route({
 		origin: {
@@ -1685,7 +1683,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 		destination: {
 			query: document.getElementById("end").value,
 		},
-		travelMode: google.maps.TravelMode.DRIVING,
+		travelMode: google.maps.TravelMode[selectedMode],
 	  })
 	  .then((response) => {
 		directionsRenderer.setDirections(response);
