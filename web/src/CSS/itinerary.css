@@ -67,25 +67,53 @@ body
 #itinerary-title-container
 {
 	
+display: inline-flex;
+	
+width: 100%;
+	
+align-items: baseline;
 }
 
 #itinerary-title-label
-{
-}
+{font-size: 18px;font-weight: 500;}
 
 #itinerary-title
-{
-}
+{/* width: 100%; */margin-right: 20%;margin-left: 20px;flex: 1;font-size: 18px;}
 /*END Itinerary Title*/
 /*Itinerary Start and End Date*/
 #itinerary-date-range-container
 {
 
 }
+
+#explain-dates
+{
+
+/* margin: 10px; */
+
+margin-bottom: 0px;
+}
+
+#item-start-end-container
+{
+	/* display: flex; */
+	display: inline-block;
+	/* width: 75%; */
+	padding-bottom: 15px;
+	margin-top: 10px;
+}
+
 /*Itinerary Start Date*/
 #itinerary-startdate-container
 {
 
+/* width: 75%; */
+
+/* width: 50%; */
+
+display: inline-block;
+
+font-size: 16px;
 }
 
 #itinerary-startdate-label
@@ -98,8 +126,7 @@ body
 /*END Itinerary Start Date*/
 /*Itinerary End Date*/
 #itinerary-enddate-container
-{
-}
+{display: inline-block;padding-left: 20px;font-size: 16px;}
 
 #itinerary-enddate-label
 {
@@ -111,16 +138,14 @@ body
 /*END Itinerary Start and End Date*/
 /*Itinerary Description*/
 #itinerary-description-container
-{
-}
+{font-size: 15px;/* display: inherit; */width: 80%;display: flex;align-items: baseline;justify-content: flex-start;}
 
 #itinerary-description-label
 {
 }
 
 #itinerary-description
-{
-}
+{/* width: 100%; *//* display: inline; */flex: 1;}
 /*END Itinerary Description*/
 /*********************END ITINERARY HEADER********************/
 /**********************START Calendar*************************/
@@ -130,6 +155,7 @@ body
 	max-height: 750px;
 	margin: 0 auto;
 	margin-bottom: 50px;
+	margin-top: 10px;
 }
 
 .calendar-disabled
@@ -175,30 +201,24 @@ body
 }
 /*Item Modal Title*/
 #item-modal-title-container
-{
-}
+{font-size: 16px;/* width: 50%; */display: flex;}
 
 #item-modal-title
-{
-}
+{/* width: 100%; */flex: 1;}
 /*END Item Modal Title*/
 /*Item Modal Time Frame*/
 #item-modal-timeframe
-{
-}
+{display: inline-block;}
 /*Item modal start time*/
 #item-modal-start-container
-{
-}
+{margin-top: 10px;display: inline-block;}
 
 #item-modal-start
-{
-}
+{width: 250px;}
 /*End Item modal Start time*/
 /*Start Item modal End Time*/
 #item-modal-end-container
-{
-}
+{display: inline-block;}
 
 #item-modal-end
 {
@@ -206,12 +226,10 @@ body
 /*End Item modal End Time*/
 /*Start Item Modal Description*/
 #item-modal-description-container
-{
-}
+{margin-top: 10px;display: flex;align-items: baseline;}
 
 #item-modal-description
-{
-}
+{margin-left: 10px;flex: 1;}
 /*End item modal description*/
 /************END ITEM MODAL HEADER***************/
 /************START ITEM MODAL ADDRESS************/
@@ -220,6 +238,7 @@ body
 {
 	display: flex;
 	flex: 1;
+	margin-top: 10px;
 }
 /*LEFT HALF: Address mode input*/
 #item-modal-left
@@ -235,9 +254,37 @@ body
 {
 }
 
+#address-description
+{
+	margin-top: 10px;
+}
+
+#address-div
+{
+	display: flex;
+}
+
+#item-modal-address
+{
+	flex:1;
+	margin:0px 10px;
+}
+
 .item-modal-radio
 { /* display: block; */
 	vertical-align: middle;
+}
+
+#autobox-div
+{
+}
+
+#radio-address-div
+{
+}
+
+#radio-latlong-div
+{
 }
 
 #item-modal-address-mode
