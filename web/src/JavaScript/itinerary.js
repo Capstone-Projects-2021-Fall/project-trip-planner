@@ -815,10 +815,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 			events: []
 		});
 
-		console.log("DbEvent Photos: ");
-
-		console.log(initialDB.items);
-
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
 		{
