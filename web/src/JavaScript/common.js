@@ -172,7 +172,7 @@ function GetIDCookie()
  * @param {string} value the string to parse as a Date object.
  * @returns {Date} the date the string represents, or null if no such date can be found.
  */
-function GetDateTimeOrNull(value)
+module.exports = function GetDateTimeOrNull(value)
 {
 	var temp = new Date(value);
 	if (!temp || isNaN(temp))
@@ -184,6 +184,7 @@ function GetDateTimeOrNull(value)
 		return temp;
 	}
 }
+
 
 /**
  * JS doesn't have a pure "date" format (Yet. Temporal looks promising), and making it a date adds a bunch of shit. This checks to see if we are in "YYYY-MM-DD" format, returns the string unaltered if it is, or null if it isn't.
