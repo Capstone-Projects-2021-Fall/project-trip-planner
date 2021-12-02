@@ -172,7 +172,7 @@ function GetIDCookie()
  * @param {string} value the string to parse as a Date object.
  * @returns {Date} the date the string represents, or null if no such date can be found.
  */
-module.exports = function GetDateTimeOrNull(value)
+export function GetDateTimeOrNull(value)
 {
 	var temp = new Date(value);
 	if (!temp || isNaN(temp))
@@ -211,7 +211,7 @@ function GetDateOrNull(value)
  * @param {string} str - The text to check
  * @returns {boolean} - true if null or whitespace, false if valid.
  */
-function IsNullOrWhitespace(str)
+export function IsNullOrWhitespace(str)
 {
 	return !str || !str.trim();
 }
