@@ -191,7 +191,7 @@ export function GetDateTimeOrNull(value)
  * @param {string} value the current representation of the string
  * @returns {string} the original string if it represents a Date (and not a DateTime), or null if it does not
  */
-function GetDateOrNull(value)
+export function GetDateOrNull(value)
 {
 	if (!value)
 	{
@@ -222,7 +222,7 @@ export function IsNullOrWhitespace(str)
  * @param {string} str - The text to check
  * @returns {string} - the unaltered string, or null if it is invalid.
  */
-function GetValidStringOrNull(str)
+export function GetValidStringOrNull(str)
 {
 	return IsNullOrWhitespace(str) ? null : str;
 }

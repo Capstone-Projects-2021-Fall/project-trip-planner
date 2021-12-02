@@ -3,7 +3,7 @@
 
 import { GetDateTimeOrNull } from '../common.js';
 describe('checks that date 12/3/2021 is valid', () => {
-  it('returns false if valid', () => {
+  it('returns the date if it is a valid date', () => {
     expect(GetDateTimeOrNull('12/3/2021')).toStrictEqual(new Date('12/3/2021'));
   });
 });
@@ -11,8 +11,22 @@ describe('checks that date 12/3/2021 is valid', () => {
 
 import { IsNullOrWhitespace } from '../common.js';
 describe('IsNullOrWhitespace', () => {
-  it('returns false if valid', () => {
+  it('returns false if valid, returns true if whitespace. Testing a string that is not white space, so should return false', () => {
     expect(IsNullOrWhitespace("not whitespace")).toBe(false);
+  });
+});
+
+import {GetDateOrNull} from '../common.js';
+describe('GetDateOrNull', () => {
+  it('returns the date if it is a valid date', () => {
+      expect(GetDateTimeOrNull('12/4/2021')).toStrictEqual(new Date('12/4/2021'));
+  });
+});
+
+import { GetValidStringOrNull } from '../common.js';
+describe('GetValidStringOrNull', () => {
+  it('returns the string if valid, returns null if whitespace. Testing a string that is not white space, so should return the string', () => {
+    expect(GetValidStringOrNull("not whitespace again")).toBe("not whitespace again");
   });
 });
 
