@@ -72,11 +72,11 @@
 				<label for="activityQuery" class="search-for-label">With one or more activities with names like:</label>
 				<input type="text" id="activityQuery" name="activityQuery" />
 			</div>
-			<div class="proximity-wrapper">
+			<div class="proximity-wrapper w3-padding-64">
 				<h2>Limit by Proximity</h2>
 				<div class="proximity-content">
-					<div class="location-left">
-						<label for="address" class="search-for-label">With One Or More activities near:</label>
+					<div class="location-left w3-padding-64">
+						<label for="address" class="search-for-label w3-container">With One Or More activities near:</label>
 						<input type="text" id="address" />
 						<div id="coordinate-container" class="hidden-by-default">
 							<label for="lat" class="search-for-label">lat</label>
@@ -85,13 +85,13 @@
 							<input type="number" id="lng" name="lng" step="0.0001" min="-180" max="180" readonly />
 						</div>
 						<div>
-							<label for="maxDistance" class="search-for-label">Up To</label>
+							<label for="maxDistance" class="search-for-label w3-container w3-padding-large">Up To:</label>
 							<input type="text" id="maxDistance" name="maxDistance" />
-							<label class="search-for-label">miles away</label>
+							<label class="search-for-label w3-container">miles away</label>
 						</div>
 						<div>
 							<input type="checkbox" id="enableLatLong" />
-							<label for="enableLatLong" class="search-for-label">Enable Manual Coordinates Search</label>
+							<label for="enableLatLong" class="search-for-label w3-padding-small">Enable Manual Coordinates Search</label>
 						</div>
 					</div>
 					<div class="location-right">
@@ -99,15 +99,15 @@
 					</div>
 				</div>
 			</div>
-			<button type="submit">Search Again</button>
+			<button type="submit" class="w3-center w3-padding-large w3-margin-top">Search Again</button>
 		</form>
 	</header>
 
 	<!-- Second Grid -->
 	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-		<h1 class="w3-margin w3-jumbo">Search Results...</h1>
+		<h1 class="w3-margin w3-jumbo w3-center">Search Results...</h1>
 		<div class="w3-content" id="itinerary-list-holder"></div>
 	</main>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>
+	<script class ="w3-padding-large" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY&callback=initMap" async></script>
 </body>
 </html>

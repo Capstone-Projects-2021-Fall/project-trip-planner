@@ -59,25 +59,27 @@
 	<!-- Header -->
 	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
 		<h1 class="w3-margin w3-jumbo" id="welcome-user">Welcome!</h1>
-		<label for="fname">First Name <i>(Optional)</i>:</label>
-		<input type="text" name="fname" id="fname" readonly/>
-		<label for="lname">Last Name <i>(Optional)</i>:</label>
-		<input type="text" name="fname" id="lname" readonly/>
-		<label for="fname">Date of Birth <i>(Optional)</i>:</label>
-		<input type="date" name="dob" id="dob" readonly/>
+		<ul>
+			<li><label class="w3-bar-block w3-center" for="fname">First Name <i>(Optional)</i>:</label>
+			<input type="text" name="fname" id="fname" readonly/></li>
+			<li><label class="user" for="lname">Last Name <i>(Optional)</i>:</label>
+			<input type="text" name="fname" id="lname" readonly/></li>
+			<li><label class="w3-bar-block w3-" for="fname">Date of Birth <i>(Optional)</i>:</label>
+			<input type="date" name="dob" id="dob" readonly/></li>
+		</ul>
 		<button type="button" id="enable-edit-btn">Edit</button>
 		<button type="button" id="revert-btn" disabled>Revert Changes</button>
 		<button type="button" id="save-btn" disabled>Save</button>
 	</header>
 	<!-- Main Content -->
-	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container w3=center">
 		<div class="w3-content">
 			<div class="w3-center">
 				<button onclick="document.location='itinerary.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create New Itinerary</button>
 			</div>
 			<div>
-				<h1>Your Itineraries</h1>
-				<div id="itinerary-list-holder"></div>
+				<h1 class="w3-center w3-padding-large">Your Itineraries:</h1>
+				<div id="itinerary-list-holder" class="w3-center"></div>
 			</div>
 		</div>
 	</main>
