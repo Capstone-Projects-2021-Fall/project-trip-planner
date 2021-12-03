@@ -33,7 +33,7 @@ function GetCookie(cname)
  * @param {boolean} isAccount true if this is going on the account page, false if it's the itinerary search page.
  * @
  */
-function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
+export function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
 {
 	if (status == 200)
 	{
@@ -135,7 +135,7 @@ function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage 
 }
 
 /**
- * Acts like response.JSON(), but properly handles a null object, response.JSON() does not. 
+ * Acts like response.JSON(), but properly handles a null object, response.JSON() does not.
  * @param {Response} response the http response to parse.
  * @param {function(JSON): Promise} callback the callback to process the json object.
  */
@@ -172,7 +172,7 @@ function GetIDCookie()
  * @param {string} value the string to parse as a Date object.
  * @returns {Date} the date the string represents, or null if no such date can be found.
  */
-function GetDateTimeOrNull(value)
+export function GetDateTimeOrNull(value)
 {
 	var temp = new Date(value);
 	if (!temp || isNaN(temp))
@@ -185,12 +185,13 @@ function GetDateTimeOrNull(value)
 	}
 }
 
+
 /**
  * JS doesn't have a pure "date" format (Yet. Temporal looks promising), and making it a date adds a bunch of shit. This checks to see if we are in "YYYY-MM-DD" format, returns the string unaltered if it is, or null if it isn't.
  * @param {string} value the current representation of the string
  * @returns {string} the original string if it represents a Date (and not a DateTime), or null if it does not
  */
-function GetDateOrNull(value)
+export function GetDateOrNull(value)
 {
 	if (!value)
 	{
@@ -210,7 +211,7 @@ function GetDateOrNull(value)
  * @param {string} str - The text to check
  * @returns {boolean} - true if null or whitespace, false if valid.
  */
-function IsNullOrWhitespace(str)
+export function IsNullOrWhitespace(str)
 {
 	return !str || !str.trim();
 }
@@ -221,7 +222,7 @@ function IsNullOrWhitespace(str)
  * @param {string} str - The text to check
  * @returns {string} - the unaltered string, or null if it is invalid.
  */
-function GetValidStringOrNull(str)
+export function GetValidStringOrNull(str)
 {
 	return IsNullOrWhitespace(str) ? null : str;
 }
