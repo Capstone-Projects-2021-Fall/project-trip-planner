@@ -46,6 +46,7 @@ describe('fillItineraries', function () {
 
     fillItineraries(document.getElementById('itinerary-list-holder'), '', 200, true, true, true);
     expect(document.getElementById('itinerary-list-holder').innerHTML).toStrictEqual('<div class=\"itinerary-empty\">You have no itineraries. Create one!</div>');
+    //expect(document.getElementById('navDemo')).toStrictEqual("something");
   });
 });
 
