@@ -33,7 +33,7 @@ function GetCookie(cname)
  * @param {boolean} isAccount true if this is going on the account page, false if it's the itinerary search page.
  * @
  */
-function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
+export function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
 {
 	if (status == 200)
 	{
@@ -135,7 +135,7 @@ function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage 
 }
 
 /**
- * Acts like response.JSON(), but properly handles a null object, response.JSON() does not. 
+ * Acts like response.JSON(), but properly handles a null object, response.JSON() does not.
  * @param {Response} response the http response to parse.
  * @param {function(JSON): Promise} callback the callback to process the json object.
  */
