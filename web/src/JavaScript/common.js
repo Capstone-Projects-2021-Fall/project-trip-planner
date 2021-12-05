@@ -227,28 +227,6 @@ export function GetValidStringOrNull(str)
 	return IsNullOrWhitespace(str) ? null : str;
 }
 
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate)
-{
-	var timeout;
-	return function ()
-	{
-		var context = this, args = arguments;
-		var later = function ()
-		{
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
-
 /**
  * retrieves the parameter of the given name from the url, or null if no such parameter exists.
  * @param {string} name - the name of the query parameter to check.
@@ -260,6 +238,52 @@ function getParameterByName(name)
 	var result = searchSection.get(name);
 	//truthy conversion is false if null or empty. i'll leave the result unaltered if either case, as the empty string may be valid and using null instead would not be.
 	return result ? decodeURIComponent(result) : result;
+}
+
+/**
+ * Takes a date in UTC time and prints back a number that is formatted in such a way that input type="datetime-local" can handle it.
+ * @param {Date} date
+ * @returns {string} in the format YYYY-MM-DDTHH:MM:SS
+ */
+function LocalStringFromDate(date)
+{
+	//in this case it's easiest to just build the string manually. 
+	//we could convert the time to a "fake" UTC time(i.e.treat the local time as UTC time) and then use toISOString() and slice off the Z, but that's more work than just doing this.
+	return ToDigitString(date.getFullYear(), 4) + "-" + ToDigitString(date.getMonth() + 1) + "-" + ToDigitString(date.getDate()) + "T" + ToDigitString(date.getHours()) + ":" +
+		ToDigitString(date.getMinutes()) + ":" + ToDigitString(date.getSeconds());
+}
+
+/**
+ * Converts a number to its string representation, preceeded by zeroes if necessary to reach the given fixed integer digit count (default: 2).
+ * @param {any} num
+ * @param {any} len
+ */
+function ToDigitString(num, len = 2)
+{
+	return num.toLocaleString('en-US', {
+		minimumIntegerDigits: len,
+		useGrouping: false
+	});
+}
+
+/**
+ * Convert our local string stored in input type="datetime-local" and put it into a date object with the proper time. 
+ * @param {any} localIsoStr
+ */
+function DateFromLocalString(localIsoStr)
+{
+	//cheat: i could split the string manually and use the date constructor expecting each part, but that's a pain. instead, we're going to cheat and let date do it for us.
+	//by appending Z, the Date constructor treats this value as a UTC time. that's not correct (it's in local time), but we can parse this "fake" date easier than a string.
+	localIsoStr = localIsoStr + "Z";
+	let fakeDate = new Date(localIsoStr);
+
+	//now, lets take that fake data and make our real time.
+	let retVal = new Date();
+	//the fake date has all the data we need, just as UTC time instead of local time. all we need to do is set the local times in our real object to the UTC times in our fake one. 
+	retVal.setFullYear(fakeDate.getUTCFullYear(), fakeDate.getUTCMonth(), fakeDate.getUTCDate());
+	retVal.setHours(fakeDate.getUTCHours(), fakeDate.getUTCMinutes(), fakeDate.getUTCSeconds(), 0);
+	//and return the result. done.
+	return retVal;
 }
 
 
