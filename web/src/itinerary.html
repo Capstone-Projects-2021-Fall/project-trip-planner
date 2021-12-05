@@ -63,16 +63,18 @@
 				<div id="item-modal-timeframe">
 					<div id="item-modal-start-container">
 						<label for="item-modal-start" class="item-modal-label readonly-aware-content readonly-content">Start Time:</label>
-						<input type="datetime-local" name="itineraryStart" id="item-modal-start" class="readonly-aware-input-field" readonly/>
+						<input type="datetime" name="itineraryStart" id="item-modal-start" class="readonly-aware-input-field" readonly/>
 					</div>
 					<div id="item-modal-end-container">
 						<label for="item-modal-end" class="item-modal-label readonly-aware-content readonly-content">End Time:</label>
-						<input type="datetime-local" name="itineraryEnd" id="item-modal-end" class="readonly-aware-input-field" readonly/>
+						<input type="datetime" name="itineraryEnd" id="item-modal-end" class="readonly-aware-input-field" readonly/>
 					</div>
 				</div>
-				<div id="item-modal-description-container">
-					<label for="item-modal-description" class="item-modal-label readonly-aware-content readonly-content">Additional Information <i>(Optional)</i>:</label>
-					<input type="text" name="itineraryDescription" id="item-modal-description" class="readonly-aware-input-field" readonly/>
+				<div>
+					<div id="item-modal-description-container">
+						<label for="item-modal-description" class="item-modal-label readonly-aware-content readonly-content">Additional Information:</label>
+						<input type="datetime" name="itineraryDescription" id="item-modal-description" class="readonly-aware-input-field" readonly/>
+					</div>
 				</div>
 			</div>
 			<div id="item-modal-middle">
@@ -81,21 +83,21 @@
 					<div id="item-modal-address-container">
 						<!-- Anyone want to make this more concise?-->
 						<p id="address-description" class="hide-in-view-mode">Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address, though you should provide an address that is specific enough that everyone going there can reliably find it. If you cannot properly show the location of the event with just an address, as is the case with remote areas or large properties, you can enable the advanced location option, which allows you to set a location by geographical coordinates instead. This also unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.</p>
-						<div id="address-div">
+						<div>
 							<label for="item-modal-address" class="item-modal-label readonly-aware-content readonly-content">Address:</label>
 							<input type="text" id="item-modal-address" class="readonly-aware-input-field" />
 							<button type="button" id="use-this-address-btn" class="hidden-on-address-mode">Update Coordinates</button>
 						</div>
-						<div id="autobox-div">
+						<div>
 							<input type="checkbox" id="advanced-mode-auto-update" name="advanced-address-mode-options" class="hidden-on-address-mode" />
 							<label for="advanced-mode-auto-update" id="auto-update-label" class="hidden-on-address-mode">Automatically update the coordinates to the address when i finish typing</label>
 						</div>
-						<div id="radio-address-div">
-							<input type="radio" id="item-modal-radio-address" class="item-modal-radio readonly-aware-radio-btn" name="address-mode" value="Address" checked disabled />
+						<div>
+							<input type="radio" id="item-modal-radio-address" class="item-modal-radio" name="address-mode" value="Address" checked />
 							<label for="item-modal-radio-address" class="item-modal-label readonly-aware-content readonly-content">Use the provided address.</label>
 						</div>
-						<div id="radio-latlong-div">
-							<input type="radio" id="item-modal-radio-latlong" class="item-modal-radio readonly-aware-radio-btn" name="address-mode" value="LatLong" disabled/>
+						<div>
+							<input type="radio" id="item-modal-radio-latlong" class="item-modal-radio" name="address-mode" value="LatLong" />
 							<label for="item-modal-radio-latlong" class="item-modal-label readonly-aware-content readonly-content">Allow me to adjust the coordinates directly.</label>
 						</div>
 						<div id="item-modal-coordinate-container">
