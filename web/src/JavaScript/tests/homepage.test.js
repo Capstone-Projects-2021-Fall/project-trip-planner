@@ -1,7 +1,6 @@
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-import {fillItineraries} from '../homepage.js';
 describe('OnLoad', function () {
   beforeEach(function() {
     return JSDOM.fromFile('web/src/homepage.html')

@@ -33,7 +33,8 @@ function GetCookie(cname)
  * @param {boolean} isAccount true if this is going on the account page, false if it's the itinerary search page.
  * @
  */
-export function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
+//export function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
+function fillItineraries(container, jsonListOfItems, status, isAccount, ownPage = true)
 {
 	if (status == 200)
 	{
@@ -172,7 +173,8 @@ function GetIDCookie()
  * @param {string} value the string to parse as a Date object.
  * @returns {Date} the date the string represents, or null if no such date can be found.
  */
-export function GetDateTimeOrNull(value)
+//export function GetDateTimeOrNull(value)
+function GetDateTimeOrNull(value)
 {
 	var temp = new Date(value);
 	if (!temp || isNaN(temp))
@@ -191,7 +193,8 @@ export function GetDateTimeOrNull(value)
  * @param {string} value the current representation of the string
  * @returns {string} the original string if it represents a Date (and not a DateTime), or null if it does not
  */
-export function GetDateOrNull(value)
+//export function GetDateOrNull(value)
+function GetDateOrNull(value)
 {
 	if (!value)
 	{
@@ -211,7 +214,8 @@ export function GetDateOrNull(value)
  * @param {string} str - The text to check
  * @returns {boolean} - true if null or whitespace, false if valid.
  */
-export function IsNullOrWhitespace(str)
+//export function IsNullOrWhitespace(str)
+function IsNullOrWhitespace(str)
 {
 	return !str || !str.trim();
 }
@@ -222,7 +226,8 @@ export function IsNullOrWhitespace(str)
  * @param {string} str - The text to check
  * @returns {string} - the unaltered string, or null if it is invalid.
  */
-export function GetValidStringOrNull(str)
+//export function GetValidStringOrNull(str)
+function GetValidStringOrNull(str)
 {
 	return IsNullOrWhitespace(str) ? null : str;
 }

@@ -1,7 +1,6 @@
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-import {fillItineraries} from '../navbar.js';
 describe('MenuToggle', function () {
   beforeEach(function() {
     return JSDOM.fromFile('web/src/itinerarySearch.html')
