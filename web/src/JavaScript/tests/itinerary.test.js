@@ -2,7 +2,8 @@ import regeneratorRuntime from "regenerator-runtime";
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-import {initMap} from '../itinerary.js';
+import { initMap } from '../itinerary.js';
+
 describe('initMap', function () {
   beforeEach(function() {
     return JSDOM.fromFile('web/src/itinerary.html')

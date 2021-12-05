@@ -7,7 +7,8 @@ let userID = null;
 
 let inEditMode = false;
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
-export function initMap()
+//export function initMap()
+function initMap()
 {
 	let modalContainer = document.getElementById('item-modal-map');
 	modalMap = new google.maps.Map(modalContainer, {
