@@ -22,3 +22,164 @@ body, h1, h2, h3, h4, h5, h6
 {
 	display: block;
 }
+
+button#enable-edit-btn
+{
+	background-color: #2C3E50;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+button#enable-edit-btn:hover
+{
+	background-color: #2C3E50;
+	border: none;
+	color: rgb(99, 97, 97);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+button#revert-btn
+{
+	background-color: #2C3E50;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+button#revert-btn:hover
+{
+	background-color: #2C3E50;
+	border: none;
+	color: rgb(99, 97, 97);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+button#save-btn
+{
+	background-color: #2C3E50;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+button#save-btn:hover
+{
+	background-color: #2C3E50;
+	border: none;
+	color: rgb(99, 97, 97);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+
+#header-container1
+{
+	width: 50%;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+}
+#header-container2
+{
+	width: 50%;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+}
+#header-container3
+{
+	width: 50%;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+}
+#header-container4
+{
+	width: 50%;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 30px;
+}
+
+#fname
+{
+	font-size: 20px;
+
+}
+#fname-label
+{
+	font-size: 20px;
+	text-align:left;
+	padding-right: 40px;
+}
+
+#lname
+{
+	font-size: 20px;
+}
+#lname-label
+{
+	font-size: 20px;
+	text-align:left;
+	padding-right: 40px;
+}
+#dob
+{
+	font-size: 20px;
+}
+#dob-label
+{
+	font-size: 20px;
+	padding-right: 105px;
+}
+
+#login-header
+{
+	font-size: 5em;
+}
+
+button#login-form-submit
+{
+	background-color: #2C3E50;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+button#login-form-submit:hover
+{
+	background-color: #2C3E50;
+	border: none;
+	color: rgb(99, 97, 97);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+

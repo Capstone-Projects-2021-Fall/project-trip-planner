@@ -78,3 +78,52 @@ hr
 		width: 25%;
 	}
 }
+
+button#login-here
+{
+	background-color: #2C3E50;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+
+button#login-here:hover
+{
+	background-color: #2C3E50;
+	border: none;
+	color: rgb(99, 97, 97);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+
+button#submit-button
+{
+	background-color: #2C3E50;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+
+button#submit-button:hover
+{
+	background-color: #1b2836; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	cursor:pointer;
+	border-radius: 8px;
+}
