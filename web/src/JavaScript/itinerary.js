@@ -2,23 +2,45 @@ let modalMap;
 let modalMarker = null;
 let calendarMap;
 let geocoder;
-
+let mapWithPins;
+let directionsService;
+let matrixService;
+let directionsRenderer;
+var infowindow;
 let userID = null;
 
+let inEditMode = false;
+var places = [];
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 //export function initMap()
 function initMap()
 {
+
 	let modalContainer = document.getElementById('item-modal-map');
+	let mapContainer = document.getElementById('map-with-multiple-pins');
+
 	modalMap = new google.maps.Map(modalContainer, {
 		zoom: 12,
 		center: { lat: 37, lng: -95 },
 		mapTypeControl: false,
-		streetViewControl: false,
-		clickableIcons: false,
+		streetViewControl: true,
+		clickableIcons: true,
 		fullscreenControl: false,
 		styles: GetMapStyling(),
 	});
+
+	  mapWithPins = new google.maps.Map(mapContainer, {
+	  zoom: 12,
+      center: { lat: 40, lng: -75},
+      mapTypeControl: false,
+
+    });
+
+	directionsService = new google.maps.DirectionsService();
+	matrixService = new google.maps.DistanceMatrixService();
+	directionsRenderer = new google.maps.DirectionsRenderer();
+	directionsRenderer.setMap(mapWithPins);
+	infowindow = new google.maps.InfoWindow();
 
 	let latLongMode = document.getElementById('item-modal-radio-latlong');
 	let latField = document.getElementById('item-modal-latitude');
@@ -38,8 +60,9 @@ function initMap()
 	});
 
 	geocoder = new google.maps.Geocoder();
-}
+	//codeAddress(places); //call the function that sets multiple pins on map
 
+}
 //NOTE TO SELF: WE CAN TOGGLE SELECTIONS ON BY going calendar.setOption('selectable', true);
 //this means we can default to view mode, and give the user an "enable editing" button. 
 
@@ -614,7 +637,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		{
 			if (!IsNullOrWhitespace(addressField.value))
 			{
-				await geocoder.geocode({ address: addressField.value }).then(x =>
+				geocoder.geocode({ address: addressField.value }).then(x =>
 				{
 					const { results } = x;
 
@@ -845,7 +868,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 			dayMaxEvents: true, // allow "more" link when too many events
 			events: []
 		});
+		console.log("DbEvent Photos: ");
 
+		//console.log(initialDB.items);
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
 		{
@@ -917,6 +942,16 @@ document.addEventListener('DOMContentLoaded', async function ()
 						values.forEach(value =>
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
+						    places.push(value["Address"]);
+
+							var startSelect = document.getElementById('start');
+							var endSelect = document.getElementById('end');
+							var opt = document.createElement('option');
+							opt.value = value["Address"];
+							opt.innerHTML = value["Address"];
+							var optClone = opt.cloneNode(true);
+							startSelect.appendChild(opt);
+							endSelect.appendChild(optClone);
 						});
 						dbItems = new DBData(creator, name, startDate, endDate, desc, coll);
 					}//end json null check
@@ -1656,9 +1691,90 @@ document.addEventListener('DOMContentLoaded', async function ()
 	initializeRemainingData(temp);
 	initializeItemModal();
 	calendar.render();
+	codeAddress(places); //call the function that sets multiple pins on map
+	const onChangeHandler = function () {
+		calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService);
+	  };
+	document.getElementById("start").addEventListener("change", onChangeHandler);
+  	document.getElementById("end").addEventListener("change", onChangeHandler);
+	document.getElementById("mode").addEventListener("change", onChangeHandler);
+	
 	//display
 });//end of dom content loaded
 
+function codeAddress(address) {
+    for(var i = 0; i < address.length; i++)
+    {
+    geocoder.geocode({
+    address: address[i]}, function(results, status)
+    {
+        if (status == google.maps.GeocoderStatus.OK) {
+            mapWithPins.setCenter(results[0].geometry.location); //center the map over the result
+            //place a marker at the location
+            var marker = new google.maps.Marker({
+            map: mapWithPins,
+            position: results[0].geometry.location
+            });
+             /*marker.addListener("click", () => {
+                infowindow.open({
+                  anchor: marker,
+                  map,
+                  shouldFocus: false,
+                });
+              });*/
+            //marker.setMap(marker);
+        } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+}
+function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService) {
+	const selectedMode = document.getElementById("mode").value;
+	let startAddress =document.getElementById("start").value;
+	let endAddress =  document.getElementById("end").value;
+	infowindow.close();
+	directionsService
+	  .route({
+		origin: {
+			query: startAddress,
+		},
+		destination: {
+			query: endAddress,
+		},
+		travelMode: google.maps.TravelMode[selectedMode],
+	  })
+	  .then((response) => {
+		directionsRenderer.setDirections(response);
+	  })
+	  .catch((e) => window.alert("Directions request failed due to " + status));
+
+	const request = {
+		origins: [startAddress],
+		destinations: [endAddress],
+		travelMode: selectedMode,
+		unitSystem: google.maps.UnitSystem.METRIC,
+		avoidHighways: false,
+		avoidTolls: false
+	};
+
+
+	geocoder.geocode( { 'address': endAddress}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK && startAddress != endAddress) {
+		matrixService.getDistanceMatrix(request).then((response) =>{
+			infowindow.close();
+			infowindow.setContent("Distance:" +response["rows"][0]["elements"][0]["distance"]["text"] +
+			"Time: " + response["rows"][0]["elements"][0]["duration"]["text"]);
+			infowindow.open(mapWithPins, new google.maps.Marker({
+			  position: new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()),
+			  map: mapWithPins
+			}));
+		});
+	}
+	});
+	  
+  }
+  
 class DBData
 {
 	/**
