@@ -4,6 +4,7 @@ let calendarMap;
 let geocoder;
 let mapWithPins;
 let directionsService;
+let matrixService;
 let directionsRenderer;
 let userID = null;
 let inEditMode = false;
@@ -32,6 +33,7 @@ function initMap()
     });
 	
 	directionsService = new google.maps.DirectionsService();
+	matrixService = new google.maps.DistanceMatrixService();
 	directionsRenderer = new google.maps.DirectionsRenderer();
 	directionsRenderer.setMap(mapWithPins);
 
@@ -1644,7 +1646,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	calendar.render();
 	codeAddress(places); //call the function that sets multiple pins on map
 	const onChangeHandler = function () {
-		calculateAndDisplayRoute(directionsService, directionsRenderer);
+		calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService);
 	  };
 	document.getElementById("start").addEventListener("change", onChangeHandler);
   	document.getElementById("end").addEventListener("change", onChangeHandler);
@@ -1673,7 +1675,7 @@ function codeAddress(address) {
         });
     }
 }
-function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService) {
 	const selectedMode = document.getElementById("mode").value;
 	let startAddress =document.getElementById("start").value;
 	let endAddress =  document.getElementById("end").value;
@@ -1692,21 +1694,18 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 	  })
 	  .catch((e) => window.alert("Directions request failed due to " + status));
 
-
-	  var config = {
-		method: 'GET', mode: "no-cors",
-		};
-
-		fetch('https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + startAddress + '&destinations=' + endAddress + '&key=' + 'AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY', config).then(function (response) {
-		
-		//below is url from googles example
-		//fetch('https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101%2C-73.89188969999998&destinations=40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626&key=' + 'AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY', config).then(function (response) {
-
-		console.log(JSON.stringify(response));
-		})
-		.catch(function (error) {
-		console.log(error);
-		});
+	const request = {
+		origins: [startAddress],
+		destinations: [endAddress],
+		travelMode: selectedMode,
+		unitSystem: google.maps.UnitSystem.METRIC,
+		avoidHighways: false,
+		avoidTolls: false
+	};
+	  matrixService.getDistanceMatrix(request).then((response) =>{
+		  console.log(response["rows"][0]["elements"][0]["distance"]["text"]);
+		  console.log(response["rows"][0]["elements"][0]["duration"]["text"]);
+	  })
   }
   
 class DBData
