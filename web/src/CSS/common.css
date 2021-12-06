@@ -13,19 +13,20 @@ body, h1, h2, h3, h4, h5, h6
 	font-size: 200px
 }
 
-.w3-red
+.blue-bg
 {
-	background-color: #2C3E50 !important
+	background-color: #2C3E50;
+	color: white;
 }
 
 .form-group
 {
 	display: block;
+	width: 100%;
 }
 
-button#enable-edit-btn
+.jsb
 {
-	background-color: #2C3E50;
 	border: none;
 	color: white;
 	padding: 15px 32px;
@@ -34,152 +35,20 @@ button#enable-edit-btn
 	font-size: 16px;
 	border-radius: 8px;
 }
-button#enable-edit-btn:hover
-{
-	background-color: #2C3E50;
-	border: none;
-	color: rgb(99, 97, 97);
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#revert-btn
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#revert-btn:hover
-{
-	background-color: #2C3E50;
-	border: none;
-	color: rgb(99, 97, 97);
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#save-btn
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#save-btn:hover
-{
-	background-color: #2C3E50;
-	border: none;
-	color: rgb(99, 97, 97);
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
 
-#header-container1
-{
-	width: 50%;
-	height: auto;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 10px;
-}
-#header-container2
-{
-	width: 50%;
-	height: auto;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 10px;
-}
-#header-container3
-{
-	width: 50%;
-	height: auto;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 10px;
-}
-#header-container4
-{
-	width: 50%;
-	height: auto;
-	margin-left: auto;
-	margin-right: auto;
-	padding-top: 30px;
-}
-
-#fname
-{
-	font-size: 20px;
-
-}
-#fname-label
-{
-	font-size: 20px;
-	text-align:left;
-	padding-right: 40px;
-}
-
-#lname
-{
-	font-size: 20px;
-}
-#lname-label
-{
-	font-size: 20px;
-	text-align:left;
-	padding-right: 40px;
-}
-#dob
-{
-	font-size: 20px;
-}
-#dob-label
-{
-	font-size: 20px;
-	padding-right: 105px;
-}
+	.jsb:hover
+	{
+		color: rgb(99, 97, 97);
+	}
 
 #login-header
 {
 	font-size: 5em;
 }
 
-button#login-form-submit
+/*in case you have color. The margin doesn't quite go all the way down, but the padding will take care of that*/
+.fix-w3-header
 {
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
+	margin-top:40px;
+	padding-top: 10px;
 }
-button#login-form-submit:hover
-{
-	background-color: #2C3E50;
-	border: none;
-	color: rgb(99, 97, 97);
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-

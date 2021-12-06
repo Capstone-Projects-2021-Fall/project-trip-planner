@@ -5,8 +5,8 @@ let geocoder;
 
 let userID = null;
 
-let inEditMode = false;
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
+//export function initMap()
 function initMap()
 {
 	let modalContainer = document.getElementById('item-modal-map');
@@ -53,15 +53,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 	let displayMode = getParameterByName("mode"); //we'll ignore this for now.
 	userID = GetIDCookie();
 
-	if (!displayMode && !itineraryID && !userID)
-	{
-		document.location = "itinerarySearch.html";
-	}
-
-	if (itineraryID)
-	{
-		itineraryID = Number(itineraryID);
-	}
+	//Only used if the itinerary is owned by the current logged in user. Will force a page into edit mode from word go. Useful when the user creates a new itinerary and chooses save and continue.
+	let inEditMode = displayMode == "edit";
 
 	/**
 	 * Our save itinerary button should only do something if the data changes. Otherwise, we're just killing our database/lambdas with identical data. 
@@ -75,6 +68,17 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 * @type {FullCalendar.Calendar}
 	 */
 	var calendar;
+
+
+	if (!itineraryID && !userID)
+	{
+		document.location = "itinerarySearch.html";
+	}
+
+	if (itineraryID)
+	{
+		itineraryID = Number(itineraryID);
+	}
 
 	function initializeItemModal()
 	{
@@ -96,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
-		//should clean up the display photo modal and move all the onclick and blur stuff here. but for now it's staying where it is.
+		//should clean up the display photo modal and move all the onclick and blur stuff here (if possible. readonly stuff prob can't). but for now it's staying where it is.
 
 		initializePhotoModal();
 	}
@@ -148,8 +152,13 @@ document.addEventListener('DOMContentLoaded', async function ()
 		itemModal.classList.remove("item-modal-collapsed");
 		itemModalSave.disabled = false;
 
-		itemModalStartDate.value = start;
-		itemModalEndDate.value = end;
+		console.log("BEFORE: Start: " + start + ", End: " + end);
+
+		itemModalStartDate.value = LocalStringFromDate(start); //these are in UTC time, i need them in Local time. fuck
+
+		itemModalEndDate.value = LocalStringFromDate(end);
+
+		console.log("ISO FORMAT: Start: " + itemModalStartDate.value + ", End: " + itemModalEndDate.value);
 
 		let isLLMode = false;
 
@@ -191,7 +200,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 
 			let hasPhotos = false;
-			event.extendedProps.Photos.forEach(function(x, index)
+			event.extendedProps.Photos.forEach(function (x, index)
 			{
 				addPhoto(photoCollection, x, index);
 				hasPhotos = true;
@@ -236,6 +245,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 		addressField.readOnly = readonly;
 		updateCoordBtn.readOnly = readonly;
 
+		latLongMode.disabled = readonly;
+		addressMode.disabled = readonly;
+
 		itemModalStartDate.readOnly = readonly;
 		itemModalEndDate.readOnly = readonly;
 		itemModalDescription.readOnly = readonly;
@@ -250,8 +262,14 @@ document.addEventListener('DOMContentLoaded', async function ()
 				itemModalSave.disabled = true;
 
 				let title = itemModalTitle.value;
-				let start = GetDateTimeOrNull(itemModalStartDate.value);
-				let end = GetDateTimeOrNull(itemModalEndDate.value);
+
+				console.log("AFTER: Start: " + itemModalStartDate.value + ", End: " + itemModalEndDate.value);
+
+				let start = DateFromLocalString(itemModalStartDate.value);
+				let end = DateFromLocalString(itemModalEndDate.value);
+
+				console.log("DATE FORMAT: Start: " + start + ", End: " + end);
+
 				let description = itemModalDescription.value;
 				let photoList = document.getElementsByClassName("item-modal-photo-img");
 				//photoList isn't an array, it's a HTMLElementCollection. the spread operator aka "[...args]" converts an iterable to an array. array.map is equivalent to C#'s LINQ Select.
@@ -264,6 +282,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 					{
 						event.setProp("title", title);
 						event.setAllDay(allDay);
+						event.setStart(start);
+						event.setEnd(end);
 						event.setExtendedProp("Latitude", lat);
 						event.setExtendedProp("Longitude", long);
 						event.setExtendedProp("AdditionalInformation", description);
@@ -458,7 +478,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 			let readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content");
 			Array.prototype.forEach.call(readonlyAwareLabels, x =>
 			{
-				x.classList.add("readonly-content");
+				if (!x.classList.contains("readonly-content"))
+				{
+					x.classList.add("readonly-content");
+				}
+			});
+
+			readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content-light");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				if (!x.classList.contains("readonly-content-light"))
+				{
+					x.classList.add("readonly-content-light");
+				}
 			});
 
 
@@ -481,6 +513,12 @@ document.addEventListener('DOMContentLoaded', async function ()
 			Array.prototype.forEach.call(readonlyAwareLabels, x =>
 			{
 				x.classList.remove("readonly-content");
+			});
+
+			readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content-light");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				x.classList.remove("readonly-content-light");
 			});
 
 			//window.onclick = null;
@@ -691,15 +729,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 	}
 
-	/**
-	 * Checks to see if the mode is something we can work with.
-	 * @param {string} mode the value obtained from the radio buttons.
-	 */
-	function isModeValid(mode)
-	{
-		return mode == 'Address' || mode == 'LatLong';
-	}
-
 	function addPhoto(container, url, index)
 	{
 		console.log("Url:" + url);
@@ -736,11 +765,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 			markDirty = true;
 		}
 
-		console.log(initialDB);
-
-		console.log('There');
-
-		console.log(new Date().toLocaleString().substring(0, 10));
 		//if the initial DB is null, use the current date. that's actually harder than it sounds. 
 		//workaround for the JS Date being terrible. new Date() returns UTC now. getting the date from that is wrong if your local offset is not 0. 
 		//(for us, that means EST, so anything > 7PM is treated as the next day)
@@ -767,6 +791,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 				return { start: GetDateOrNull(start.value) ?? start.defaultValue, end: GetDateOrNull(zzub) ?? end.defaultValue }
 			},
 			initialView: 'timeGridAnyDay',
+			//timeZone: 'UTC',
+			//nowIndicator: false,
 			nowIndicator: true,
 			headerToolbar: {
 				left: 'prev,next today',
@@ -777,7 +803,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				timeGridAnyDay: {
 					type: 'timeGrid',
 					duration: {
-						days: 4
+						days: 7
 					},
 					buttonText: 'Whole Trip'
 				},
@@ -818,7 +844,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
 		{
-			console.log("Hello!");
 			calendar.addEvent({
 				title: dbEvent.activityName,
 				start: dbEvent.startTime,
@@ -1348,7 +1373,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				history.back();
 			});
 		}
-		//logged in and creator.
+		//logged in and creator
 		else
 		{
 			/**
@@ -1384,18 +1409,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 				return ret;
 			}
 
-			view_mode_self.classList.remove("not-view-mode-self");
-			self_enable_edit.addEventListener("click", _ =>
+			function initializeEditMode()
 			{
-				self_enable_edit.disabled = true;
-				self_go_back.disabled = true;
-				self_view_delete.disabled = true;
-
-				self_enable_edit.onclick = null;
-				self_go_back.onclick = null;
-				self_view_delete.onclick = null;
-
-				view_mode_self.classList.add("not-view-mode-self");
 				normal_edit_mode.classList.remove("not-normal-edit-mode");
 
 				makeEditable(true);
@@ -1491,41 +1506,64 @@ document.addEventListener('DOMContentLoaded', async function ()
 						}
 					});
 				});
-			});
-			self_go_back.addEventListener("click", _ =>
-			{
-				self_enable_edit.disabled = true;
-				self_go_back.disabled = true;
-				self_view_delete.disabled = true;
+			}
 
-				history.back();
-			});
-			self_view_delete.addEventListener("click", _ =>
+			if (!inEditMode) 
 			{
-				self_enable_edit.disabled = true;
-				self_go_back.disabled = true;
-				self_view_delete.disabled = true;
 
-				handleDeleting().then(x =>
+				view_mode_self.classList.remove("not-view-mode-self");
+				self_enable_edit.addEventListener("click", _ =>
 				{
-					//this only happens if x is false.
-					if (x)
-					{
-						document.location = "account.html";
-					}
-					else 
-					{
-						self_enable_edit.disabled = false;
-						self_go_back.disabled = false;
-						self_view_delete.disabled = false;
-					}
+					self_enable_edit.disabled = true;
+					self_go_back.disabled = true;
+					self_view_delete.disabled = true;
+
+					self_enable_edit.onclick = null;
+					self_go_back.onclick = null;
+					self_view_delete.onclick = null;
+
+					view_mode_self.classList.add("not-view-mode-self");
+
+					initializeEditMode();
 				});
-			});
+				self_go_back.addEventListener("click", _ =>
+				{
+					self_enable_edit.disabled = true;
+					self_go_back.disabled = true;
+					self_view_delete.disabled = true;
+
+					history.back();
+				});
+				self_view_delete.addEventListener("click", _ =>
+				{
+					self_enable_edit.disabled = true;
+					self_go_back.disabled = true;
+					self_view_delete.disabled = true;
+
+					handleDeleting().then(x =>
+					{
+						//this only happens if x is false.
+						if (x)
+						{
+							document.location = "account.html";
+						}
+						else 
+						{
+							self_enable_edit.disabled = false;
+							self_go_back.disabled = false;
+							self_view_delete.disabled = false;
+						}
+					});
+				});
+			}
+			else
+			{
+				initializeEditMode();
+			}
 		}
 
 
 
-		//workaround to refresh the display. Go to the currently selected date, refresh.
 		start.addEventListener("blur", _ =>
 		{
 			if (inEditMode)
@@ -1537,14 +1575,16 @@ document.addEventListener('DOMContentLoaded', async function ()
 					start.defaultValue = temp;
 				}
 
-				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value))
+				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value) && new Date(end.value) >= new Date(start.value))
 				{
 					enableCalendar();
 					console.log(calendar.getDate());
+					//workaround to refresh the display. Go to the currently selected date, refresh.
 					calendar.gotoDate(start.value);
 				}
 				else
 				{
+					//workaround to refresh the display. Go to the currently selected date, refresh.
 					calendar.gotoDate(calendar.getDate());
 				}
 
@@ -1566,7 +1606,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					end.value = end.defaultValue;
 				}
 
-				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value))
+				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value) && new Date(end.value) >= new Date(start.value))
 				{
 					enableCalendar();
 					console.log(calendar.getDate());

@@ -10,9 +10,8 @@
 
 body
 {
-	/* margin: 60px 10px; */
-	background-color: lightgray;
-	padding: 0;
+	/* margin: 10px; */
+	/* padding: 10px; */
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 14px;
 }
@@ -21,7 +20,14 @@ body
 /*Applied to any content that should appear to be "read only" when in "view mode". This is typically done with labels when their associated field is "read only" (JS: readOnly, HTML: readonly, CSS: read-only) */
 .readonly-content, .label-readonly
 {
+	color: lightgray;
 	color: gray;
+}
+
+.readonly-content-light
+{
+	color: lightgray;
+	/* color: gray; */
 }
 
 /*Applied to all non-labels that need to appear read-only when in "view mode". We use this with "getElementsByClassName" to get them, then append the "readonly-content" class. */
@@ -39,7 +45,7 @@ body
 }
 
 /*Hidden Content*/
-.hide-in-view-mode, .item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change, .not-create-mode, .not-logged-out, .not-view-mode-other, 
+.hide-in-view-mode, .item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change, .not-create-mode, .not-logged-out, .not-view-mode-other,
 .not-view-mode-self, .not-copy-edit-mode, .not-normal-edit-mode, .readonly-item-hide-button, .photo-modal-hidden, .no-photos-attached
 {
 	display: none !important;
@@ -51,27 +57,6 @@ body
 	/* display: block; */
 }
 
-#view-mode-self
-{
-	background-color: #2C3E50; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-#normal-edit-mode
-{
-	background-color: #2C3E50; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-
 
 /*End Global or Reoccuring Elements*/
 
@@ -79,130 +64,138 @@ body
 
 
 /*********************Main Itinerary Information (HEADER)****************************/
-#main-itinerary-data
+.dark-bg
 {
-	padding-top: 100px;
-	padding-left: 100px;
-	padding-right: auto;
-	float:left;
-	overflow: auto
 
-	
+background-color: #2C3E50;
+
+width: 100%;
+
+margin: 0;
+
+padding: 1px 0px 1px 0px;
 }
 
+#main-itinerary-data
+{
+	/* padding-top: 10px; */
+	/* padding-left: 20px; */
+	/* padding-right: 20px; */
+	margin: 10px auto;
+	width: 75%;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+}
 /*Itinerary Title*/
 #itinerary-title-container
 {
-	text-align: left;
-	margin-left: 20px;
+	display: inline-flex;
+	width: 100%;
+	align-items: baseline;
 }
 
 #itinerary-title-label
 {
-	font-size: 20px;
+	font-size: 18px;
+	font-weight: 500;
 }
 
 #itinerary-title
 {
-	float: right;
-	font-size: 20px;
-	text-align: center;
+	/* width: 100%; */
+	/* margin-right: 20%; */
+	margin-left: 20px;
+	flex: 1;
+	font-size: 18px;
 }
 /*END Itinerary Title*/
 /*Itinerary Start and End Date*/
 #itinerary-date-range-container
 {
-	text-align: left;
-	margin-left: 20px;
-	padding-right: auto;
 }
 
 #explain-dates
 {
-	text-align: center;
-	padding-top: 20px;
-	padding-bottom: none;
-	color: grey;
-	font-size: 13px;
+	/* margin: 10px; */
+
+	margin-bottom: 0px;
 }
+
+#item-start-end-container
+{
+	/* display: flex; */
+	display: inline-block;
+	/* width: 75%; */
+	padding-bottom: 15px;
+	margin-top: 10px;
+}
+
 /*Itinerary Start Date*/
 #itinerary-startdate-container
 {
-	padding-top: 20px;
+	/* width: 75%; */
+	/* width: 50%; */
+
+	display: inline-block;
+	font-size: 16px;
 }
 
 #itinerary-startdate-label
 {
-	font-size: 20px;
 }
 
 #itinerary-startdate
 {
-	float: right;
-	font-size: 20px;
 }
 /*END Itinerary Start Date*/
 /*Itinerary End Date*/
 #itinerary-enddate-container
 {
-	padding-top: 20px;
+	display: inline-block;
+	padding-left: 20px;
+	font-size: 16px;
 }
 
 #itinerary-enddate-label
 {
-	font-size: 20px;
 }
+
 #itinerary-enddate
 {
-	float: right;
-	font-size: 20px;
 }
 /*END Itinerary End Date*/
 /*END Itinerary Start and End Date*/
-
 /*Itinerary Description*/
 #itinerary-description-container
 {
-	padding-top: 20px;
+	font-size: 15px;
+	/* display: inherit; */
+	/* width: 80%; */
+	display: flex;
+	align-items: baseline;
+	justify-content: flex-start;
 }
 
 #itinerary-description-label
 {
-	font-size: 20px;
 }
 
 #itinerary-description
-{
-	display: flex;
-	float: none;
-	font-size: 15px;
-	height: 110px;
-	width: 400px;
-	text-align: left;
-	line-height: 1.5em;
-	
+{ /* width: 100%; */ /* display: inline; */
+	flex: 1;
 }
 /*END Itinerary Description*/
-
 /*********************END ITINERARY HEADER********************/
-
-
 /**********************START Calendar*************************/
 #calendar
 {
-	/* margin-top: 100px; */
-	max-width: 1100px;
-	max-height: 800px;
-	margin-left: 600px;
-	margin-top: 50px;
-	margin-bottom: 0px;
-	border-style: solid;
-	border-color: #2C3E50;
-	border-width: 3px;
-	border-radius: 8px;
-	padding: 20px;
-	
-	
+	max-width: 1500px;
+	max-height: 750px;
+	margin: 0 auto;
+	margin-bottom: 25px;
+	margin-top: 10px;
+	width: 75%;
 }
 
 .calendar-disabled
@@ -229,12 +222,11 @@ body
 #item-modal-container
 {
 	overflow: auto; /* Enable scroll if needed */
-	background-color: hsl(0, 0%, 85%);
+	background-color: lightgray;
 	margin: 5% auto; /* 15% from the top and centered */
-	padding: 10px;
-	border: 5px solid #2C3E50;
-	border-radius: 10px;
-	width: 95%; /* Could be more or less, depending on screen size */
+	/* padding: 10px; */
+	border: 1px solid #888;
+	width: 80%; /* Could be more or less, depending on screen size */
 	height: 80%; /* Full height */
 	display: flex;
 	flex-direction: column;
@@ -244,96 +236,63 @@ body
 /*End General Modal Formatting*/
 
 /*Top Modal Section (Activity Name, Start Date/Time, End Date/Time, Additional Info.*/
-/* #item-modal-top
+#item-modal-top
 {
-	padding-top: 100px;
-	padding-left: 100px;
-	padding-right: auto;
-	float:left;
-} */
+	padding: 10px;
+	background: slategray;
+	color: white;
+}
 /*Item Modal Title*/
 #item-modal-title-container
 {
-	width: 80%;
-	padding-top:30px;
-}
-#item-model-label
-{
-	font-size: 20px;
-	padding-left: 25%;
-}
-#item-modal-title
-{
-	float: right;
-	font-size: 20px;
-	text-align: center;
-	width: 40%;
+	font-size: 16px; /* width: 50%; */
+	display: flex;
 }
 
+#item-modal-title
+{ /* width: 100%; */
+	flex: 1;
+}
 /*END Item Modal Title*/
 /*Item Modal Time Frame*/
 #item-modal-timeframe
 {
+	display: inline-block;
 }
 /*Item modal start time*/
 #item-modal-start-container
 {
-	width: 80%;
-	padding-top:auto;
+	margin-top: 10px;
+	display: inline-block;
 }
 
 #item-modal-start
 {
-	float: right;
-	font-size: 20px;
-	width: 40%;
-}
-#item-modal-start-label
-{
-	font-size: 20px;
-	padding-left: 25%;
+	width: 250px;
 }
 /*End Item modal Start time*/
 /*Start Item modal End Time*/
 #item-modal-end-container
 {
-	width: 80%;
-	padding-top:20px;
+	display: inline-block;
 }
 
 #item-modal-end
 {
-	float: right;
-	font-size: 20px;
-	width: 40%;
-}
-
-#item-modal-end-label
-{
-	font-size: 20px;
-	padding-left: 25%;
 }
 /*End Item modal End Time*/
 /*Start Item Modal Description*/
 #item-modal-description-container
 {
-	width: 80%;
-	padding-top:20px;
+	margin-top: 10px;
+	display: flex;
+	align-items: baseline;
 }
 
 #item-modal-description
 {
-	display: flex;
-	float: right;
-	font-size: 15px;
-	height: 70px;
-	width: 75%;
-	text-align: left;
-}
-#item-modal-description-label
-{
-	font-size: 15px;
-	padding-left: 25%;
+	margin-left: 10px;
+	flex: 1;
 }
 /*End item modal description*/
 /************END ITEM MODAL HEADER***************/
@@ -343,6 +302,8 @@ body
 {
 	display: flex;
 	flex: 1;
+	margin-top: 10px;
+	/* background-color: lightgray; */
 }
 /*LEFT HALF: Address mode input*/
 #item-modal-left
@@ -352,111 +313,51 @@ body
 	flex: 1;
 	flex-direction: column;
 	justify-content: space-between;
-	float: left;
 }
 
 #item-modal-address-container
 {
-	width: 80%;
 }
-#item-modal-address-label
-{
-	font-size: 18px;
-	padding-left: 25%;
-}
-#item-modal-address
-{
-	/* float: right; */
-	font-size: 15px;
-	width: 55%;
-}
+
 #address-description
 {
-	text-align: left;
-	padding-top: none;
-	padding-bottom: none;
-	color: grey;
-	font-size: 13px;
-	padding-left: 25%;
+	margin-top: 10px;
+}
 
+#address-div
+{
+	display: flex;
+}
 
+#item-modal-address
+{
+	flex: 1;
+	margin: 0px 10px;
 }
 
 .item-modal-radio
 { /* display: block; */
 	vertical-align: middle;
 }
-#item-modal-radio-address-label
-{
-	font-size: 12px;
-	/* padding-left: 25%; */
-	margin-top: px;
-}
-#item-modal-radio-address
-{
-	width:15px;
-	height:15px;
-	margin-left: 25%;
 
-}
-#item-modal-radio-latlong
+#autobox-div
 {
-	width:15px;
-	height:15px;
-	margin-left: 25%;
-}
-#item-modal-radio-latlong-label
-{
-	font-size: 12px;
-	/* padding-left: 25%; */
-	margin-top: px;
-}
-/* =================================== */
-#item-modal-latitude
-{
-	font-size: 14px;
-	padding-left: 25%;
-}
-#lat-label
-{
-	font-size: 14px;
-	padding-left: 25%;
-}
-#long-label
-{
-	font-size: 14px;
-}
-#item-modal-longitude
-{
-	font-size: 14px;
 }
 
+#radio-address-div
+{
+}
+
+#radio-latlong-div
+{
+}
 
 #item-modal-address-mode
 {
-
-	margin-left: 25%;
 }
-#advanced-mode-auto-update
-{
-	width:15px;
-	height:15px;
-	margin-left: 25%;
-}
-#auto-update-label
-{
-	font-size: 12px;
-}
-#use-this-address-btn
-{
-	float: center;
-}
-
 
 #item-modal-latlong-mode
 {
-
-	margin-left: 25%;
 }
 
 #item-modal-coordinate-container
@@ -469,13 +370,12 @@ body
 	display: inline;
 	/* float:left; */
 	width: 25%;
-
-	color:inherit;
+	color: inherit;
 }
 
 	.item-modal-coordinate:read-only
 	{
-		background-color:lightgray;
+		background-color: lightgray;
 		color: gray;
 		border: none;
 		outline: none;
@@ -484,15 +384,15 @@ body
 #photo-label-button
 {
 	display: inline;
-	width:100%;
+	width: 100%;
 	height: auto;
 	padding: 10px;
 }
 
 #your-photo-text
 {
-	float:left;
-	padding-left: 20%;
+	float: left;
+	margin: 0;
 }
 
 #uploadPhotosEventDetails
@@ -514,16 +414,12 @@ body
 {
 	/* padding: 10px; */
 	height: 100%;
-	border-style: solid;
-	border-radius: 8px;
-	border-width: 2px;
-	border-color:#2C3E50;
 	/* margin-bottom: 10px; */
 }
 
 #item-modal-photo-list
 {
-	width:100%;
+	width: 100%;
 	height: 230px; /*200px + 4 for scroll bar*/
 	background-color: lightgray;
 	border: 2px solid black;
@@ -550,15 +446,15 @@ body
 
 .item-modal-photo-img:hover
 {
-	opacity:0.7;
+	opacity: 0.7;
 }
 
 item-modal-no-photo
 {
-	color:white;
-	font-size:18px;
-	text-align:center;
-	width:100%;
+	color: white;
+	font-size: 18px;
+	text-align: center;
+	width: 100%;
 	height: 100%;
 }
 
@@ -581,14 +477,18 @@ item-modal-no-photo
 	display: block;
 	width: 100%;
 	/* padding-top:20px; */
+	background-color: slategray;
 }
 
 #item-modal-footer-buttons
 {
 	width: 100%;
-	display:flex;
+	/* height: 100%; */
+	padding: 5px;
+	display: flex;
 	justify-content: space-between;
-	padding-top: 10px;
+	/* padding-top: 10px; */
+	align-items: center;
 }
 
 /*The footer*/
@@ -600,31 +500,53 @@ item-modal-no-photo
 	width: 100%;
 	height: 40px;
 	/* padding: 10px 0px; */
-	background-color: #2C3E50;
+	background-color: slategray;
 	z-index: 10;
-	padding-bottom: 50px;
+	/* margin-top: 10px; */
+}
+
+.footer-text-left
+{
+	/* margin: 0px 0px 0px 10px; */
+	color: white;
+	display: inline-block;
 }
 
 /****COMMON FOOTER***/
-#create-mode, #view-mode-other, #view-mode-self, #copy-edit-mode, #normal-edit-mode
+#create-mode, #view-mode-self, #copy-edit-mode, #normal-edit-mode
 {
 	display: flex;
 	justify-content: space-between;
 	align-content: center;
 	align-items: center;
-	width:100%;
-	padding:0px;
-	margin:0px;
+	width: 75%;
+	height: 100%;
+	/* padding: 5px; */
+	margin: 0 auto;
 }
-/****LOGGED OUT VIEW MODE******/
-#logged-out-wrapper
+
+#view-mode-other
 {
-	display:flex;
+	display: flex;
+	justify-content: space-between;
 	align-content: center;
 	align-items: center;
-	height:100%;
-	width: 100%;
+	width: 75%;
+	height: 100%;
+	/* padding: 5px; */
+	margin: 0 auto;
+	min-width: 900px;
 }
+	/****LOGGED OUT VIEW MODE******/
+	#logged-out-wrapper
+	{
+		display: flex;
+		align-content: center;
+		align-items: center;
+		height: 100%;
+		width: 100%;
+	}
+
 #logged-out-note
 {
 	/* width: 100%; */
@@ -636,19 +558,27 @@ item-modal-no-photo
 #create-save-cont
 {
 }
+
 #create-save-exit
 {
 }
+
 #create-clear
 {
 }
+
 #create-cancel
 {
 }
 /**************LOGGED IN BUT NOT CREATOR VIEW MODE************/
-#other-create-copy
+#other-copy-wrapper
 {
+	display:inline;
 }
+
+#other-create-copy
+{display: inline-block;margin-left: 10px;}
+
 #other-cancel
 {
 }
@@ -656,9 +586,11 @@ item-modal-no-photo
 #self-enable-edit
 {
 }
+
 #self-go-back
 {
 }
+
 #self-view-delete
 {
 }
@@ -666,12 +598,15 @@ item-modal-no-photo
 #save-copy-cont
 {
 }
+
 #save-copy-exit
 {
 }
+
 #copy-revert
 {
 }
+
 #copy-cancel
 {
 }
@@ -679,15 +614,19 @@ item-modal-no-photo
 #save-cont
 {
 }
+
 #save-exit
 {
 }
+
 #revert-cont
 {
 }
+
 #revert-exit
 {
 }
+
 #edit-delete
 {
 }
@@ -738,436 +677,4 @@ item-modal-no-photo
 	color: #bbb;
 	text-decoration: none;
 	cursor: pointer;
-}
-
-/* FOOTER BUTTONS========== */
-button#create-save-cont
-{
-	background-color: #2C3E50; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#create-save-cont:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-
-button#create-save-exit
-{
-	background-color: #2C3E50; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-button#create-save-exit:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-
-button#create-clear
-{
-	background-color: #2C3E50; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#create-clear:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-
-button#create-cancel
-{
-	background-color: #2C3E50; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#create-cancel:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;	
-	cursor:pointer;
-}
-
-button#self-enable-edit
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#self-enable-edit:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;	
-	cursor:pointer;
-}
-
-button#self-go-back
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#self-go-back:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;	
-	cursor:pointer;
-}
-
-button#self-view-delete
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-
-}
-button#self-view-delete:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;	
-	cursor:pointer;
-}
-
-button#save-cont
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-
-button#save-cont:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-
-button#save-exit
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#save-exit:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-
-button#revert-cont
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#revert-cont:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-button#revert-exit
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#revert-exit:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-
-button#edit-delete
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-}
-button#edit-delete:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-}
-button#fill-address-btn
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 5px 38px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 12px;
-	border-radius: 8px;
-	margin: 10px 0px 10px 50%;
-}
-button#fill-address-btn:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 5px 38px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 12px;
-	cursor:pointer;
-	border-radius: 8px;
-}
-button#uploadPhotosEventDetails
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 5px 24px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-	margin: 10px 20% 5px 0%;
-}
-button#uploadPhotosEventDetails:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 5px 24px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-	border-radius: 8px;
-}
-
-button#use-this-address-btn
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 5px 24px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 12px;
-	border-radius: 8px;
-	margin: 10px 0px 10px 50%;
-}
-button#use-this-address-btn:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 5px 24px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 12px;
-	cursor:pointer;
-	border-radius: 8px;
-}
-
-button#save-itinerary-item
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#save-itinerary-item:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-	border-radius: 8px;
-}
-button#cancel-itinerary-item
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#cancel-itinerary-item:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-	border-radius: 8px;
-}
-button#delete-itinerary-item
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#delete-itinerary-item:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-	border-radius: 8px;
-}
-button#revert-itinerary-item
-{
-	background-color: #2C3E50;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	border-radius: 8px;
-}
-button#revert-itinerary-item:hover
-{
-	background-color: #1b2836; /* Green */
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 16px;
-	cursor:pointer;
-	border-radius: 8px;
 }
