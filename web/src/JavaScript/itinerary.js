@@ -9,8 +9,127 @@ let directionsRenderer;
 var infowindow;
 let userID = null;
 
+/**
+ * @type {FullCalendar.Calendar}
+ */
+var calendar;
+
+
 let inEditMode = false;
 var places = [];
+let imageList = new Set();
+
+function PerformMinorMiracle(e)
+{
+	let k = document.getElementById("batch-upload-modal");
+	k.style.display = "block";
+}
+
+function NegateSaidMiracle()
+{
+	let k = document.getElementById("batch-upload-modal");
+	k.style.display = "none";
+}
+
+function ConvertDMSToDD(degrees, minutes, seconds, direction)
+{
+	var dd = degrees + minutes / 60 + seconds / (60 * 60);
+
+	if (direction == "S" || direction == "W")
+	{
+		dd = dd * -1;
+	} // Don't do anything for N or E
+
+	return dd;
+}
+
+function createObjectURL(object)
+{
+	return (window.URL) ? window.URL.createObjectURL(object) : window.webkitURL.createObjectURL(object);
+}
+
+function CaffeineExclamationPoint() 
+{
+	function addPhoto(url, index)
+	{
+		let container = document.getElementById("uploadedPhotoContainer");
+
+		console.log("Url:" + url);
+		let div = document.createElement('div');
+		div.classList.add("item-modal-photo");
+		let img = document.createElement("img");
+		img.src = url;
+		img.classList.add("item-modal-photo-img");
+		img.alt = "batch photo #" + index;
+		div.appendChild(img);
+		container.appendChild(div);
+	}
+
+	let photoList = document.getElementById("photoList");
+	let theList = photoList.files || [];
+	Array.from(theList).forEach(x => imageList.add(x));
+
+	let calendarArr = calendar.getEvents();
+
+	removeList = [];
+
+	imageList.forEach(y =>
+	{
+		let q = 0;
+		EXIF.getData(y, function ()
+		{
+			//console.log(y);
+
+			let lat = EXIF.getTag(this, "GPSLatitude");
+			let latDir = EXIF.getTag(this, "GPSLatitudeRef");
+			let lng = EXIF.getTag(this, "GPSLongitude");
+			let lngDir = EXIF.getTag(this, "GPSLongitudeRef");
+
+			let time = EXIF.getTag(this, "DateTimeOriginal")
+			let t2 = time.substring(0, 4) + '-' + time.substring(5,7) + '-' + time.substring(8,10) + 'T' + time.substring(11);
+
+			let d = DateFromLocalString(t2);
+
+			if (lat && lng && GetDateTimeOrNull(d))
+			{
+				let latNum = ConvertDMSToDD(lat[0], lat[1], lat[2], latDir)
+				let lngNum = ConvertDMSToDD(lng[0], lng[1], lng[2], lngDir)
+			
+				let trueTime = GetDateTimeOrNull(d);
+
+				let found = calendarArr.some(z =>
+				{
+					console.log("latNum: " + latNum + ", longNum: " + lngNum);
+					console.log("Start: " + z.start + ", time: " + trueTime + ", End: " + z.end);
+					console.log("delta: " + Math.sqrt(latNum * latNum + lngNum * lngNum));
+					if (z.start <= trueTime && z.end >= trueTime && Math.sqrt(latNum * latNum + lngNum * lngNum) < 100)
+					{
+						/**@type {Array} */
+						let temp = z.extendedProps.Photos;
+						temp.push(createObjectURL(y));
+						let replacement = [...temp];
+						z.setExtendedProp("Photos", replacement);
+						console.log("Pushing");
+						console.log(y);
+
+						removeList.push(y);
+						return true;
+					}
+					return false;
+				});
+
+				if (!found)
+				{
+					addPhoto(createObjectURL(y), q);
+					q++;
+				}
+			}
+		});
+	});
+
+	photoList.value = null;
+}
+
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 //export function initMap()
 function initMap()
@@ -86,11 +205,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 * @type {boolean} 
 	 */
 	var markDirty = false;
-
-	/**
-	 * @type {FullCalendar.Calendar}
-	 */
-	var calendar;
 
 
 	if (!itineraryID && !userID)
@@ -1100,8 +1214,13 @@ document.addEventListener('DOMContentLoaded', async function ()
 					let itineraryStart = GetDateTimeOrNull(start.value);
 					let itineraryEnd = GetDateTimeOrNull(end.value);
 
+					itineraryEnd.setDate(itineraryEnd.getDate() + 1);
+					itineraryEnd.setHours(0, 0, 0, 0);
+
 					let itemStartObj = GetDateTimeOrNull(itemStart);
 					let itemEndObj = GetDateTimeOrNull(itemEnd);
+
+
 					//if they are invalid, set them aside to be deleted.
 					if (itemStartObj < itineraryStart || itemEndObj <= itineraryStart || itemStartObj >= itineraryEnd || itemEndObj > itineraryEnd)
 					{
