@@ -6,6 +6,7 @@ let mapWithPins;
 let directionsService;
 let matrixService;
 let directionsRenderer;
+var infowindow;
 let userID = null;
 let inEditMode = false;
 var places = [];
@@ -40,6 +41,7 @@ function initMap()
 	matrixService = new google.maps.DistanceMatrixService();
 	directionsRenderer = new google.maps.DirectionsRenderer();
 	directionsRenderer.setMap(mapWithPins);
+	infowindow = new google.maps.InfoWindow();
 
 	let latLongMode = document.getElementById('item-modal-radio-latlong');
 	let latField = document.getElementById('item-modal-latitude');
@@ -1672,13 +1674,13 @@ function codeAddress(address) {
             map: mapWithPins,
             position: results[0].geometry.location
             });
-             marker.addListener("click", () => {
+             /*marker.addListener("click", () => {
                 infowindow.open({
                   anchor: marker,
                   map,
                   shouldFocus: false,
                 });
-              });
+              });*/
             //marker.setMap(marker);
         } else {
                 alert('Geocode was not successful for the following reason: ' + status);
@@ -1687,10 +1689,10 @@ function codeAddress(address) {
     }
 }
 function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService) {
-    var infowindow = new google.maps.InfoWindow();
 	const selectedMode = document.getElementById("mode").value;
 	let startAddress =document.getElementById("start").value;
 	let endAddress =  document.getElementById("end").value;
+	infowindow.close();
 	directionsService
 	  .route({
 		origin: {
