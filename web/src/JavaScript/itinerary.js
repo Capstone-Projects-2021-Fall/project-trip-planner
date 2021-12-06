@@ -1675,13 +1675,15 @@ function codeAddress(address) {
 }
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 	const selectedMode = document.getElementById("mode").value;
+	let startAddress =document.getElementById("start").value;
+	let endAddress =  document.getElementById("end").value;
 	directionsService
 	  .route({
 		origin: {
-			query: document.getElementById("start").value,
+			query: startAddress,
 		},
 		destination: {
-			query: document.getElementById("end").value,
+			query: endAddress,
 		},
 		travelMode: google.maps.TravelMode[selectedMode],
 	  })
@@ -1689,6 +1691,22 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 		directionsRenderer.setDirections(response);
 	  })
 	  .catch((e) => window.alert("Directions request failed due to " + status));
+
+	  var axios = require('axios');
+
+		var config = {
+			method: 'get',
+			url: 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + startAddress + 'destinations=' + endAddress + '&key=' + 'AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY',
+			headers: { }
+		};
+
+		axios(config)
+		.then(function (response) {
+		console.log(JSON.stringify(response.data));
+		})
+		.catch(function (error) {
+		console.log(error);
+		});
   }
   
 class DBData
