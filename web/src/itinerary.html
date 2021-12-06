@@ -231,6 +231,14 @@
 		<div id="batch-upload-modal" style="display:none">
 			<div id="batch-modal-container">
 				<p>Select JPEG files to upload. Should the file match a timespan and rough location of an event on the calendar, it will automatically be added to the calendar. those that have no event will remain here. You may click on one of these photos to view the time it was taken and the latitude and location location if that data is available. If you then close this modal and create an event at that time and location, the photo will automatically be added. Closing this modal does not clear the photos; they will remain here if you open it again. You may add more photos at any time</p>
+				<div>
+					<label>Latitude</label>
+					<p id="lat-text"></p>
+					<label>Longitude</label>
+					<p id="lng-text"></p>
+					<label>Time</label>
+					<p id="time-text"></p>
+				</div>
 				<input id="photoList" type="file" multiple accept="image/jpeg, image/jpg" onchange="CaffeineExclamationPoint()" />
 				<div id="uploadedPhotoContainer">
 				</div>

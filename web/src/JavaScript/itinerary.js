@@ -50,7 +50,7 @@ function createObjectURL(object)
 
 function CaffeineExclamationPoint() 
 {
-	function addPhoto(url, index)
+	function addPhoto(url, index, lat, lng, time)
 	{
 		let container = document.getElementById("uploadedPhotoContainer");
 
@@ -63,6 +63,21 @@ function CaffeineExclamationPoint()
 		img.alt = "batch photo #" + index;
 		div.appendChild(img);
 		container.appendChild(div);
+
+		console.log("hello ppls");
+
+		let l = document.getElementById("lat-text");
+	
+		let n = document.getElementById("lng-text");
+		let t = document.getElementById("time-text");
+
+		img.addEventListener("click", _=>
+		{
+			console.log("Hello");
+			l.textContent = lat;
+			n.textContent = lng;
+			t.textContent = time;
+		});
 	}
 
 	let photoList = document.getElementById("photoList");
@@ -120,7 +135,7 @@ function CaffeineExclamationPoint()
 
 				if (!found)
 				{
-					addPhoto(createObjectURL(y), q);
+					addPhoto(createObjectURL(y), q, latNum, lngNum, trueTime);
 					q++;
 				}
 			}
