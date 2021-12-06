@@ -11,11 +11,14 @@ let inEditMode = false;
 var places = [];
 
 
+
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 function initMap()
 {
+
 	let modalContainer = document.getElementById('item-modal-map');
 	let mapContainer = document.getElementById('map-with-multiple-pins');
+
 	modalMap = new google.maps.Map(modalContainer, {
 		zoom: 12,
 		center: { lat: 37, lng: -95 },
@@ -30,8 +33,9 @@ function initMap()
 	  zoom: 12,
       center: { lat: 40, lng: -75},
       mapTypeControl: false,
+
     });
-	
+
 	directionsService = new google.maps.DirectionsService();
 	matrixService = new google.maps.DistanceMatrixService();
 	directionsRenderer = new google.maps.DirectionsRenderer();
@@ -1668,6 +1672,13 @@ function codeAddress(address) {
             map: mapWithPins,
             position: results[0].geometry.location
             });
+             marker.addListener("click", () => {
+                infowindow.open({
+                  anchor: marker,
+                  map,
+                  shouldFocus: false,
+                });
+              });
             //marker.setMap(marker);
         } else {
                 alert('Geocode was not successful for the following reason: ' + status);
@@ -1676,6 +1687,7 @@ function codeAddress(address) {
     }
 }
 function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService) {
+    var infowindow = new google.maps.InfoWindow();
 	const selectedMode = document.getElementById("mode").value;
 	let startAddress =document.getElementById("start").value;
 	let endAddress =  document.getElementById("end").value;
@@ -1703,8 +1715,17 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixS
 		avoidTolls: false
 	};
 	  matrixService.getDistanceMatrix(request).then((response) =>{
-		  console.log(response["rows"][0]["elements"][0]["distance"]["text"]);
-		  console.log(response["rows"][0]["elements"][0]["duration"]["text"]);
+	      //Failed infoWindow </3
+	      //infowindow.setContent("Distance:" +response["rows"][0]["elements"][0]["distance"]["text"] +
+	      //"Time: " + response["rows"][0]["elements"][0]["duration"]["text"]);
+
+		 // console.log(response["rows"][0]["elements"][0]["distance"]["text"]);
+		 // console.log(response["rows"][0]["elements"][0]["duration"]["text"]);
+
+		  var minutes = document.getElementById("minutes");
+		  var distance = document.getElementById("distance");
+		  minutes.innerHTML = response["rows"][0]["elements"][0]["duration"]["text"];
+		  distance.innerHTML = response["rows"][0]["elements"][0]["distance"]["text"]
 	  })
   }
   
