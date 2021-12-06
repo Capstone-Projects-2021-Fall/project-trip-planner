@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					}
 				}
 
-				if (isItemValid(title, start, end) && modalMarker) 
+				if (isItemValid(title, start, end) && modalMarker && modalMarker.getMap()) 
 				{
 					addOrUpdateItem(Number(latField.value), Number(longField.value), IsNullOrWhitespace(addressField.value) ? null : addressField.value);
 					//collapse the item modal.
@@ -628,6 +628,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 					}
 					else
 					{
+						if (!modalMap.getMap())
+						{
+							modalMap.setMap(map);
+						}
+
 						modalMap.setCenter(loc);
 					}
 
