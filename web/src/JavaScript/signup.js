@@ -59,6 +59,8 @@ function CallAPI()
 			body: raw,
 		};
 
+		console.log(raw);
+
 		// make API call with parameters and use promises to get response
 		fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateNewUserNormalLogin", requestOptions).then(response =>
 		{

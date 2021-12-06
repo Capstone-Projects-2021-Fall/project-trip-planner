@@ -1093,15 +1093,34 @@ document.addEventListener('DOMContentLoaded', async function ()
 					let itemLatitude = entry["_def"]["extendedProps"]["Latitude"];
 					let itemLongitude = entry["_def"]["extendedProps"]["Longitude"];
 					let itemAddress = entry["_def"]["extendedProps"]["Address"];
-					let itemStart = entry["_instance"]["range"]["start"].toJSON();
-					let itemEnd = entry["_instance"]["range"]["end"].toJSON();
+					let itemStart = entry.start;
+					let itemEnd = entry.end;
 					let itemPhotos = entry["_def"]["extendedProps"]["Photos"]
 
 					let itineraryStart = GetDateTimeOrNull(start.value);
 					let itineraryEnd = GetDateTimeOrNull(end.value);
 
+					console.log("\nitem start:");
+					console.log(itemStart);
+					console.log("item end:");
+					console.log(itemEnd);
+
+
+
+					itineraryStart.setDate(itineraryStart.getDate() + 1);
+					itineraryStart.setHours(0, 0, 0, 0);
+
+					itineraryEnd.setDate(itineraryEnd.getDate() + 2);
+					itineraryEnd.setHours(0, 0, 0, 0);
+
 					let itemStartObj = GetDateTimeOrNull(itemStart);
 					let itemEndObj = GetDateTimeOrNull(itemEnd);
+
+					console.log(itemStartObj);
+					console.log(itemEndObj);
+					console.log(itineraryStart);
+					console.log(itineraryEnd);
+
 					//if they are invalid, set them aside to be deleted.
 					if (itemStartObj < itineraryStart || itemEndObj <= itineraryStart || itemStartObj >= itineraryEnd || itemEndObj > itineraryEnd)
 					{
@@ -1110,6 +1129,14 @@ document.addEventListener('DOMContentLoaded', async function ()
 					//else, add to the save list.
 					else 
 					{
+						itemStart = new Date();
+						itemEnd = new Date();
+
+						itemStart.setUTCFullYear(itemStartObj.getFullYear(), itemStartObj.getMonth(), itemStartObj.getDate());
+						itemStart.setUTCHours(itemStartObj.getHours(), itemStartObj.getMinutes(), itemStartObj.getSeconds(), 0);
+
+						itemEnd.setUTCFullYear(itemEndObj.getFullYear(), itemEndObj.getMonth(), itemEndObj.getDate());
+						itemEnd.setUTCHours(itemEndObj.getHours(), itemEndObj.getMinutes(), itemEndObj.getSeconds(), 0);
 
 						saveEvents["ItineraryItems"].push({
 							"ActivityName": itemTitle,
