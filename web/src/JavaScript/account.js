@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', _ =>
 	}
 	else 
 	{
+		let createNew = document.getElementById("create-new-btn");
+		createNew.addEventListener("click", function ()
+		{
+			document.location = "itinerary.html";
+		});
 
 		// create a JSON object with parameters for API call and store in a variable
 		var requestItinerary = {

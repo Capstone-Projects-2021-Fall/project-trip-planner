@@ -610,11 +610,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
-		function submitAddressField(force = false)
+		async function submitAddressField(force = false)
 		{
 			if (!IsNullOrWhitespace(addressField.value))
 			{
-				geocoder.geocode({ address: addressField.value }).then(x =>
+				await geocoder.geocode({ address: addressField.value }).then(x =>
 				{
 					const { results } = x;
 
@@ -647,7 +647,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		};
 
 		//wire up the address to mark the map.
-		addressField.onblur = _ => submitAddressField();
+		addressField.onblur = async _ => await submitAddressField();
 
 		autoUpdateCoordBox.onclick = _ =>
 		{
