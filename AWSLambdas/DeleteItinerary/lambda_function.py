@@ -23,18 +23,13 @@ def lambda_handler(event, context):
         cursor = connection.cursor()
 
         body = json.loads(event['body'])
-        title = body['itineraryName']
-        startDate = body['startDate']
-        endDate = body['endDate']
-        userID = body['userID']
-        addlInfo = body['additionalInformation']
-
-        startDate = dateutil.parser.isoparse(startDate).date()
-        endDate = dateutil.parser.isoparse(endDate).date()
-
-        args = [title, startDate, endDate, userID, addlInfo, None, None, None]
         
-        resultTuple = pymysql_CallProcAndGetArgs(cursor, "CreateItinerary", args)
+        userID = int(body["UserID"])
+        itineraryID = int(body["ItineraryID"])
+
+        args = [userID, itineraryID, None, None]
+        
+        resultTuple = pymysql_CallProcAndGetArgs(cursor, "DeleteItinerary", args)
         
         newArgs = resultTuple[0]
         results = resultTuple[1]
@@ -42,10 +37,8 @@ def lambda_handler(event, context):
         connection.commit()
         connection.close()
         
-        itineraryID = newArgs[5];
-        
-        if (itineraryID is None):
-            errData = { "errorCode" : newArgs[6], "errorMessage" : newArgs[7] }
+        if (newArgs[2] != 0):
+            errData = { "errorCode" : newArgs[2], "errorMessage" : newArgs[3] }
             #409 is a generic conflict error. that's good enough for us.
             return {
                 'statusCode': 409,
@@ -54,5 +47,5 @@ def lambda_handler(event, context):
         else:
             return {
                 'statusCode': 200,
-                'body': itineraryID
+                'body': json.dumps('ok')
             }  

@@ -9,10 +9,6 @@ password = 'TripPlanner'
 database_name = 'database'
 
 
-"""
-Function is used to list all itineraries that the user has created. Used in the account.html page
-This should be a GET request with the userid passed along via a cookie, but idk how to get cookies cross origin and i'm not trying to.
-"""
 def lambda_handler(event, context):
     # TODO implement
     http_method = event["httpMethod"]
@@ -22,13 +18,19 @@ def lambda_handler(event, context):
         cursor = connection.cursor()
 
         body = json.loads(event['body'])
-        id = body["id"];
+        
+        itineraryQuery = body["itineraryQuery"]
+        activityQuery = body["activityQuery"]
+        lat = body["latitude"]
+        lng = body["longitude"]
+        
+        dist = body["maxDistanceAway"]
         
 
         #Call stored procedure with hard coded arguments and store to return to website
         #(CHANGE NUMBER 2 WHEN USER ACCOUNT FEATURE WORKS)        
-        args = [id, None, None]
-        resultTuple = pymysql_CallProcAndGetArgs(cursor, 'RetrieveAllItinerariesForUser', args)
+        args = [itineraryQuery, activityQuery, lat, lng, dist]
+        resultTuple = pymysql_CallProcAndGetArgs(cursor, 'FindItinerariesAdvanced', args)
         
         output = resultTuple[1]
     
