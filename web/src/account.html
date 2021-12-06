@@ -13,6 +13,7 @@
 
 	<link href="CSS/common.css" rel="stylesheet" type="text/css" />
 	<link href="CSS/itineraryItem.css" rel="stylesheet" type="text/css" />
+	<link href="CSS/account.css" rel="stylesheet" type="text/css" />
 	<link href='CSS/navbar.css' rel='stylesheet' />
 	<link href='CSS/account.css' rel='stylesheet' />
 
@@ -25,11 +26,11 @@
 <body>
 	<!-- Navbar -->
 	<nav class="w3-top">
-		<div class="w3-bar w3-red w3-card w3-left-align w3-large">
+		<div class="w3-bar blue-bg w3-card w3-left-align w3-large">
 			<!--Common to both mini and regular -->
 			<a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
 			<!--Mini navbar dropdown toggle. This now works -->
-			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large blue-bg" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
 			<!--Regular navbar content-->
 			<div class="w3-hide-small account-buttons">
 				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="login-your-account">placeholder</a>
@@ -58,36 +59,37 @@
 		</div>
 	</nav>
 	<!-- Header -->
-	<header class="w3-container w3-red w3-center" style="padding:128px 16px">
+	<header class="blue-bg w3-center pad-header">
 		<h1 class="w3-margin w3-jumbo" id="welcome-user">Welcome!</h1>
-		<div class="account-div">
-			<label for="fname">First Name <i>(Optional)</i>:</label>
-			<input type="text" name="fname" id="fname" readonly />
-		</div>
-		<div class="account-div">
-			<label for="lname">Last Name <i>(Optional)</i>:</label>
-			<input type="text" name="fname" id="lname" readonly />
-		</div>
-		<div class="account-div">
-		<label for="fname">Date of Birth <i>(Optional)</i>:</label>
-		<input type="date" name="dob" id="dob" readonly />
-		</div>
-		<div class="account-div">
-			<button type="button" id="enable-edit-btn">Edit</button>
-			<button type="button" id="revert-btn" disabled>Revert Changes</button>
-			<button type="button" id="save-btn" disabled>Save</button>
+		<div id="header-formatter">
+			<div class="header-container">
+				<label class="user" id="fname-label" for="fname">First Name <i>(Optional)</i>:</label>
+				<input type="text" name="fname" id="fname" disabled />
+			</div>
+			<div class="header-container">
+				<label class="user" id="lname-label" for="lname">Last Name <i>(Optional)</i>:</label>
+				<input type="text" name="fname" id="lname" disabled />
+			</div>
+			<div class="header-container">
+				<label class="user" id="dob-label" for="dob">Date of Birth <i>(Optional)</i>:</label>
+				<input type="date" name="dob" id="dob" disabled />
+			</div>
+			<div class="header-container header-btn-container">
+				<button type="button" id="enable-edit-btn">Edit</button>
+				<button type="button" id="revert-btn" disabled>Revert Changes</button>
+				<button type="button" id="save-btn" disabled>Save</button>
+			</div>
 		</div>
 	</header>
 	<!-- Main Content -->
-	<main class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-		<div class="w3-content">
-			<div class="w3-center">
-				<button onclick="document.location='itinerary.html'" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create New Itinerary</button>
-			</div>
-			<div>
-				<h1 class="w3-center w3-padding-large">Your Itineraries</h1>
-				<div id="itinerary-list-holder" class="w3-center"></div>
-			</div>
+	<main class="account-main">
+		<div class="account-button-holder">
+			<button type="button" id="create-new-btn" class="w3-button w3-black w3-padding-large w3-large">Create New Itinerary</button>
+			<button type="button" id="batch-photo-btn" class="w3-button w3-black w3-padding-large w3-large">Start Itinerary From Photos</button>
+		</div>
+		<div>
+			<h1 class="w3-center w3-padding-large">Your Itineraries:</h1>
+			<div id="itinerary-list-holder" class="w3-center"></div>
 		</div>
 	</main>
 </body>

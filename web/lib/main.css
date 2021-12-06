@@ -958,6 +958,7 @@ A VERTICAL event
     flex-grow: 1;
     flex-shrink: 1;
     min-height: 0; /* important for allowing to shrink all the way */
+    margin-left: px;
   }
 
 .fc-v-event .fc-event-title { /* will have fc-sticky on it */
@@ -1211,7 +1212,7 @@ A VERTICAL event
     position: absolute; /* absolute WITHIN the harness */
     top: 0; /* for when not yet positioned */
     bottom: 0; /* " */
-    left: 0;
+    left: 4px;
     right: 0;
   }
 .fc-timegrid-event-harness-inset .fc-timegrid-event,

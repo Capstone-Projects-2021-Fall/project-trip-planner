@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', _ =>
 	}
 	else 
 	{
+		let createNew = document.getElementById("create-new-btn");
+		createNew.addEventListener("click", function ()
+		{
+			document.location = "itinerary.html";
+		});
 
 		// create a JSON object with parameters for API call and store in a variable
 		var requestItinerary = {
@@ -63,9 +68,9 @@ document.addEventListener('DOMContentLoaded', _ =>
 
 							editMode = true;
 
-							fnameField.readOnly = false;
-							lnameField.readOnly = false;
-							dobField.readOnly = false;
+							fnameField.disabled = false;
+							lnameField.disabled = false;
+							dobField.disabled = false;
 
 							revertBtn.disabled = false;
 							saveBtn.disabled = false;
@@ -91,9 +96,9 @@ document.addEventListener('DOMContentLoaded', _ =>
 						revertBtn.disabled = true;
 						if (editMode)
 						{
-							fnameField.readOnly = true;
-							lnameField.readOnly = true;
-							dobField.readOnly = true;
+							fnameField.disabled = true;
+							lnameField.disabled = true;
+							dobField.disabled = true;
 
 							let userData =
 							{

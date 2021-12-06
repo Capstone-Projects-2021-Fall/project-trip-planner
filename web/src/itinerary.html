@@ -23,29 +23,31 @@
 	<script src="JavaScript/itinerary.js"></script>
 </head>
 <body>
-	<header id="main-itinerary-data">
-		<div id="itinerary-title-container">
-			<label for="itinerary-title" id="itinerary-title-label" class="readonly-aware-content readonly-content">Itinerary Name:</label>
-			<input type="text" id="itinerary-title" class="readonly-aware-input-field" readonly/>
-		</div>
-		<div id="itinerary-date-range-container">
-			<!--<p class="hide-in-view-mode">-->
-			<p id="explain-dates" class="hide-in-view-mode readonly-aware-content readonly-content">
-				Set or Update the start and end dates. Events that fall out of range will be kept until the itinerary is saved. Invalid dates will go back to their previous value, if applicable.
-			</p>
-			<div id="item-start-end-container">
-				<div id="itinerary-startdate-container">
-					<label for="itinerary-startdate" id="itinerary-startdate-label" class="readonly-aware-content readonly-content">Start Date:</label>
-					<input type="date" id="itinerary-startdate" class="readonly-aware-input-field" readonly/>
-				</div>
-				<div id="itinerary-enddate-container">
-					<label for="itinerary-title" id="itinerary-enddate-label" class="readonly-aware-content readonly-content">End Date:</label>
-					<input type="date" id="itinerary-enddate" class="readonly-aware-input-field" readonly/>
+	<header class="dark-bg">
+		<div id="main-itinerary-data">
+			<div id="itinerary-title-container">
+				<label for="itinerary-title" id="itinerary-title-label" class="readonly-aware-content-light readonly-content-light">Itinerary Name:</label>
+				<input type="text" id="itinerary-title" class="readonly-aware-input-field" readonly />
+			</div>
+			<div id="itinerary-date-range-container">
+				<!--<p class="hide-in-view-mode">-->
+				<p id="explain-dates" class="hide-in-view-mode readonly-aware-content-light readonly-content-light">
+					Set or Update the start and end dates. Events that fall out of range will be kept until the itinerary is saved. Invalid dates will go back to their previous value, if applicable.
+				</p>
+				<div id="item-start-end-container">
+					<div id="itinerary-startdate-container">
+						<label for="itinerary-startdate" id="itinerary-startdate-label" class="readonly-aware-content-light readonly-content-light">Start Date:</label>
+						<input type="date" id="itinerary-startdate" class="readonly-aware-input-field" readonly />
+					</div>
+					<div id="itinerary-enddate-container">
+						<label for="itinerary-title" id="itinerary-enddate-label" class="readonly-aware-content-light readonly-content-light">End Date:</label>
+						<input type="date" id="itinerary-enddate" class="readonly-aware-input-field" readonly />
+					</div>
 				</div>
 			</div>
 			<div id="itinerary-description-container">
-				<label for="itinerary-title" id="itinerary-description-label" class="readonly-aware-content readonly-content">Description <i>(optional)</i>:</label>
-				<input type="text" id="itinerary-description" class="readonly-aware-input-field" readonly/>
+				<label for="itinerary-description" id="itinerary-description-label" class="readonly-aware-content-light readonly-content-light">Description <i>(optional)</i>:</label>
+				<input type="text" id="itinerary-description" class="readonly-aware-input-field" readonly />
 			</div>
 		</div>
 	</header>
@@ -57,22 +59,22 @@
 			<!--Top part, aka the modal header: title, timeframe, description.-->
 			<div id="item-modal-top">
 				<div id="item-modal-title-container">
-					<label for="item-modal-title" class="item-modal-label readonly-aware-content readonly-content">Activity Name:</label>
-					<input type="text" name="itineraryTitle" id="item-modal-title" class="readonly-aware-input-field" readonly/>
+					<label for="item-modal-title" class="item-modal-label readonly-aware-content-light readonly-content-light">Activity Name:</label>
+					<input type="text" name="itineraryTitle" id="item-modal-title" class="readonly-aware-input-field" readonly />
 				</div>
 				<div id="item-modal-timeframe">
 					<div id="item-modal-start-container">
-						<label for="item-modal-start" class="item-modal-label readonly-aware-content readonly-content">Start Time:</label>
-						<input type="datetime-local" name="itineraryStart" id="item-modal-start" class="readonly-aware-input-field" readonly/>
+						<label for="item-modal-start" class="item-modal-label readonly-aware-content-light readonly-content-light">Start Time:</label>
+						<input type="datetime-local" name="itineraryStart" id="item-modal-start" class="readonly-aware-input-field" readonly />
 					</div>
 					<div id="item-modal-end-container">
-						<label for="item-modal-end" class="item-modal-label readonly-aware-content readonly-content">End Time:</label>
-						<input type="datetime-local" name="itineraryEnd" id="item-modal-end" class="readonly-aware-input-field" readonly/>
+						<label for="item-modal-end" class="item-modal-label readonly-aware-content-light readonly-content-light">End Time:</label>
+						<input type="datetime-local" name="itineraryEnd" id="item-modal-end" class="readonly-aware-input-field" readonly />
 					</div>
 				</div>
 				<div id="item-modal-description-container">
-					<label for="item-modal-description" class="item-modal-label readonly-aware-content readonly-content">Additional Information <i>(Optional)</i>:</label>
-					<input type="text" name="itineraryDescription" id="item-modal-description" class="readonly-aware-input-field" readonly/>
+					<label for="item-modal-description" class="item-modal-label readonly-aware-content-light readonly-content">Additional Information <i>(Optional)</i>:</label>
+					<input type="text" name="itineraryDescription" id="item-modal-description" class="readonly-aware-input-field" readonly />
 				</div>
 			</div>
 			<div id="item-modal-middle">
@@ -80,7 +82,11 @@
 				<div id="item-modal-left">
 					<div id="item-modal-address-container">
 						<!-- Anyone want to make this more concise?-->
-						<p id="address-description" class="hide-in-view-mode">Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address, though you should provide an address that is specific enough that everyone going there can reliably find it. If you cannot properly show the location of the event with just an address, as is the case with remote areas or large properties, you can enable the advanced location option, which allows you to set a location by geographical coordinates instead. This also unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.</p>
+						<p id="address-description" class="hide-in-view-mode">
+							Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address in standardized address format, or coordinates* of the location if necessary
+
+							<br/><br/>*This unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.
+						</p>
 						<div id="address-div">
 							<label for="item-modal-address" class="item-modal-label readonly-aware-content readonly-content">Address:</label>
 							<input type="text" id="item-modal-address" class="readonly-aware-input-field" />
@@ -95,7 +101,7 @@
 							<label for="item-modal-radio-address" class="item-modal-label readonly-aware-content readonly-content">Use the provided address.</label>
 						</div>
 						<div id="radio-latlong-div">
-							<input type="radio" id="item-modal-radio-latlong" class="item-modal-radio readonly-aware-radio-btn" name="address-mode" value="LatLong" disabled/>
+							<input type="radio" id="item-modal-radio-latlong" class="item-modal-radio readonly-aware-radio-btn" name="address-mode" value="LatLong" disabled />
 							<label for="item-modal-radio-latlong" class="item-modal-label readonly-aware-content readonly-content">Allow me to adjust the coordinates directly.</label>
 						</div>
 						<div id="item-modal-coordinate-container">
@@ -152,13 +158,13 @@
 		<!--This is the view mode display for a user who reaches this page while logged out. This will not collapse into any other modes-->
 		<!--If made to display, the hrefs will do nothing-->
 		<div id="logged-out-wrapper" class="not-logged-out">
-			<p id="logged-out-note">You aren't logged in. <a href="signup.html">Sign Up</a> or <a href="login.html">Log In</a> to edit this itinerary or a copy of it. Or, go <a href="javascript:history.back()">back to the previous page</a>.</p>
+			<p id="logged-out-note" class="footer-text-left">You aren't logged in. <a href="signup.html">Sign Up</a> or <a href="login.html">Log In</a> to edit this itinerary or a copy of it. Or, go <a href="javascript:history.back()">back to the previous page</a>.</p>
 		</div>
 		<!--This is the view mode display for a user who is logged in, but is not the person who created this page. This will collapse into "edit a copy" mode if they choose to create a copy.-->
 		<!--If made to display, the buttons will do nothing-->
 		<div id="view-mode-other" class="not-view-mode-other">
-			<p>You don't have Permission to edit this itinerary, but you can create a copy and edit that instead. </p>
-			<div>
+			<div id="other-copy-wrapper">
+				<p class="footer-text-left">You don't have Permission to edit this itinerary, but you can create a copy and edit that instead. </p>
 				<button id="other-create-copy" type="button">Create an editable Copy</button>
 			</div>
 			<div>

@@ -13,12 +13,42 @@ body, h1, h2, h3, h4, h5, h6
 	font-size: 200px
 }
 
-.w3-red
+.blue-bg
 {
-	background-color: #2C3E50 !important
+	background-color: #2C3E50;
+	color: white;
 }
 
 .form-group
 {
 	display: block;
+	width: 100%;
+}
+
+.jsb
+{
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 8px;
+}
+
+	.jsb:hover
+	{
+		color: rgb(99, 97, 97);
+	}
+
+#login-header
+{
+	font-size: 5em;
+}
+
+/*in case you have color. The margin doesn't quite go all the way down, but the padding will take care of that*/
+.fix-w3-header
+{
+	margin-top:40px;
+	padding-top: 10px;
 }

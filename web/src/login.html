@@ -23,11 +23,11 @@
 <body>
 	<!-- Navbar -->
 	<nav class="w3-top">
-		<div class="w3-bar w3-red w3-card w3-left-align w3-large">
+		<div class="w3-bar blue-bg w3-card w3-left-align w3-large">
 			<!--Common to both mini and regular -->
 			<a href="homepage.html" target="_self" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
 			<!--Mini navbar dropdown toggle. This now works -->
-			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+			<a class="w3-bar-item w3-button show-small w3-right w3-padding-large w3-hover-white w3-large blue-bg" href="javascript:void(0);" onclick="MenuToggle()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
 			<!--Regular navbar content-->
 			<div class="w3-hide-small account-buttons">
 				<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="login-your-account">placeholder</a>
@@ -60,9 +60,8 @@
 		<h1 class="w3-margin w3-jumbo">Login Page under construction...</h1>
 		<button onclick="document.location='login.html'" class="w3-button w3-green w3-padding-large w3-large w3-margin-top">Log In Here!</button>
 	</header>-->
-	<main id="main-holder" class="w3-container w3-red w3-center" style="padding:128px 16px">
-		<h1 id="login-header">Login</h1>
-
+	<header id="main-holder" class="blue-bg w3-center fix-w3-header">
+		<h2>Login</h2>
 		<div id="login-error-msg-holder" style="visibility:hidden">
 			<p id="login-error-msg"></p>
 		</div>
@@ -72,6 +71,6 @@
 			<input type="password" name="password" id="password" class="login-form-field" placeholder="Password">
 			<button value="Login" id="login-form-submit" type="button">Login</button>
 		</form>
-	</main>
+	</header>
 </body>
 </html>

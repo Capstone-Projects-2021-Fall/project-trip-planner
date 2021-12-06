@@ -32,6 +32,40 @@
 	display: block;
 }
 
+header
+{
+	/* margin-bottom: 20px; */
+	/* height: 120px; */
+	display: flex;
+	margin-top: 40px;
+	padding-top: 10px;
+}
+
+.user-search-refine
+{
+	margin: 30px auto;
+	text-align: center;
+	font-size:16px;
+	/* height: 40px; */
+	/* margin-top: 40px; */
+	/* padding-top: 30px; */
+	/* min-width: 100px; */
+}
+
+.user-search-results
+{
+	min-height: 300px;
+	margin: 0px;
+	width: 100%;
+	height: auto;
+}
+
+#fix-formatting
+{
+	padding: 20px 0px;
+	margin: 0 auto;
+}
+
 /* Responsive layout - makes a one column layout instead of a two-column layout */
 /*
 @media (max-width: 800px) {

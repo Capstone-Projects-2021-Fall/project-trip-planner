@@ -3,3 +3,29 @@
 	display: block;
 	text-align: center;
 }
+
+.content-item
+{
+	text-align: center;
+	width: 75%;
+	margin: 0 auto;
+}
+
+	.content-item p
+	{
+		font-size: 18px;
+	}
+
+.login-signup-homepage
+{
+	width: 200px;
+	margin: 0px 10px;
+}
+
+.homepage-header
+{
+	margin-top: 40px;
+	padding-top: 10px;
+	text-align: center;
+	padding-bottom: 20px;
+}

@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 
 			let hasPhotos = false;
-			event.extendedProps.Photos.forEach(function(x, index)
+			event.extendedProps.Photos.forEach(function (x, index)
 			{
 				addPhoto(photoCollection, x, index);
 				hasPhotos = true;
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					}
 				}
 
-				if (isItemValid(title, start, end) && modalMarker) 
+				if (isItemValid(title, start, end) && modalMarker && modalMarker.getMap()) 
 				{
 					addOrUpdateItem(Number(latField.value), Number(longField.value), IsNullOrWhitespace(addressField.value) ? null : addressField.value);
 					//collapse the item modal.
@@ -478,7 +478,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 			let readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content");
 			Array.prototype.forEach.call(readonlyAwareLabels, x =>
 			{
-				x.classList.add("readonly-content");
+				if (!x.classList.contains("readonly-content"))
+				{
+					x.classList.add("readonly-content");
+				}
+			});
+
+			readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content-light");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				if (!x.classList.contains("readonly-content-light"))
+				{
+					x.classList.add("readonly-content-light");
+				}
 			});
 
 
@@ -501,6 +513,12 @@ document.addEventListener('DOMContentLoaded', async function ()
 			Array.prototype.forEach.call(readonlyAwareLabels, x =>
 			{
 				x.classList.remove("readonly-content");
+			});
+
+			readonlyAwareLabels = itemModal.getElementsByClassName("readonly-aware-content-light");
+			Array.prototype.forEach.call(readonlyAwareLabels, x =>
+			{
+				x.classList.remove("readonly-content-light");
 			});
 
 			//window.onclick = null;
@@ -592,11 +610,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
-		function submitAddressField(force = false)
+		async function submitAddressField(force = false)
 		{
 			if (!IsNullOrWhitespace(addressField.value))
 			{
-				geocoder.geocode({ address: addressField.value }).then(x =>
+				await geocoder.geocode({ address: addressField.value }).then(x =>
 				{
 					const { results } = x;
 
@@ -610,6 +628,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 					}
 					else
 					{
+						if (!modalMap.getMap())
+						{
+							modalMap.setMap(map);
+						}
+
 						modalMap.setCenter(loc);
 					}
 
@@ -629,7 +652,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		};
 
 		//wire up the address to mark the map.
-		addressField.onblur = _ => submitAddressField();
+		addressField.onblur = async _ => await submitAddressField();
 
 		autoUpdateCoordBox.onclick = _ =>
 		{
@@ -785,7 +808,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				timeGridAnyDay: {
 					type: 'timeGrid',
 					duration: {
-						days: 4
+						days: 7
 					},
 					buttonText: 'Whole Trip'
 				},
