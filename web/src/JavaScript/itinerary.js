@@ -1697,7 +1697,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 		method: 'GET', mode: "no-cors",
 		};
 
-		fetch('https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + startAddress + 'destinations=' + endAddress + '&key=' + 'AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY', config).then(function (response) {
+		fetch('https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + startAddress + '&destinations=' + endAddress + '&key=' + 'AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY', config).then(function (response) {
 		
 		//below is url from googles example
 		//fetch('https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101%2C-73.89188969999998&destinations=40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626&key=' + 'AIzaSyAGbze5amXmflZVecAENrKG2sC-r_kecKY', config).then(function (response) {
