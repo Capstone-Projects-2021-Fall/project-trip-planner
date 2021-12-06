@@ -109,3 +109,53 @@ describe('fillItineraries', function () {
 
   });
 });
+
+//INTEGRATION TESTS
+
+//check itinerary creation and event filling
+
+//first check that itinerary exists by checking if it is in the itinerary list
+describe('fillItineraries', function () {
+  beforeEach(function() {
+    return JSDOM.fromFile('web/src/itinerarySearch.html')
+      .then((dom) => {
+        global.window = dom.window;
+        global.document = window.document;
+      });
+  })
+  it ('Checks that fillItineraries updated the text of the element based on the list given to it. In this case, it is given an empty list and the text should tell the user they have no itineraries', function () {
+
+    fillItineraries(document.getElementById('itinerary-list-holder'), '', 200, true, false, false);
+    expect(document.getElementById('itinerary-list-holder').innerHTML).toStrictEqual('<div class=\"itinerary-empty\">This user has no itineraries.</div>');
+
+  });
+});
+
+//then check if event entered is a string or null
+
+describe('GetValidStringOrNull', () => {
+  it('returns the string if valid, returns null if whitespace. Testing a string that is not white space, so should return the string', () => {
+    expect(GetValidStringOrNull("valid string")).toBe("valid string");
+  });
+});
+
+//check in a different way if event entered is a string or white space
+describe('IsNullOrWhitespace', () => {
+  it('returns false if valid, returns true if whitespace. Testing a string that is not white space, so should return false', () => {
+    expect(IsNullOrWhitespace("not whitespace")).toBe(false);
+  });
+});
+
+
+//then check if date of event is valid
+describe('checks that date 1/14/2021 is valid', () => {
+  it('returns the date if it is a valid date. This test inputs a valid date so it should return a date', () => {
+
+    expect(GetDateTimeOrNull('1/14/2021')).toStrictEqual(new Date('1/14/2021'));
+
+  });
+});
+
+
+
+
