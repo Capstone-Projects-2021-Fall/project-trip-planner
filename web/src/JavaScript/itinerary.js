@@ -1718,7 +1718,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixS
 	};
 
 
-	geocoder.geocode( { 'address': startAddress}, function(results, status) {
+	geocoder.geocode( { 'address': endAddress}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK && startAddress != endAddress) {
 		matrixService.getDistanceMatrix(request).then((response) =>{
 			infowindow.close();
@@ -1726,8 +1726,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixS
 			"Time: " + response["rows"][0]["elements"][0]["duration"]["text"]);
 			infowindow.open(mapWithPins, new google.maps.Marker({
 			  position: new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()),
-			  map: mapWithPins,
-			  //icon: locations[i][3]
+			  map: mapWithPins
 			}));
 		});
 	}
