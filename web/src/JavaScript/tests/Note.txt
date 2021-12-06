@@ -1,0 +1,16 @@
+In order to use these, the following scripts will need to be altered: 
+	common.js
+	itinerary.js
+specifically, the following function calls must be altered with the word "export" before the function definition (that is, "export function" instead of "function").
+	
+itinerary.js:
+	initMap
+
+common.js:
+	fillItineraries
+	GetDateTimeOrNull
+	GetDateOrNull
+	IsNullOrWhitespace
+	GetValidStringOrNull
+
+the current web design is incompatible with modular testing, (it expects "script" type js instead of "module" type js, and the fix is more involved than just switching the types).
