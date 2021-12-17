@@ -13,11 +13,14 @@
 #batch-modal-container
 {
 	background-color: lightgray;
+	position: absolute;
 	margin: auto; /* 15% from the top and centered */
-	/* padding: 10px; */
+	top: 20%;
+	left: 20%;
+	padding: 10px;
 	border: 1px solid #888;
-	width: 50%; /* Could be more or less, depending on screen size */
-	height: 50%; /* Full height */
+	width: 60%; /* Could be more or less, depending on screen size */
+	height: 60%; /* Full height */
 	display: flex;
 	flex-direction: column;
 	align-content: center;

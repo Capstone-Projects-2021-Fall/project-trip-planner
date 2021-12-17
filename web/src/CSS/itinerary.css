@@ -46,7 +46,7 @@ body
 
 /*Hidden Content*/
 .hide-in-view-mode, .item-modal-collapsed, .hidden-on-address-mode, .nothing-to-change, .not-create-mode, .not-logged-out, .not-view-mode-other,
-.not-view-mode-self, .not-copy-edit-mode, .not-normal-edit-mode, .readonly-item-hide-button, .photo-modal-hidden, .no-photos-attached
+.not-view-mode-self, .not-copy-edit-mode, .not-normal-edit-mode, .readonly-item-hide-button, .photo-modal-hidden, .no-photos-attached, .no-metadata
 {
 	display: none !important;
 }
@@ -682,4 +682,45 @@ item-modal-no-photo
 	color: #bbb;
 	text-decoration: none;
 	cursor: pointer;
+}
+
+#photo-metadata
+{
+	position:absolute;
+	left: 5px;
+	top: 5px;
+	font-size:14px;
+	color: white;
+}
+
+.meta-selected
+{
+	border: 4px solid yellow;
+}
+
+hr
+{
+	margin: 2px 0px;
+}
+
+#batch-modal-container p
+{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#upload-info
+{
+	margin-top: 5px;
+}
+
+.metadata-div
+{
+	display: block;
+	margin: 5px 0px;
+}
+
+#lat-text, #lng-text, #time-text
+{
+	display:inline;
 }

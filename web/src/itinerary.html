@@ -88,7 +88,7 @@
 						<p id="address-description" class="hide-in-view-mode">
 							Please provide a location for this event. You may provide a general location (i.e. Baltimore), or a specific address in standardized address format, or coordinates* of the location if necessary
 
-							<br/><br/>*This unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.
+							<br /><br />*This unlocks the ability to move the marker around the map; you can use the address field as a starting point, then click or drag the marker around the map to a more accurate location.
 						</p>
 						<div id="address-div">
 							<label for="item-modal-address" class="item-modal-label readonly-aware-content readonly-content">Address:</label>
@@ -137,6 +137,12 @@
 				</div>
 			</div>
 			<div id="photo-modal" class="photo-modal-hidden">
+				<div id="photo-metadata" class="no-metadata">
+					<p id="latitude-metadata"></p>
+					<p id="longitude-metadata"></p>
+					<p id="location-metadata"></p>
+					<p id="timestamp-metadata"></p>
+				</div>
 				<!-- The Close Button -->
 				<span aria-label="close image" id="photo-close">&times;</span>
 				<!-- Modal Content (The Image) -->
@@ -145,7 +151,7 @@
 		</div>
 	</div>
 
-    <div id="floating-panel">
+	<div id="floating-panel">
 		<b>Start: </b>
 		<select id="start">
 		</select>
@@ -153,12 +159,12 @@
 		<select id="end">
 		</select>
 		<b>Mode of Travel: </b>
-      <select id="mode">
-        <option value="DRIVING">Driving</option>
-        <option value="WALKING">Walking</option>
-        <option value="BICYCLING">Bicycling</option>
-        <option value="TRANSIT">Transit</option>
-      </select>
+		<select id="mode">
+			<option value="DRIVING">Driving</option>
+			<option value="WALKING">Walking</option>
+			<option value="BICYCLING">Bicycling</option>
+			<option value="TRANSIT">Transit</option>
+		</select>
 	</div>
 
 	<div id="map-with-multiple-pins"></div>
@@ -224,25 +230,37 @@
 				<button id="revert-exit" type="button">Clear Changes And Exit</button>
 			</div>
 			<div>
-				<button id="experimental-photo-tool" onclick="PerformMinorMiracle()">Batch Upload Image (experimental)</button>
+				<button id="experimental-photo-tool">Batch Upload Image (experimental)</button>
 			</div>
 			<button id="edit-delete" type="button">Delete Itinerary</button>
 		</div>
 		<div id="batch-upload-modal" style="display:none">
 			<div id="batch-modal-container">
 				<p>Select JPEG files to upload. Should the file match a timespan and rough location of an event on the calendar, it will automatically be added to the calendar. those that have no event will remain here. You may click on one of these photos to view the time it was taken and the latitude and location location if that data is available. If you then close this modal and create an event at that time and location, the photo will automatically be added. Closing this modal does not clear the photos; they will remain here if you open it again. You may add more photos at any time</p>
+				<hr />
 				<div>
-					<label>Latitude</label>
-					<p id="lat-text"></p>
-					<label>Longitude</label>
-					<p id="lng-text"></p>
-					<label>Time</label>
-					<p id="time-text"></p>
+					<p id="select-msg">No files selected</p>
+					<div class="metadata-div">
+						<label>Latitude: </label>
+						<p id="lat-text"></p>
+					</div>
+					<div class="metadata-div">
+						<label>Longitude: </label>
+						<p id="lng-text"></p>
+					</div>
+					<div class="metadata-div">
+						<label>Time: </label>
+						<p id="time-text"></p>
+					</div>
+					<div class="metadata-div">
+						<button type="button" id="generate-item" disabled>Generate Event From Selected</button>
+					</div>
 				</div>
-				<input id="photoList" type="file" multiple accept="image/jpeg, image/jpg" onchange="CaffeineExclamationPoint()" />
+				<input aria-label="upload photos" id="photoList" type="file" multiple accept="image/jpeg, image/jpg" />
+				<p id="upload-info">No photos uploaded. Upload some photos</p>
 				<div id="uploadedPhotoContainer">
 				</div>
-				<button id="closeThatShit" onclick="NegateSaidMiracle()">Close</button>
+				<button id="closeThatShit" type="button">Close</button>
 			</div>
 		</div>
 	</footer>

@@ -17,133 +17,11 @@ var calendar;
 
 let inEditMode = false;
 var places = [];
-let imageList = new Set();
 
-function PerformMinorMiracle(e)
-{
-	let k = document.getElementById("batch-upload-modal");
-	k.style.display = "block";
-}
-
-function NegateSaidMiracle()
-{
-	let k = document.getElementById("batch-upload-modal");
-	k.style.display = "none";
-}
-
-function ConvertDMSToDD(degrees, minutes, seconds, direction)
-{
-	var dd = degrees + minutes / 60 + seconds / (60 * 60);
-
-	if (direction == "S" || direction == "W")
-	{
-		dd = dd * -1;
-	} // Don't do anything for N or E
-
-	return dd;
-}
-
-function createObjectURL(object)
-{
-	return (window.URL) ? window.URL.createObjectURL(object) : window.webkitURL.createObjectURL(object);
-}
-
-function CaffeineExclamationPoint() 
-{
-	function addPhoto(url, index, lat, lng, time)
-	{
-		let container = document.getElementById("uploadedPhotoContainer");
-
-		console.log("Url:" + url);
-		let div = document.createElement('div');
-		div.classList.add("item-modal-photo");
-		let img = document.createElement("img");
-		img.src = url;
-		img.classList.add("item-modal-photo-img");
-		img.alt = "batch photo #" + index;
-		div.appendChild(img);
-		container.appendChild(div);
-
-		console.log("hello ppls");
-
-		let l = document.getElementById("lat-text");
-	
-		let n = document.getElementById("lng-text");
-		let t = document.getElementById("time-text");
-
-		img.addEventListener("click", _=>
-		{
-			console.log("Hello");
-			l.textContent = lat;
-			n.textContent = lng;
-			t.textContent = time;
-		});
-	}
-
-	let photoList = document.getElementById("photoList");
-	let theList = photoList.files || [];
-	Array.from(theList).forEach(x => imageList.add(x));
-
-	let calendarArr = calendar.getEvents();
-
-	removeList = [];
-
-	imageList.forEach(y =>
-	{
-		let q = 0;
-		EXIF.getData(y, function ()
-		{
-			//console.log(y);
-
-			let lat = EXIF.getTag(this, "GPSLatitude");
-			let latDir = EXIF.getTag(this, "GPSLatitudeRef");
-			let lng = EXIF.getTag(this, "GPSLongitude");
-			let lngDir = EXIF.getTag(this, "GPSLongitudeRef");
-
-			let time = EXIF.getTag(this, "DateTimeOriginal")
-			let t2 = time.substring(0, 4) + '-' + time.substring(5,7) + '-' + time.substring(8,10) + 'T' + time.substring(11);
-
-			let d = DateFromLocalString(t2);
-
-			if (lat && lng && GetDateTimeOrNull(d))
-			{
-				let latNum = ConvertDMSToDD(lat[0], lat[1], lat[2], latDir)
-				let lngNum = ConvertDMSToDD(lng[0], lng[1], lng[2], lngDir)
-			
-				let trueTime = GetDateTimeOrNull(d);
-
-				let found = calendarArr.some(z =>
-				{
-					console.log("latNum: " + latNum + ", longNum: " + lngNum);
-					console.log("Start: " + z.start + ", time: " + trueTime + ", End: " + z.end);
-					console.log("delta: " + Math.sqrt(latNum * latNum + lngNum * lngNum));
-					if (z.start <= trueTime && z.end >= trueTime && Math.sqrt(latNum * latNum + lngNum * lngNum) < 100)
-					{
-						/**@type {Array} */
-						let temp = z.extendedProps.Photos;
-						temp.push(createObjectURL(y));
-						let replacement = [...temp];
-						z.setExtendedProp("Photos", replacement);
-						console.log("Pushing");
-						console.log(y);
-
-						removeList.push(y);
-						return true;
-					}
-					return false;
-				});
-
-				if (!found)
-				{
-					addPhoto(createObjectURL(y), q, latNum, lngNum, trueTime);
-					q++;
-				}
-			}
-		});
-	});
-
-	photoList.value = null;
-}
+/**
+ * @type{Array<FileWithMetadata>} 
+ */
+let imageList = null;
 
 //ok, we need to use map in two locations, potentially, but i don't know how the Google Maps API works with that, so i'll just create the div here. Then we can add that div to the place it's being used.
 //export function initMap()
@@ -163,12 +41,12 @@ function initMap()
 		styles: GetMapStyling(),
 	});
 
-	  mapWithPins = new google.maps.Map(mapContainer, {
-	  zoom: 12,
-      center: { lat: 40, lng: -75},
-      mapTypeControl: false,
+	mapWithPins = new google.maps.Map(mapContainer, {
+		zoom: 12,
+		center: { lat: 40, lng: -75 },
+		mapTypeControl: false,
 
-    });
+	});
 
 	directionsService = new google.maps.DirectionsService();
 	matrixService = new google.maps.DistanceMatrixService();
@@ -267,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 	 * @param {boolean} allDay a fullCalendar argument that deals with all day events, idk what it actually does lol.
 	 * @param {boolean} readonly if true, disabled all interaction, if false, allows normal editing. 
 	 */
-	function displayItemModal(event, start, end, allDay, readonly)
+	function displayItemModal(event, start, end, allDay, readonly, autoLat = null, autoLng = null, autoPhoto = null, successCallback = null, deleteCallback = null)
 	{
 		let itemModal = document.getElementById('item-modal'); //need this to toggle visibility.
 		let itemModalTitle = document.getElementById('item-modal-title'); //value
@@ -304,15 +182,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 		itemModal.classList.remove("item-modal-collapsed");
 		itemModalSave.disabled = false;
 
-		console.log("BEFORE: Start: " + start + ", End: " + end);
-
 		itemModalStartDate.value = LocalStringFromDate(start); //these are in UTC time, i need them in Local time. fuck
 
 		itemModalEndDate.value = LocalStringFromDate(end);
 
-		console.log("ISO FORMAT: Start: " + itemModalStartDate.value + ", End: " + itemModalEndDate.value);
-
 		let isLLMode = false;
+
+		//ensure photo collection is clear.
+		while (photoCollection.firstChild)
+		{
+			photoCollection.removeChild(photoCollection.lastChild);
+		}
+
+		let hasPhotos = false;
 
 		if (event)
 		{
@@ -345,27 +227,12 @@ document.addEventListener('DOMContentLoaded', async function ()
 			createOrUpdateMarker({ lat: Number(latField.value), lng: Number(longField.value) }, draggable);
 			handleRadio(displayMe);
 
-			//ensure photo collection is clear.
-			while (photoCollection.firstChild)
-			{
-				photoCollection.removeChild(photoCollection.lastChild);
-			}
 
-			let hasPhotos = false;
 			event.extendedProps.Photos.forEach(function (x, index)
 			{
 				addPhoto(photoCollection, x, index);
 				hasPhotos = true;
 			});
-
-			if (hasPhotos)
-			{
-				photoCollection.classList.remove("no-photos-attached");
-			}
-			else if (!photoCollection.classList.contains("no-photos-attached"))
-			{
-				photoCollection.classList.add("no-photos-attached");
-			}
 
 			itemModalDelete.classList.remove('nothing-to-change');
 			itemModalRevert.classList.remove('nothing-to-change');
@@ -393,6 +260,38 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
+		if (autoPhoto && autoPhoto.length > 0)
+		{
+			let items = photoCollection.getElementsByClassName("item-modal-photo") || [];
+			let index = items.length;
+
+			for (const photo of autoPhoto)
+			{
+				addPhoto(photoCollection, photo, index++);
+			}
+			hasPhotos = true;
+		}
+		if (autoLat && autoLng)
+		{
+			latField.value = autoLat;
+			longField.value = autoLng;
+
+			latLongMode.checked = true;
+
+			isLLMode = false; //so handleRadio correctly toggles it to true.
+			createOrUpdateMarker({ lat: Number(latField.value), lng: Number(longField.value) }, true);
+			handleRadio(latLongMode);
+			updateAddress();
+		}
+		if (hasPhotos)
+		{
+			photoCollection.classList.remove("no-photos-attached");
+		}
+		else if (!photoCollection.classList.contains("no-photos-attached"))
+		{
+			photoCollection.classList.add("no-photos-attached");
+		}
+
 		itemModalTitle.readOnly = readonly;
 		addressField.readOnly = readonly;
 		updateCoordBtn.readOnly = readonly;
@@ -415,15 +314,11 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 				let title = itemModalTitle.value;
 
-				console.log("AFTER: Start: " + itemModalStartDate.value + ", End: " + itemModalEndDate.value);
-
 				let start = DateFromLocalString(itemModalStartDate.value);
 				let end = DateFromLocalString(itemModalEndDate.value);
 
-				console.log("DATE FORMAT: Start: " + start + ", End: " + end);
-
 				let description = itemModalDescription.value;
-				let photoList = document.getElementsByClassName("item-modal-photo-img");
+				let photoList = photoCollection.getElementsByClassName("item-modal-photo-img");
 				//photoList isn't an array, it's a HTMLElementCollection. the spread operator aka "[...args]" converts an iterable to an array. array.map is equivalent to C#'s LINQ Select.
 				//In simple terms: take the photoList, create a new list with just the url attribute from them.
 				let photos = [...photoList].map(x => x.src);
@@ -465,6 +360,10 @@ document.addEventListener('DOMContentLoaded', async function ()
 					addOrUpdateItem(Number(latField.value), Number(longField.value), IsNullOrWhitespace(addressField.value) ? null : addressField.value);
 					//collapse the item modal.
 					clearFieldsAndClose();
+					if (successCallback) 
+					{
+						successCallback();
+					}
 				}
 				else
 				{
@@ -578,6 +477,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 					event.remove();
 				}
 				clearFieldsAndClose();
+				resetPhotoModal();
 			}
 		};
 
@@ -795,6 +695,43 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 
+		function resetPhotoModal()
+		{
+			let k = calendar.getEvents();
+			let found = [];
+
+			console.log("break here");
+
+			for (const item of imageList)
+			{
+				for (let q of k)
+				{
+					let photos = q.extendedProps.Photos;
+
+					if (photos.some(x => x === item.imgElement.src))
+					{
+						found.push(item);
+						console.log("Hello");
+						console.log(item.imgElement);
+						if (item.imgElement.classList.contains("meta-selected"))
+						{
+							item.imgElement.classList.remove("meta-selected");
+						}
+					}
+				}
+			}
+
+			let container = document.getElementById("uploadedPhotoContainer");
+
+			for (const allItems of imageList)
+			{
+				if (!found.some(x => allItems === x))
+				{
+					container.appendChild(allItems.imgElement.parentElement);
+				}
+			}
+		}
+
 		updateCoordBtn.onclick = _ =>
 		{
 			if (latLongMode.checked)
@@ -841,7 +778,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		latField.onblur = updateMapFromCoordinate;
 		longField.onblur = updateMapFromCoordinate;
 
-		updateAddressBtn.onclick = _ =>
+		function updateAddress()
 		{
 			if (latLongMode.checked && isFinite(latField.value) && isFinite(longField.value))
 			{
@@ -861,7 +798,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 					});
 				}
 			}
-		};
+		}
+
+		updateAddressBtn.onclick = updateAddress;
 	}
 
 	/**
@@ -888,7 +827,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 	function addPhoto(container, url, index)
 	{
-		console.log("Url:" + url);
 		let div = document.createElement('div');
 		div.classList.add("item-modal-photo");
 		let img = document.createElement("img");
@@ -908,6 +846,72 @@ document.addEventListener('DOMContentLoaded', async function ()
 			modal.classList.remove("photo-modal-hidden");
 			modalImg.src = img.src;
 			modalImg.alt = img.alt;
+
+			let metadata = document.getElementById("photo-metadata");
+			let latM = document.getElementById("latitude-metadata");
+			let lngM = document.getElementById("longitude-metadata");
+			let tM = document.getElementById("timestamp-metadata");
+			let locM = document.getElementById("location-metadata");
+
+			if (!metadata.classList.contains("no-metadata"))
+			{
+				metadata.classList.add("no-metadata");
+			}
+			latM.textContent = "";
+			lngM.textContent = "";
+			tM.textContent = "";
+			locM.textContent = "";
+
+			EXIF.getData(img, function ()
+			{
+				let lat = EXIF.getTag(this, "GPSLatitude");
+				let latDir = EXIF.getTag(this, "GPSLatitudeRef");
+				let lng = EXIF.getTag(this, "GPSLongitude");
+				let lngDir = EXIF.getTag(this, "GPSLongitudeRef");
+
+				let time = EXIF.getTag(this, "DateTimeOriginal")
+
+				let t2 = time.substring(0, 4) + '-' + time.substring(5, 7) + '-' + time.substring(8, 10) + 'T' + time.substring(11);
+
+				let d = DateFromLocalString(t2);
+
+				if (lat && lng && GetDateTimeOrNull(d))
+				{
+					let latNum = ConvertDMSToDD(lat[0], lat[1], lat[2], latDir)
+					let lngNum = ConvertDMSToDD(lng[0], lng[1], lng[2], lngDir)
+
+					let trueTime = GetDateTimeOrNull(d);
+
+					metadata.classList.remove("no-metadata");
+
+					latM.textContent = "Latitude: " + latNum;
+					lngM.textContent = "Longitude: " + lngNum;
+					tM.textContent = "Time Taken: " + trueTime;
+
+					geocoder.geocode({ location: { lat: latNum, lng: lngNum } }).then(response =>
+					{
+						locM.textContent = "Could not approximate address";
+
+						if (response.results.length > 0)
+						{
+							for (let i = 0; i < response.results.length; i++)
+							{
+								let resultItem = response.results[i];
+								if (resultItem && !resultItem.types.includes("plus_code"))
+								{
+									locM.textContent = "Estimated Address: " + resultItem.formatted_address;
+									break;
+								}
+							}
+						}
+					}, failure =>
+					{
+						locM.textContent = "Could not approximate address";
+					});
+
+				}
+			});
+
 		}
 	}
 
@@ -933,6 +937,52 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let end = document.getElementById("itinerary-enddate");
 
 		let calendarEl = document.getElementById('calendar');
+
+		function tryGetData(startTime, endTime)
+		{
+			/**
+			 * @type {Array<FileWithMetadata>}
+			 */
+			let matches = [];
+			let latSum = 0;
+			let lngSum = 0;
+			let validCount = 0;
+
+			let urls = [];
+			if (imageList)
+			{
+				matches = imageList.filter(x => x.time >= startTime && x.time <= endTime);
+			}
+
+			for (const item of matches)
+			{
+				if (item.time >= startTime && item.time <= endTime)
+				{
+					validCount++;
+					urls.push(item.imgElement.src);
+					latSum += item.latitude;
+					lngSum += item.longitude;
+				}
+			}
+
+
+			if (validCount > 0)
+			{
+				return new AutofillHelper(latSum / validCount, lngSum / validCount, urls, function ()
+				{
+					matches.forEach(x =>
+					{
+						x.imgElement.parentElement.parentElement.removeChild(x.imgElement.parentElement);
+						x.imgElement.classList.remove("meta-selected");
+					});
+				});
+			}
+			else
+			{
+				return new AutofillHelper(null, null, null, null);
+			}
+		}
+
 		calendar = new FullCalendar.Calendar(calendarEl, {
 			initialDate: buzz,
 			validRange: _ =>
@@ -983,7 +1033,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 			selectMirror: false,
 			select: function (arg)
 			{
-				displayItemModal(null, arg.start, arg.end, arg.allDay, false);
+				let temp = tryGetData(arg.start, arg.end);
+				displayItemModal(null, arg.start, arg.end, arg.allDay, false, temp.avgLat, temp.avgLng, temp.urls, temp.callback);
 			},
 			eventClick: function (arg)
 			{
@@ -997,9 +1048,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			dayMaxEvents: true, // allow "more" link when too many events
 			events: []
 		});
-		console.log("DbEvent Photos: ");
 
-		//console.log(initialDB.items);
 		var dbEventList = initialDB?.items ?? [];
 		dbEventList.forEach(dbEvent =>
 		{
@@ -1037,7 +1086,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 			method: 'GET',
 			headers: {
 				"Access-Control-Allow-Headers": "*",
-				"Access-Control-Allow-Origin": "*"
+				"Access-Control-Allow-Origin": "*",
+				"Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT",
 			}
 
 		};
@@ -1071,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 						values.forEach(value =>
 						{
 							coll.push(new DBItem(value["ActivityName"], value["Latitude"], value["Longitude"], value["Address"], GetDateTimeOrNull(value["StartTime"]), GetDateTimeOrNull(value["EndTime"]), value["AdditionalInformation"], value["Photos"]))
-						    places.push(value["Address"]);
+							places.push(value["Address"]);
 
 							var startSelect = document.getElementById('start');
 							var endSelect = document.getElementById('end');
@@ -1161,6 +1211,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		let save_exit = document.getElementById("save-exit");
 		let revert_cont = document.getElementById("revert-cont");
 		let revert_exit = document.getElementById("revert-exit");
+		let experiment = document.getElementById("experimental-photo-tool");
 		let edit_delete = document.getElementById("edit-delete");
 
 		/**
@@ -1219,7 +1270,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 				{
 					let itemTitle = entry["_def"]["title"];
 					let itemAdditionalInformation = entry["_def"]["extendedProps"]["AdditionalInformation"];
-					let itemLatitude = entry["_def"]["extendedProps"]["Latitude"];
+					let itemLatitude = entry.extendedProps.Latitude;
 					let itemLongitude = entry["_def"]["extendedProps"]["Longitude"];
 					let itemAddress = entry["_def"]["extendedProps"]["Address"];
 					let itemStart = entry.start;
@@ -1228,13 +1279,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 					let itineraryStart = GetDateTimeOrNull(start.value);
 					let itineraryEnd = GetDateTimeOrNull(end.value);
-
-					console.log("\nitem start:");
-					console.log(itemStart);
-					console.log("item end:");
-					console.log(itemEnd);
-
-
 
 					itineraryStart.setDate(itineraryStart.getDate() + 1);
 					itineraryStart.setHours(0, 0, 0, 0);
@@ -1281,25 +1325,24 @@ document.addEventListener('DOMContentLoaded', async function ()
 					x.remove();
 				});
 
-				console.log(saveEvents);
 				var json = JSON.stringify(saveEvents);
-				console.log(json);
 				// create a JSON object with parameters for API call and store in a variable
 				var requestOptions = {
 					method: 'POST',
 					body: json,
 				};
+
+				console.log(json);
+
 				// make API call with parameters and use promises to get response
 				let g = await fetch("https://hhd3reswr9.execute-api.us-west-2.amazonaws.com/CreateReadUpdateItinerary", requestOptions).then(async gucci =>
 				{
-					console.log("hello");
 					//maybe pop up "your shit was saved" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 					if (gucci.status == 200) 
 					{
 						markDirty = false; //clear the dirty-ness.
 						let q = await gucci.text().then(data =>
 						{
-							console.log("data: " + data)
 							return Number(data);
 						});
 						return q;
@@ -1320,7 +1363,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 					//maybe pop up "something broke" in a temporary div that collapses after a few seconds or when the user hits the 'x'.
 					return null;
 				});
-				console.log("G: " + g);
 
 				return g;
 			}
@@ -1632,7 +1674,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 					edit_delete.disabled = true;
 
 					let k = await handleSaving(itineraryID);
-					console.log(k);
 					if (k) 
 					{
 						document.location = "account.html";
@@ -1672,6 +1713,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 
 					document.location = "account.html";
 				});
+
+				experiment.onclick = PerformMinorMiracle;
 
 				edit_delete.addEventListener("click", _ =>
 				{
@@ -1770,7 +1813,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value) && new Date(end.value) >= new Date(start.value))
 				{
 					enableCalendar();
-					console.log(calendar.getDate());
 					//workaround to refresh the display. Go to the currently selected date, refresh.
 					calendar.gotoDate(start.value);
 				}
@@ -1801,7 +1843,6 @@ document.addEventListener('DOMContentLoaded', async function ()
 				if (!calendar.getOption("selectable") && GetDateOrNull(start.value) && GetDateOrNull(end.value) && new Date(end.value) >= new Date(start.value))
 				{
 					enableCalendar();
-					console.log(calendar.getDate());
 					calendar.gotoDate(start.value);
 				}
 				else
@@ -1835,6 +1876,286 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		});
 	}
+
+
+	function PerformMinorMiracle()
+	{
+		let k = document.getElementById("batch-upload-modal");
+		k.style.display = "block";
+
+		let q = document.getElementById("closeThatShit");
+		q.onclick = NegateSaidMiracle;
+		let g = document.getElementById("photoList");
+		g.onchange = CaffeineExclamationPoint;
+	}
+
+	function NegateSaidMiracle()
+	{
+		let k = document.getElementById("batch-upload-modal");
+		k.style.display = "none";
+		let q = document.getElementById("closeThatShit");
+		q.onclick = null;
+		let g = document.getElementById("photoList");
+		g.onchange = null;
+	}
+
+	function ConvertDMSToDD(degrees, minutes, seconds, direction)
+	{
+		var dd = degrees + minutes / 60 + seconds / (60 * 60);
+
+		if (direction == "S" || direction == "W")
+		{
+			dd = dd * -1;
+		} // Don't do anything for N or E
+
+		return dd;
+	}
+
+	function createObjectURL(object)
+	{
+		return (window.URL) ? window.URL.createObjectURL(object) : window.webkitURL.createObjectURL(object);
+	}
+
+	async function CaffeineExclamationPoint() 
+	{
+		function addPhoto(image, index, lat, lng, time)
+		{
+			let container = document.getElementById("uploadedPhotoContainer");
+
+			let url = createObjectURL(image);
+
+			let div = document.createElement('div');
+			div.classList.add("item-modal-photo");
+			let img = document.createElement("img");
+			img.src = url;
+			img.classList.add("item-modal-photo-img");
+			img.alt = "batch photo #" + index;
+			div.appendChild(img);
+			container.appendChild(div);
+
+			imageList.push(new FileWithMetadata(img, lat, lng, time));
+
+			img.addEventListener("click", _ =>
+			{
+				if (img.classList.contains("meta-selected"))
+				{
+					img.classList.remove("meta-selected");
+				}
+				else
+				{
+					img.classList.add("meta-selected");
+				}
+
+				updateDisplay();
+			});
+		}
+
+		function updateDisplay()
+		{
+			let s = document.getElementById("select-msg");
+			let l = document.getElementById("lat-text");
+			let n = document.getElementById("lng-text");
+			let t = document.getElementById("time-text");
+			let g = document.getElementById('generate-item');
+
+			let container = document.getElementById("uploadedPhotoContainer");
+
+			let selected = container.getElementsByClassName("meta-selected");
+
+			if (selected.length > 0)
+			{
+				let latSum = 0;
+				let lngSum = 0;
+				/**
+				 * @type {Date}
+				 */
+				let minTime = null;
+				/**
+				 * @type {Date}
+				 */
+				let maxTime = null;
+				let validCount = 0;
+				let selectedArr = Array.from(selected);
+				selectedArr.forEach(x =>
+				{
+					let metaData = imageList.find(y => x == y.imgElement);
+					if (metaData)
+					{
+						if (!minTime || minTime > metaData.time)
+						{
+							minTime = metaData.time;
+						}
+						if (!maxTime || maxTime < metaData.time)
+						{
+							maxTime = metaData.time;
+						}
+
+						latSum += metaData.latitude;
+						lngSum += metaData.longitude;
+
+						validCount++;
+					}
+				});
+
+				let latAverage = validCount > 0 ? latSum / validCount : 0;
+				let lngAverage = validCount > 0 ? lngSum / validCount : 0;
+
+				let text = selected.length + " file" + (selected.length > 1 ? "s" : "") + " selected";
+
+				if (validCount == 0)
+				{
+					text += " (No valid metadata)";
+					l.textContent = "No info available.";
+					n.textContent = "No info available.";
+					t.textContent = "No info available.";
+				}
+				else if (validCount == 1)
+				{
+					text += (selected.length > 1 ? " (1 " : " (") + "has valid metadata)";
+					l.textContent = latAverage;
+					n.textContent = lngAverage;
+					t.textContent = minTime;
+				}
+				else
+				{
+					text += " (" + validCount + " have valid metadata)";
+					l.textContent = latAverage + " (Average)";
+					n.textContent = lngAverage + " (Average)";
+					t.textContent = minTime + " - " + maxTime;
+				}
+				s.textContent = text;
+				if (validCount > 0) 
+				{
+					g.onclick = function ()
+					{
+						//if only one photo selected, make a one minute event. 
+						if (minTime == maxTime)
+						{
+							maxTime = new Date(maxTime.getTime() + 1 * 60000); //60,000 ms or 1 minute.
+						}
+						//round down to the previous minute by chopping off the seconds/ ms. 
+						minTime.setSeconds(0, 0);
+
+						if (maxTime.getSeconds() != 0)
+						{
+							//round up to the next minute by adding a minute
+							maxTime = new Date(maxTime.getTime() + 1 * 60000); //60,000 ms or 1 minute.
+							//then chopping off the seconds and milliseconds.
+							maxTime.setSeconds(0, 0);
+						}
+
+						displayItemModal(null, minTime, maxTime, false, false, latAverage, lngAverage, selectedArr.map(k => k.src), function ()
+						{
+							selectedArr.forEach(x =>
+							{
+								container.removeChild(x.parentElement);
+								x.classList.remove("meta-selected");
+							});
+
+							updateDisplay();
+						});
+					};
+					g.disabled = false;
+				}
+				else
+				{
+					g.disabled = true;
+					g.onclick = null;
+				}
+			}
+			else
+			{
+				s.textContent = "no files selected";
+				l.textContent = "";
+				n.textContent = "";
+				t.textContent = "";
+
+				g.disabled = true;
+				g.onclick = null;
+			}
+		}
+
+		if (imageList == null)
+		{
+			imageList = [];
+		}
+
+		let photoList = document.getElementById("photoList");
+		let theList = Array.from(photoList.files || []);
+
+
+
+		let calendarArr = calendar.getEvents();
+
+		let infoField = document.getElementById("upload-info");
+		let photoAddCount = 0;
+
+		let photosIncluded = theList.length;
+		let addedTo = [];
+
+		for (const y of theList)
+		{
+			let q = 0;
+			await new Promise(resolve => EXIF.getData(y, function ()
+			{
+				let lat = EXIF.getTag(this, "GPSLatitude");
+				let latDir = EXIF.getTag(this, "GPSLatitudeRef");
+				let lng = EXIF.getTag(this, "GPSLongitude");
+				let lngDir = EXIF.getTag(this, "GPSLongitudeRef");
+
+				let time = EXIF.getTag(this, "DateTimeOriginal")
+				let t2 = time.substring(0, 4) + '-' + time.substring(5, 7) + '-' + time.substring(8, 10) + 'T' + time.substring(11);
+
+				let d = DateFromLocalString(t2);
+
+				if (lat && lng && GetDateTimeOrNull(d))
+				{
+					let latNum = ConvertDMSToDD(lat[0], lat[1], lat[2], latDir)
+					let lngNum = ConvertDMSToDD(lng[0], lng[1], lng[2], lngDir)
+
+					let trueTime = GetDateTimeOrNull(d);
+
+					let found = calendarArr.some(z =>
+					{
+						if (z.start <= trueTime && z.end >= trueTime && Math.sqrt(Math.pow(latNum - z.extendedProps.Latitude, 2) + Math.pow(lngNum - z.extendedProps.Longitude, 2)) < 0.5)
+						{
+							/**@type {Array<string>} */
+							let temp = z.extendedProps.Photos;
+							temp.push(createObjectURL(y));
+							let replacement = [...temp];
+							z.setExtendedProp("Photos", replacement);
+
+							if (!addedTo.includes(z))
+							{
+								addedTo.push(z);
+							}
+
+							photoAddCount++;
+							return true;
+						}
+						return false;
+					});
+
+					if (!found)
+					{
+						addPhoto(y, q, latNum, lngNum, trueTime);
+						q++;
+					}
+					resolve(true);
+				}
+				else
+				{
+					addPhoto(y, q++, null, null, null);
+					resolve(true);
+				}
+			}));
+		}
+
+		infoField.textContent = photosIncluded + " photos added. " + photoAddCount + " of them were included in " + addedTo.length + " different activity(ies)";
+
+		photoList.files = null;
+	}
+
 	//Load Itinerary
 
 	let temp = await loadItinerary(itineraryID);
@@ -1844,62 +2165,72 @@ document.addEventListener('DOMContentLoaded', async function ()
 	initializeItemModal();
 	calendar.render();
 	codeAddress(places); //call the function that sets multiple pins on map
-	const onChangeHandler = function () {
+
+	const onChangeHandler = function ()
+	{
 		calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService);
-	  };
+	};
+
 	document.getElementById("start").addEventListener("change", onChangeHandler);
-  	document.getElementById("end").addEventListener("change", onChangeHandler);
+	document.getElementById("end").addEventListener("change", onChangeHandler);
 	document.getElementById("mode").addEventListener("change", onChangeHandler);
-	
+
 	//display
 });//end of dom content loaded
 
-function codeAddress(address) {
-    for(var i = 0; i < address.length; i++)
-    {
-    geocoder.geocode({
-    address: address[i]}, function(results, status)
-    {
-        if (status == google.maps.GeocoderStatus.OK) {
-            mapWithPins.setCenter(results[0].geometry.location); //center the map over the result
-            //place a marker at the location
-            var marker = new google.maps.Marker({
-            map: mapWithPins,
-            position: results[0].geometry.location
-            });
-             /*marker.addListener("click", () => {
-                infowindow.open({
-                  anchor: marker,
-                  map,
-                  shouldFocus: false,
-                });
-              });*/
-            //marker.setMap(marker);
-        } else {
-                alert('Geocode was not successful for the following reason: ' + status);
-            }
-        });
-    }
+function codeAddress(address)
+{
+	for (var i = 0; i < address.length; i++)
+	{
+		geocoder.geocode({
+			address: address[i]
+		}, function (results, status)
+		{
+			if (status == google.maps.GeocoderStatus.OK)
+			{
+				mapWithPins.setCenter(results[0].geometry.location); //center the map over the result
+				//place a marker at the location
+				var marker = new google.maps.Marker({
+					map: mapWithPins,
+					position: results[0].geometry.location
+				});
+				/*marker.addListener("click", () => {
+				   infowindow.open({
+					 anchor: marker,
+					 map,
+					 shouldFocus: false,
+				   });
+				 });*/
+				//marker.setMap(marker);
+			} else
+			{
+				alert('Geocode was not successful for the following reason: ' + status);
+			}
+		});
+	}
 }
-function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService) {
+
+function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixService)
+{
 	const selectedMode = document.getElementById("mode").value;
-	let startAddress =document.getElementById("start").value;
-	let endAddress =  document.getElementById("end").value;
+	let startAddress = document.getElementById("start").value;
+	let endAddress = document.getElementById("end").value;
 	infowindow.close();
 	directionsService
-	  .route({
-		origin: {
-			query: startAddress,
-		},
-		destination: {
-			query: endAddress,
-		},
-		travelMode: google.maps.TravelMode[selectedMode],
-	  })
-	  .then((response) => {
-		directionsRenderer.setDirections(response);
-	  })
-	  .catch((e) => window.alert("Directions request failed due to " + status));
+		.route({
+			origin: {
+				query: startAddress,
+			},
+			destination: {
+				query: endAddress,
+			},
+			travelMode: google.maps.TravelMode[selectedMode],
+		})
+		.then((response) =>
+		{
+			directionsRenderer.setDirections(response);
+		})
+		.catch((e) => window.alert("Directions request failed due to " + status));
 
 	const request = {
 		origins: [startAddress],
@@ -1911,22 +2242,25 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer, matrixS
 	};
 
 
-	geocoder.geocode( { 'address': endAddress}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK && startAddress != endAddress) {
-		matrixService.getDistanceMatrix(request).then((response) =>{
-			infowindow.close();
-			infowindow.setContent("Distance:" +response["rows"][0]["elements"][0]["distance"]["text"] +
-			"Time: " + response["rows"][0]["elements"][0]["duration"]["text"]);
-			infowindow.open(mapWithPins, new google.maps.Marker({
-			  position: new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()),
-			  map: mapWithPins
-			}));
-		});
-	}
+	geocoder.geocode({ 'address': endAddress }, function (results, status)
+	{
+		if (status == google.maps.GeocoderStatus.OK && startAddress != endAddress)
+		{
+			matrixService.getDistanceMatrix(request).then((response) =>
+			{
+				infowindow.close();
+				infowindow.setContent("Distance:" + response["rows"][0]["elements"][0]["distance"]["text"] +
+					"Time: " + response["rows"][0]["elements"][0]["duration"]["text"]);
+				infowindow.open(mapWithPins, new google.maps.Marker({
+					position: new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()),
+					map: mapWithPins
+				}));
+			});
+		}
 	});
-	  
-  }
-  
+
+}
+
 class DBData
 {
 	/**
@@ -1973,3 +2307,280 @@ class DBItem
 		this.photos = photos;
 	}
 }
+
+class FileWithMetadata
+{
+	/**
+	 * 
+	 * @param {HTMLImageElement} imgElement
+	 * @param {number} latitude
+	 * @param {number} longitude
+	 * @param {Date} time
+	 */
+	constructor(imgElement, latitude, longitude, time)
+	{
+		this.imgElement = imgElement;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.time = time;
+	}
+}
+
+class AutofillHelper
+{
+	/**
+	 * 
+	 * @param {number} avgLat
+	 * @param {number} avgLng
+	 * @param {Array<string>} urls
+	 * @param {function()} callback
+	 */
+	constructor(avgLat, avgLng, urls, callback)
+	{
+		this.avgLat = avgLat;
+		this.avgLng = avgLng;
+		this.urls = urls;
+		this.callback = callback;
+	}
+}
+
+//class MetaPhoto
+//{
+//	/**
+//	 * @param {string} name
+//	 * @param {number} size
+//	 * @param {number} age
+//	 * @param {number | null} latitude
+//	 * @param {number | null} longitude
+//	 * @param {Date | null} time
+//	 */
+//	constructor(name, size, age, latitude, longitude, time)
+//	{
+//		this.name = name;
+//		this.size = size;
+//		this.age = age;
+
+//		this.latitude = latitude;
+//		this.longitude = longitude;
+//		this.time = time;
+//	}
+
+//	getHashCode()
+//	{
+//		function doubleHashCode(value)
+//		{
+//			let k = new Uint32Array(new Float64Array([value]).buffer, 0, 2);
+//			return k[0] ^ k[1];
+//		}
+
+//		function stringHashCode(value)
+//		{
+//			var hash = 0, i, chr;
+//			if (value.length === 0) return hash;
+//			for (i = 0; i < value.length; i++)
+//			{
+//				chr = value.charCodeAt(i);
+//				hash = ((hash << 5) - hash) + chr;
+//				hash |= 0; // Convert to 32bit integer
+//			}
+//			return hash;
+//		}
+
+//		let hashCode = 2021072037;
+//		hashCode = hashCode * -1521134295 + stringHashCode(value);
+//		hashCode = hashCode * -1521134295 + this.size;
+//		hashCode = hashCode * -1521134295 + this.age;
+
+//		hashCode = this.latitude == null ? hashCode : hashCode * -1521134295 + doubleHashCode(this.latitude);
+//		hashCode = this.longitude == null ? hashCode: hashCode * -1521134295 + doubleHashCode(this.longitude);
+//		hashCode = this.time == null ? hashCode : hashCode * -1521134295 + this.time.getTime();
+
+//		return hashCode;
+//	}
+
+//	checkEqual(other)
+//	{
+//		if ('latitude' in other && 'longitude' in other && 'time' in other && 'age' in other && 'size' in other && 'name' in other)
+//		{
+//			return this.latitude === other.latitude && this.longitude === other.longitude && this.time.getTime() === other.time?.getTime() && other.name === this.name && this.size === other.size && this.age === other.age;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//	}
+
+//	static areEqual(value, other)
+//	{
+//		if (value instanceof MetaPhoto)
+//		{
+//			return value.checkEqual(other);
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//	}
+
+//	static hashCodeOf(value)
+//	{
+//		if (value instanceof MetaPhoto)
+//		{
+//			return value.getHashCode();
+//		}
+//		else
+//		{
+//			return undefined;
+//		}
+//	}
+//}
+
+///**
+// * A representation of a mutable hash set with a custom equality comparison. The hashset is the standard sort that does not handle mutable data well. Hashing Collisions are handled via chaining.
+// */
+//class HashSet
+//{
+//	/**
+//	 * 
+//	 * @callback getHashCodeCallback
+//	 * @param {any} value the value to get the hashcode for
+//	 * @returns {number}
+//	 * 
+//	 * @callback getEqualityCompare
+//	 * @param {any} first first value to check
+//	 * @param {any} second the second value to check
+//	 * @returns {boolean} true if both values should be considered equal, false otherwise
+//	 */
+//	/**
+//	 * 
+//	 * @param {getHashCodeCallback} getHashCodeCallback the hashcode algorithm for the given value. if null or not provided, uses the default === operator. 
+//	 * @param {getEqualityCompare} getEqualityCompare the value equality for the algorithm. 
+//	 */
+//	constructor(getHashCodeCallback, getEqualityCompare = null)
+//	{
+//		function fallbackEquals(x, y)
+//		{
+//			return x === y;
+//		}
+
+//		function justUseHashCode(x, y)
+//		{
+//			return true;
+//		}
+
+//		function fallbackHashCode(x)
+//		{
+//			return 0;
+//		}
+
+//		if (getHashCodeCallback != null)
+//		{
+//			this.getHashCodeCallback = getHashCodeCallback;
+//			this.getEqualityCompare = getEqualityCompare ?? justUseHashCode;
+//		}
+//		else
+//		{
+//			this.getHashCodeCallback = fallbackHashCode;
+//			this.getEqualityCompare = getEqualityCompare ?? fallbackEquals;
+//		}
+
+//		/**
+//		 * @type{Map<number, Array<any>}
+//		 */
+//		this.map = new Map();
+//	}
+
+//	clear()
+//	{
+//		this.map.clear();
+//	}
+
+//	/**
+//	 * Adds the value. if the value is already part of the set, this will return false, otherwise it will add it and return true.
+//	 * @param {any} value
+//	 */
+//	add(value)
+//	{
+//		if (this.contains(value))
+//		{
+//			return false;
+//		}
+//		else
+//		{
+//			let k = this.getHashCodeCallback(value);
+//			if (this.map.has(k))
+//			{
+//				let l = this.map.get(k);
+//				(this.map.get(k)).push(value);
+//			}
+//			else
+//			{
+//				this.map.set(k, [value]);
+//			}
+
+//			return true;
+//		}
+//	}
+
+//	any(predicate)
+//	{
+//		return this.values.some(x => predicate(x));
+//	}
+
+//	remove(value)
+//	{
+//		if (!this.contains(value))
+//		{
+//			return false;
+//		}
+//		else
+//		{
+//			let k = this.getHashCodeCallback(value);
+//			let g = this.map.get(k);
+//			let index = g.findIndex(x => this.getEqualityCompare(x, value));
+//			if (index > -1)
+//			{
+//				let l = g.splice(index, 1);
+//				if (l.length > 0) 
+//				{
+//					this.map.set(k, l);
+//				}
+//				else
+//				{
+//					this.map.delete(k);
+//				}
+//				return true;
+//			}
+//			else
+//			{
+//				return false;
+//			}
+//		}
+//	}
+
+//	forEach(callback)
+//	{
+//		this.values.forEach(callback);
+//	}
+
+//	/**
+//	 * Determines if this collection contains the given value. 
+//	 * @param {any} value the value to check for
+//	 * @returns {boolean} true 
+//	 */
+//	contains(value)
+//	{
+//		let k = this.getHashCodeCallback(value);
+//		return this.map.has(k) && this.map.get(k).some(x => this.getEqualityCompare(x, value));
+//	}
+
+//	values()
+//	{
+//		return (Array.from(this.map.values)).flat();
+//	}
+
+//	get size()
+//	{
+//		return this.map.size;
+//	}
+//}
