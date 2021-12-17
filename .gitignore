@@ -283,4 +283,6 @@ __pycache__/
 /workspace.xml
 
 .idea/
+.babelrc
+package.json
 
